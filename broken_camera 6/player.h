@@ -7,6 +7,8 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
+#include "scene_node.h"
+
 
 namespace game {
 
@@ -16,10 +18,13 @@ namespace game {
         public:
             Player(void);
             ~Player();
- 
+            
+            //shape
+            void SetShape(SceneNode* shape);
             // Get global Player attributes
             glm::vec3 GetPosition(void) const;
             glm::quat GetOrientation(void) const;
+            
 
             // Set global Player attributes
             void SetPosition(glm::vec3 position);
@@ -42,34 +47,28 @@ namespace game {
             void Yaw(float angle);
             void Roll(float angle);
 
-            // Set the view from Player parameters: initial position of Player,
-            // point looking at, and up vector
-            // Resets the current orientation and position of the Player
-            void SetView(glm::vec3 position, glm::vec3 look_at, glm::vec3 up);
-            // Set projection from frustum parameters: field-of-view,
-            // near and far planes, and width and height of viewport
-            void SetProjection(GLfloat fov, GLfloat near, GLfloat far, GLfloat w, GLfloat h);
-            // Set all Player-related variables in shader program
-            void SetupShader(GLuint program);
+            void Init(glm::vec3 position, glm::vec3 look_at, glm::vec3 up);
 
             inline float GetRadius() { return radius_; }
             void AddMaxSpeed(float);
             void Update(double);
 
         private:
+            //geometry
+            SceneNode* shape_;
+            
+            //attributes
             glm::vec3 position_; // Position of Player
             glm::quat orientation_; // Orientation of Player
             glm::vec3 forward_; // Initial forward vector
             glm::vec3 side_; // Initial side vector
-            glm::mat4 view_matrix_; // View matrix
-            glm::mat4 projection_matrix_; // Projection matrix
+            
             double speed_ = 0.0f;  // Current Speed
             float accel_magnitude = 4.0f;
             float radius_ = 1.0f;
             float max_speed_ = INIT_MAX_SPEED;
 
-            // Create view matrix from current Player parameters
-            void SetupViewMatrix(void);
+            
 
     }; // class Player
 

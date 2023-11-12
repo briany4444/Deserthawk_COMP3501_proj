@@ -57,11 +57,7 @@ namespace game {
         return current_up;
     }
 
-    void Camera::SetPlayer(Player* player)
-    {
-        player_ = player;
-
-    }
+    
 
 
     
@@ -106,9 +102,17 @@ namespace game {
         glUniformMatrix4fv(projection_mat, 1, GL_FALSE, glm::value_ptr(projection_matrix_));
     }
 
-    void Camera::Update()
+    void Camera::Update(glm::quat o, glm::vec3 f, glm::vec3 s, glm::vec3 pos)
     {
-
+        orientation_ = o;
+        //forward_ = f;
+        //side_ = s;
+        glm::vec3 current_forward = orientation_ * forward_;
+        current_forward.z *= 3;
+        glm::vec3 displacement = current_forward + glm::vec3(0,1,0);
+        position_ = pos + displacement;
+        
+        
     }
 
 

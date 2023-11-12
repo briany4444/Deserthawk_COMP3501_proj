@@ -58,8 +58,8 @@ namespace game {
             ResourceManager resman_;
 
             // Player abstraction
-            Player Player_;
-            Camera Camera_;
+            Player player_;
+            Camera camera_;
 
             RaceTrack racetrack_;
 

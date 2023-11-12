@@ -6,7 +6,6 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
-#include "player.h"
 
 namespace game {
 
@@ -27,7 +26,7 @@ namespace game {
         glm::vec3 GetUp(void) const;
 
         //init player
-        void SetPlayer(Player* player);
+        //void SetPlayer(Player* player);
 
         // Set the view from camera parameters: initial position of camera,
         // point looking at, and up vector
@@ -39,12 +38,10 @@ namespace game {
         // Set all camera-related variables in shader program
         void SetupShader(GLuint program);
 
-        void Update();
+        void Update(glm::quat o, glm::vec3 f, glm::vec3 s, glm::vec3 pos);
 
     private:
-        Player* player_; // the player the camera is oriented around
-
-
+        
         glm::vec3 position_; // Position of Player
         glm::quat orientation_; // Orientation of Player
         glm::vec3 forward_; // Initial forward vector
@@ -52,7 +49,6 @@ namespace game {
         glm::mat4 view_matrix_; // View matrix
         glm::mat4 projection_matrix_; // Projection matrix
         
-
         // Create view matrix from current camera parameters
         void SetupViewMatrix(void);
 

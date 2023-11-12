@@ -187,7 +187,7 @@ void SceneNode::SetupShader(GLuint program){
     glm::mat4 scaling = glm::scale(glm::mat4(1.0), scale_);
     glm::mat4 rotation = glm::mat4_cast(orientation_);
     glm::mat4 translation = glm::translate(glm::mat4(1.0), position_);
-    glm::mat4 transf = translation * rotation * scaling; // why this sequence?
+    glm::mat4 transf = translation * rotation * scaling; 
 
     GLint world_mat = glGetUniformLocation(program, "world_mat");
     glUniformMatrix4fv(world_mat, 1, GL_FALSE, glm::value_ptr(transf));

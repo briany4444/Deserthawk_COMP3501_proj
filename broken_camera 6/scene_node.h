@@ -67,15 +67,16 @@ namespace game {
             GLenum mode_; // Type of geometry
             GLsizei size_; // Number of primitives in geometry
             GLuint material_; // Reference to shader program
-            glm::vec3 position_; // Position of node
-            glm::quat orientation_; // Orientation of node
-            glm::vec3 scale_; // Scale of node
+            
 
         protected:
             std::string type_ = "NoneType";
             float radius_ = 1.0f;
             bool collidable_ = false;
-
+            
+            glm::vec3 position_; // Position of node
+            glm::quat orientation_; // Orientation of node
+            glm::vec3 scale_; // Scale of node
             // Set matrices that transform the node in a shader program
             void SetupShader(GLuint program);
 

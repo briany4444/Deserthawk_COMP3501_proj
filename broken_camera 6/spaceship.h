@@ -12,6 +12,7 @@
 #define ENEMY_SPEED 2
 #include "resource.h"
 #include "scene_node.h"
+#include "player.h"
 
 namespace game {
 
