@@ -26,6 +26,9 @@ namespace game {
         glm::vec3 GetSide(void) const;
         glm::vec3 GetUp(void) const;
 
+        //init player
+        void SetPlayer(Player* player);
+
         // Set the view from camera parameters: initial position of camera,
         // point looking at, and up vector
         // Resets the current orientation and position of the camera
@@ -36,7 +39,7 @@ namespace game {
         // Set all camera-related variables in shader program
         void SetupShader(GLuint program);
 
-        
+        void Update();
 
     private:
         Player* player_; // the player the camera is oriented around

@@ -59,6 +59,7 @@ namespace game {
 
             // Player abstraction
             Player Player_;
+            Camera Camera_;
 
             RaceTrack racetrack_;
 

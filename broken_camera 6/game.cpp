@@ -95,6 +95,9 @@ void Game::InitView(void){
     Player_.SetView(Player_position_g, Player_look_at_g, Player_up_g);
     // Set projection
     Player_.SetProjection(Player_fov_g, Player_near_clip_distance_g, Player_far_clip_distance_g, width, height);
+
+    //Set up Camera
+    Camera_.SetPlayer(&Player_);
 }
 
 
@@ -159,7 +162,7 @@ void Game::MainLoop(void){
         }
 
         // Draw the scene
-        scene_.Draw(&Player_);
+        scene_.Draw(&Camera_);
 
         // Push buffer drawn in the background onto the display
         glfwSwapBuffers(window_);
@@ -220,7 +223,7 @@ void Game::ResizeCallback(GLFWwindow* window, int width, int height){
     glViewport(0, 0, width, height);
     void* ptr = glfwGetWindowUserPointer(window);
     Game *game = (Game *) ptr;
-    game->Player_.SetProjection(Player_fov_g, Player_near_clip_distance_g, Player_far_clip_distance_g, width, height);
+    game->Camera_.SetProjection(Player_fov_g, Player_near_clip_distance_g, Player_far_clip_distance_g, width, height);
 }
 
 

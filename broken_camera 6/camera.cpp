@@ -57,6 +57,12 @@ namespace game {
         return current_up;
     }
 
+    void Camera::SetPlayer(Player* player)
+    {
+        player_ = player;
+
+    }
+
 
     
 
@@ -98,6 +104,11 @@ namespace game {
         // Set projection matrix in shader
         GLint projection_mat = glGetUniformLocation(program, "projection_mat");
         glUniformMatrix4fv(projection_mat, 1, GL_FALSE, glm::value_ptr(projection_matrix_));
+    }
+
+    void Camera::Update()
+    {
+
     }
 
 
