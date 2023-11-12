@@ -14,6 +14,8 @@
 
 namespace game {
 
+    enum Obj_t { building, collectable, interactable, enemy, player };
+
     // Class that manages one object in a scene 
     class SceneNode {
 
@@ -75,6 +77,7 @@ namespace game {
             std::string type_ = "NoneType";
             float radius_ = 1.0f;
             bool collidable_ = false;
+            Obj_t node_type_;
 
             // Set matrices that transform the node in a shader program
             void SetupShader(GLuint program);

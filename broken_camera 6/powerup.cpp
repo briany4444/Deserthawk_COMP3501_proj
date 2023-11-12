@@ -6,6 +6,7 @@ namespace game {
         collidable_ = true;
         radius_ = 0.5f;
         type_ = "Powerup";
+        node_type_ = Obj_t.collectable;
     }
 
 

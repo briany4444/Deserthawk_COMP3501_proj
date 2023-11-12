@@ -9,14 +9,14 @@
 #define GLM_FORCE_RADIANS
 #include <glm/gtc/quaternion.hpp>
 
-#define ENEMY_SPEED 2
 #include "resource.h"
 #include "scene_node.h"
+#include "enemy.h"
 
 namespace game {
 
     // Abstraction of an asteroid
-    class Spaceship : public SceneNode {
+    class Spaceship : public Enemy {
 
     public:
         // Create asteroid from given resources
@@ -28,11 +28,7 @@ namespace game {
         // Update geometry configuration
         void Update(float);
 
-    private:
-        float speed_;
-        Player *player_;
-
-    }; // class Spaceship
+    }; 
 
 } // namespace game
 
