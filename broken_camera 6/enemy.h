@@ -20,11 +20,11 @@ namespace game {
     public:
         Enemy(Player *c, const std::string name, const Resource* geometry, const Resource* material);
 
-        ~Enemyp();
+        ~Enemy();
 
         void Update(float);
 
-    private:
+    protected:
         float speed_;
         Player *player_;
 

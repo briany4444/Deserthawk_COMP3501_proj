@@ -14,12 +14,13 @@
 
 namespace game {
 
-    enum Obj_t { building, collectable, interactable, enemy, player };
+    
 
     // Class that manages one object in a scene 
     class SceneNode {
 
         public:
+            enum Obj_t { building, collectable, interactable, enemy, player };
             // Create scene node from given resources
             SceneNode(const std::string name, const Resource *geometry, const Resource *material);
 

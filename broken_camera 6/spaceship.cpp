@@ -2,7 +2,7 @@
 
 namespace game {
 
-    Spaceship::Spaceship(Player *c, const std::string name, const Resource* geometry, const Resource* material) : SceneNode(name, geometry, material) {
+    Spaceship::Spaceship(Player *c, const std::string name, const Resource* geometry, const Resource* material) : Enemy(c, name, geometry, material) {
         collidable_ = true;
         radius_ = 0.5f;
         speed_ = ENEMY_SPEED;

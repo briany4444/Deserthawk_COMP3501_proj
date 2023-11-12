@@ -9,6 +9,7 @@
 #define GLM_FORCE_RADIANS
 #include <glm/gtc/quaternion.hpp>
 
+#define ENEMY_SPEED 2
 #include "resource.h"
 #include "scene_node.h"
 #include "enemy.h"
