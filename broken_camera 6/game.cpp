@@ -16,14 +16,14 @@ const unsigned int window_width_g = 800;
 const unsigned int window_height_g = 600;
 const bool window_full_screen_g = false;
 
-// Viewport and camera settings
-float camera_near_clip_distance_g = 0.01;
-float camera_far_clip_distance_g = 1000.0;
-float camera_fov_g = 60.0; // Field-of-view of camera (degrees)
+// Viewport and Player settings
+float Player_near_clip_distance_g = 0.01;
+float Player_far_clip_distance_g = 1000.0;
+float Player_fov_g = 60.0; // Field-of-view of Player (degrees)
 const glm::vec3 viewport_background_color_g(0, 0.0, 0.0);
-glm::vec3 camera_position_g(0.0, 0.0, 800.0);
-glm::vec3 camera_look_at_g(0.0, 0.0, 0.0);
-glm::vec3 camera_up_g(0.0, 1.0, 0.0);
+glm::vec3 Player_position_g(0.0, 0.0, 800.0);
+glm::vec3 Player_look_at_g(0.0, 0.0, 0.0);
+glm::vec3 Player_up_g(0.0, 1.0, 0.0);
 static double last_time = 0;
 
 // Materials 
@@ -90,11 +90,11 @@ void Game::InitView(void){
     glfwGetFramebufferSize(window_, &width, &height);
     glViewport(0, 0, width, height);
 
-    // Set up camera
+    // Set up Player
     // Set current view
-    camera_.SetView(camera_position_g, camera_look_at_g, camera_up_g);
+    Player_.SetView(Player_position_g, Player_look_at_g, Player_up_g);
     // Set projection
-    camera_.SetProjection(camera_fov_g, camera_near_clip_distance_g, camera_far_clip_distance_g, width, height);
+    Player_.SetProjection(Player_fov_g, Player_near_clip_distance_g, Player_far_clip_distance_g, width, height);
 }
 
 
@@ -152,14 +152,14 @@ void Game::MainLoop(void){
             double current_time = glfwGetTime();
             if ((current_time - last_time) > 0.05){
                 scene_.Update(current_time - last_time);
-                camera_.Update(current_time - last_time);
+                Player_.Update(current_time - last_time);
                 last_time = current_time;
             }
             HandleCollisions();
         }
 
         // Draw the scene
-        scene_.Draw(&camera_);
+        scene_.Draw(&Player_);
 
         // Push buffer drawn in the background onto the display
         glfwSwapBuffers(window_);
@@ -185,28 +185,28 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
         float rot_factor(glm::pi<float>() * 3 / 180); // amount the ship turns per keypress
         float trans_factor = 1.0; // amount the ship steps forward per keypress
         if (key == GLFW_KEY_UP) {
-            game->camera_.Pitch(rot_factor);
+            game->Player_.Pitch(rot_factor);
         }
         if (key == GLFW_KEY_DOWN) {
-            game->camera_.Pitch(-rot_factor);
+            game->Player_.Pitch(-rot_factor);
         }
         if (key == GLFW_KEY_LEFT) {
-            game->camera_.Yaw(rot_factor);
+            game->Player_.Yaw(rot_factor);
         }
         if (key == GLFW_KEY_RIGHT) {
-            game->camera_.Yaw(-rot_factor);
+            game->Player_.Yaw(-rot_factor);
         }
         if (key == GLFW_KEY_Z) {
-            game->camera_.Roll(-rot_factor);
+            game->Player_.Roll(-rot_factor);
         }
         if (key == GLFW_KEY_X) {
-            game->camera_.Roll(rot_factor);
+            game->Player_.Roll(rot_factor);
         }
         if (key == GLFW_KEY_W) {
-            game->camera_.Accelerate(glfwGetTime() - last_time);
+            game->Player_.Accelerate(glfwGetTime() - last_time);
         }
         if (key == GLFW_KEY_S) {
-            game->camera_.Decelerate(glfwGetTime() - last_time);
+            game->Player_.Decelerate(glfwGetTime() - last_time);
         }
     }
 
@@ -216,11 +216,11 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
 
 void Game::ResizeCallback(GLFWwindow* window, int width, int height){
 
-    // Set up viewport and camera projection based on new window size
+    // Set up viewport and Player projection based on new window size
     glViewport(0, 0, width, height);
     void* ptr = glfwGetWindowUserPointer(window);
     Game *game = (Game *) ptr;
-    game->camera_.SetProjection(camera_fov_g, camera_near_clip_distance_g, camera_far_clip_distance_g, width, height);
+    game->Player_.SetProjection(Player_fov_g, Player_near_clip_distance_g, Player_far_clip_distance_g, width, height);
 }
 
 
@@ -259,7 +259,7 @@ Spaceship* Game::CreateShipInstance(std::string entity_name, std::string object_
     }
 
     // Create ship
-    Spaceship* ship = new Spaceship(&camera_, entity_name, geom, mat);
+    Spaceship* ship = new Spaceship(&Player_, entity_name, geom, mat);
     scene_.AddNode(ship);
     return ship;
 }
@@ -355,10 +355,10 @@ void Game::HandleCollisions() {
     std::vector<SceneNode*> collidables = scene_.GetCollidables();
     for (int i = 0; i < collidables.size(); ) {
         SceneNode* curr_node = collidables[i];
-        float node_dist = glm::length(curr_node->GetPosition() - camera_.GetPosition());
+        float node_dist = glm::length(curr_node->GetPosition() - Player_.GetPosition());
 
         // if collision occurred
-        if (camera_.GetRadius() + curr_node->GetRadius() > node_dist) {
+        if (Player_.GetRadius() + curr_node->GetRadius() > node_dist) {
 
             // handles Player - Beacon collision
             if (curr_node->GetName() == "targetBeacon") {
@@ -379,7 +379,7 @@ void Game::HandleCollisions() {
 
             // handles Player - Power Up Collision
             } else if (curr_node->GetType() == "Powerup") {
-                camera_.AddMaxSpeed(4.0f);
+                Player_.AddMaxSpeed(4.0f);
                 std::cout << "You collected a powerup! Max speed increased by 4 units" << std::endl;
                 scene_.RemoveCollidable(curr_node->GetName());
             }

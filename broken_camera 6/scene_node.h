@@ -10,7 +10,7 @@
 #include <glm/gtc/quaternion.hpp>
 
 #include "resource.h"
-#include "camera.h"
+#include "player.h"
 
 namespace game {
 
@@ -42,9 +42,9 @@ namespace game {
             void Rotate(glm::quat rot);
             void Scale(glm::vec3 scale);
 
-            // Draw the node according to scene parameters in 'camera'
+            // Draw the node according to scene parameters in 'player'
             // variable
-            virtual void Draw(Camera *camera);
+            virtual void Draw(Player *player);
 
             // Update the node
             virtual void Update(float);

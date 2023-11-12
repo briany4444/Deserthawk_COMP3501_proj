@@ -134,7 +134,7 @@ GLuint SceneNode::GetMaterial(void) const {
 }
 
 
-void SceneNode::Draw(Camera *camera){
+void SceneNode::Draw(Player *player){
 
     // Select proper material (shader program)
     glUseProgram(material_);
@@ -143,8 +143,8 @@ void SceneNode::Draw(Camera *camera){
     glBindBuffer(GL_ARRAY_BUFFER, array_buffer_);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_array_buffer_);
 
-    // Set globals for camera
-    camera->SetupShader(material_);
+    // Set globals for player
+    player->SetupShader(material_);
 
     // Set world matrix and other shader input variables
     SetupShader(material_);

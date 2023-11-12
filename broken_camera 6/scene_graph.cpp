@@ -97,7 +97,7 @@ std::vector<SceneNode *>::const_iterator SceneGraph::end() const {
 }
 
 
-void SceneGraph::Draw(Camera *camera){
+void SceneGraph::Draw(Player *player){
 
     // Clear background
     glClearColor(background_color_[0], 
@@ -107,7 +107,7 @@ void SceneGraph::Draw(Camera *camera){
 
     // Draw all scene nodes
     for (int i = 0; i < node_.size(); i++){
-        node_[i]->Draw(camera);
+        node_[i]->Draw(player);
     }
 }
 

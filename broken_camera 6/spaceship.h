@@ -20,7 +20,7 @@ namespace game {
 
     public:
         // Create asteroid from given resources
-        Spaceship(Camera *c, const std::string name, const Resource* geometry, const Resource* material);
+        Spaceship(Player *c, const std::string name, const Resource* geometry, const Resource* material);
 
         // Destructor
         ~Spaceship();
@@ -30,7 +30,7 @@ namespace game {
 
     private:
         float speed_;
-        Camera *player_;
+        Player *player_;
 
     }; // class Spaceship
 

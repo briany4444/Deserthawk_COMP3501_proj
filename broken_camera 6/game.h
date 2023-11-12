@@ -11,7 +11,7 @@
 #include "racetrack.h"
 #include "scene_graph.h"
 #include "resource_manager.h"
-#include "camera.h"
+#include "Player.h"
 #include "asteroid.h"
 #include "spaceship.h"
 #include "powerup.h"
@@ -57,8 +57,8 @@ namespace game {
             // Resources available to the game
             ResourceManager resman_;
 
-            // Camera abstraction
-            Camera camera_;
+            // Player abstraction
+            Player Player_;
 
             RaceTrack racetrack_;
 

@@ -9,7 +9,7 @@
 
 #include "scene_node.h"
 #include "resource.h"
-#include "camera.h"
+#include "player.h"
 
 namespace game {
 
@@ -50,7 +50,7 @@ namespace game {
             inline std::vector<SceneNode *> GetCollidables() { return collidable_nodes_; }
 
             // Draw the entire scene
-            void Draw(Camera *camera);
+            void Draw(Player *player);
 
             // Update entire scene
             void Update(float);
