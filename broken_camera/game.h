@@ -19,6 +19,7 @@
 #include "terrain.h"
 #include "tree.h"
 #include "light.h"
+#include "Ui.h"
 
 namespace game {
 
@@ -66,6 +67,10 @@ namespace game {
             // Player abstraction
             Player player_;
             Camera camera_;
+
+            //hud
+            Ui* gui_;
+
             Light* l;
 
             RaceTrack racetrack_;
@@ -111,3 +116,4 @@ namespace game {
 } // namespace game
 
 #endif // GAME_H_
+

@@ -193,6 +193,10 @@ void Game::SetupScene(void){
     player_.SetShape(playerShape);
     scene_.AddNode(playerShape);
 
+    //gui
+    gui_ = new Ui("Hud", resman_.GetResource("SimpleWall"),resman_.GetResource("GuiMaterial"));
+    scene_.AddNode(gui_);
+
     // Create global light source
     l = CreateLightInstance("light", "lightMesh", "RandomTexMaterial", "TextureMaterial");
     l->SetPosition(glm::vec3(0, 0, 800));
@@ -250,6 +254,7 @@ void Game::MainLoop(void){
 
         // Draw the scene
         scene_.Draw(&camera_);
+        gui_->Draw(&camera_);
 
         // Push buffer drawn in the background onto the display
         glfwSwapBuffers(window_);
