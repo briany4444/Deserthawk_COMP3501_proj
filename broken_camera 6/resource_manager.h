@@ -41,6 +41,7 @@ namespace game {
             // Create the geometry for a cone
             void CreateCone(std::string object_name, float height = 1.0, float radius = 0.6, int num_samples_theta = 90, int num_samples_phi = 45);
 
+            void CreateWall(std::string object_name);
 			
         private:
            

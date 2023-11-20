@@ -15,6 +15,7 @@
 #include "asteroid.h"
 #include "spaceship.h"
 #include "powerup.h"
+#include "Ui.h"
 
 namespace game {
 
@@ -60,6 +61,9 @@ namespace game {
             // Player abstraction
             Player player_;
             Camera camera_;
+
+            //hud
+            Ui* gui_;
 
             RaceTrack racetrack_;
 

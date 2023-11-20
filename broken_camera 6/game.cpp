@@ -31,7 +31,7 @@ const std::string material_directory_g = MATERIAL_DIRECTORY;
 
 
 Game::Game(void){
-
+    
     // Don't do work in the constructor, leave it for the Init() function
 }
 
@@ -125,11 +125,17 @@ void Game::SetupResources(void){
     resman_.CreateCone("Beacon", 2, 2, 30, 30);
     resman_.CreateCylinder("Enemy");
     resman_.CreateSphere("Powerup");
+    resman_.CreateWall("SimpleWall");
 
 
     // Load material to be applied to asteroids
     std::string filename = std::string(MATERIAL_DIRECTORY) + std::string("/material");
     resman_.LoadResource(Material, "ObjectMaterial", filename.c_str());
+
+    // Load material to be applied to the GUI
+    filename = std::string(MATERIAL_DIRECTORY) + std::string("/ui");
+    resman_.LoadResource(Material, "GuiMaterial", filename.c_str());
+
 }
 
 
@@ -149,6 +155,10 @@ void Game::SetupScene(void){
     //playerShape->Scale(glm::vec3(.5f, .5f, .5f));
     player_.SetShape(playerShape);
     scene_.AddNode(playerShape);
+
+    //gui
+    gui_ = new Ui("Hud", resman_.GetResource("SimpleWall"),resman_.GetResource("GuiMaterial"));
+    scene_.AddNode(gui_);
 
     //entities
     CreateShips();

@@ -5,6 +5,7 @@
 // Vertex buffer
 in vec3 vertex;
 in vec3 color;
+in vec2 
 
 // Uniform (global) buffer
 uniform mat4 world_mat;
@@ -13,6 +14,7 @@ uniform mat4 projection_mat;
 
 // Attributes forwarded to the fragment shader
 out vec4 color_interp;
+out vec2 uv;
 
 
 void main()
