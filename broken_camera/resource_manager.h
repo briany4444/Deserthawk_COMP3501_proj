@@ -6,6 +6,8 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/constants.hpp>
 
 #include "resource.h"
 
@@ -19,6 +21,14 @@ namespace game {
     class ResourceManager {
 
         public:
+
+            typedef struct {
+                GLubyte* hmap;
+                int width_;
+                int height_;
+                float max_height;
+            } HeightMap;
+
             // Constructor and destructor
             ResourceManager(void);
             ~ResourceManager();
@@ -36,6 +46,7 @@ namespace game {
 			// Create the geometry for a sphere
 			void CreateSphere(std::string object_name, float radius = 0.6, int num_samples_theta = 90, int num_samples_phi = 45);
 
+            void CreatePlane(std::string object_name, float length = 1, float width = 1, int num_length_samples = 100, int num_width_samples = 100, HeightMap hm = { 0 });
             // Create the geometry for a cylinder
             void CreateCylinder(std::string object_name, float height = 1.0, float radius = 0.6, int num_samples_theta = 90, int num_samples_phi = 45);
             // Create the geometry for a cone
@@ -56,6 +67,8 @@ namespace game {
             std::string LoadTextFile(const char *filename);
             // Loads a mesh in obj format
             void LoadMesh(const std::string name, const char* filename);
+
+            float getAugmentedPos(glm::vec2, HeightMap);
 
     }; // class ResourceManager
 

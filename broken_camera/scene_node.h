@@ -67,7 +67,7 @@ namespace game {
             inline std::string GetType() { return type_; }
             void SceneNode::Orbit(double d);
 
-        private:
+        protected:
             std::string name_; // Name of the scene node
             GLuint array_buffer_; // References to geometry: vertex and array buffers
             GLuint element_array_buffer_;
@@ -76,8 +76,6 @@ namespace game {
             GLuint material_; // Reference to shader program
             GLuint texture_;
             
-
-        protected:
             std::string type_ = "NoneType";
             float radius_ = 1.0f;
             bool collidable_ = false;

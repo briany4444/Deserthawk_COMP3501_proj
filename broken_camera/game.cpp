@@ -132,13 +132,19 @@ void Game::SetupResources(void){
     resman_.CreateCylinder("branch", 5.0, 0.5, 100, 100);
     resman_.CreateCone("thorn", 0.5, 0.2, 90, 90);
 
+    std::string filename = std::string(MATERIAL_DIRECTORY) + std::string("/moon.jpg");
+    resman_.LoadResource(Texture, "MoonTex", filename.c_str());
+
+    loadHeightMap("/moon.jpg");
+    resman_.CreatePlane("terrain", 300, 300, 100, 100, heightmap_);
 
     // Load material to be applied to asteroids
-    std::string filename = std::string(MATERIAL_DIRECTORY) + std::string("/material");
+    filename = std::string(MATERIAL_DIRECTORY) + std::string("/material");
     resman_.LoadResource(Material, "ObjectMaterial", filename.c_str());
 
-    //filename = std::string(MATERIAL_DIRECTORY) + std::string("/crater.png");
-    //resman_.LoadResource(Texture, "ObjectMaterial", filename.c_str());
+    filename = std::string(MATERIAL_DIRECTORY) + std::string("/normal_map2.png");
+    resman_.LoadResource(Texture, "TextureMaterial", filename.c_str());
+
 }
 
 
@@ -160,10 +166,11 @@ void Game::SetupScene(void){
     player_.SetShape(playerShape);
     scene_.AddNode(playerShape);
 
-    //entities
-    // CreateShips();
+    SceneNode* t = new SceneNode("terrain", resman_.GetResource("terrain"), resman_.GetResource("ObjectMaterial"), resman_.GetResource("TextureMaterial"));
+    t->SetPosition(glm::vec3(0, -30, 775));
+    scene_.AddNode(t);
 
-    // scene_.AddNode(wall);
+
     CreateTrees();
     CreatePowerups();
     CreateAsteroidField();
@@ -457,6 +464,27 @@ void Game::HandleCollisions() {
         i++;
     }
 
+}
+
+void Game::loadHeightMap(std::string file_name) {
+
+    std::string filename = std::string(MATERIAL_DIRECTORY) + std::string(file_name);
+
+    int width, height, channels;
+    width = 1024;
+    height = 1024;
+    channels = 3;
+
+    glBindTexture(GL_TEXTURE_2D, resman_.GetResource("MoonTex")->GetResource());
+
+    // Allocate memory for reading pixels
+    heightmap_.hmap = new GLubyte[width * height * 3]; // 3 for RGB
+    heightmap_.height_ = height;
+    heightmap_.width_ = width;
+    heightmap_.max_height = 35;
+
+    // Read the pixels from the texture
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE, heightmap_.hmap);
 }
 
 } // namespace game
