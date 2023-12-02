@@ -11,6 +11,13 @@ namespace game {
     // Possible resource types
     typedef enum Type { Material, PointSet, Mesh, Texture } ResourceType;
 
+    typedef struct {
+        GLubyte* hmap;
+        int width_;
+        int height_;
+        float max_height;
+    } HeightMap;
+
     // Class that holds one resource
     class Resource {
 

@@ -6,6 +6,7 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <SOIL/SOIL.h>
 
 #include "beacon.h"
 #include "racetrack.h"
@@ -64,8 +65,7 @@ namespace game {
             Camera camera_;
 
             RaceTrack racetrack_;
-            ResourceManager::HeightMap heightmap_;
- 
+            Terrain *terrain_;
 
             // current game state
             game_state_t game_state_;
@@ -88,7 +88,7 @@ namespace game {
             void CreateShips();
             Powerup* CreatePowerupInstance(std::string entity_name, std::string object_name, std::string material_name);
             void CreatePowerups();
-            void loadHeightMap(std::string file_name);
+            void createTerrain(const char* file_name);
 
             // handle Player-Scene node collisions
             void HandleCollisions();

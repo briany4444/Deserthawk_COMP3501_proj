@@ -22,13 +22,6 @@ namespace game {
 
         public:
 
-            typedef struct {
-                GLubyte* hmap;
-                int width_;
-                int height_;
-                float max_height;
-            } HeightMap;
-
             // Constructor and destructor
             ResourceManager(void);
             ~ResourceManager();

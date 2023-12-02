@@ -1177,7 +1177,7 @@ namespace game {
         int row = floor(uv[1] * hm.height_);
         int col = floor(uv[0] * hm.width_);
 
-        float height = hm.hmap[row * hm.width_ * 3 + col * 3] / 255.0;
+        float height = hm.hmap[row * hm.width_ * 3 + col * 3 - 1] / 255.0;
 
         return hm.max_height * height;
     }
