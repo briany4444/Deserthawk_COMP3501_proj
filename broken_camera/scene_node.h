@@ -42,6 +42,7 @@ namespace game {
             inline std::vector<SceneNode*> GetChildren() { return children_; }
             inline void SetOrbiting() { orbiting_ = true; }
             inline void SetJointPos(glm::vec3 p) { joint_pos_ = p; }
+            inline void SetBlending(bool b) { blending_ = b; }
             
             // Perform transformations on node
             void Translate(glm::vec3 trans);
@@ -67,7 +68,7 @@ namespace game {
             inline std::string GetType() { return type_; }
             void SceneNode::Orbit(double d);
 
-        private:
+        protected:
             std::string name_; // Name of the scene node
             GLuint array_buffer_; // References to geometry: vertex and array buffers
             GLuint element_array_buffer_;
@@ -75,9 +76,8 @@ namespace game {
             GLsizei size_; // Number of primitives in geometry
             GLuint material_; // Reference to shader program
             GLuint texture_;
+            bool blending_;
             
-
-        protected:
             std::string type_ = "NoneType";
             float radius_ = 1.0f;
             bool collidable_ = false;

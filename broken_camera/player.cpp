@@ -20,7 +20,6 @@ Player::~Player(){
 
 void Player::Update(double delta_time) {
     position_ += float(speed_ * delta_time) * GetForward();
-    std::cout << position_.x << ":" << position_.y << ":" << position_.z << std::endl;
 
     //update shape
     shape_->SetPosition(position_);

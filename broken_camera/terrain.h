@@ -2,12 +2,15 @@
 #define TERRAIN_H_
 
 #include <string>
+#include <vector>
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #define GLM_FORCE_RADIANS
 #include <glm/gtc/quaternion.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "resource.h"
 #include "scene_node.h"
@@ -19,18 +22,16 @@ namespace game {
 
     public:
         // Create asteroid from given resources
-        Terrain(const std::string name, const Resource* geometry, const Resource* material, const Resource* texture);
+        Terrain(const std::string name, const Resource* geometry, const Resource* material, const Resource* texture, const Resource* normalMap, HeightMap h);
 
         // Destructor
         ~Terrain();
 
+        void Draw(Camera* camera);
 
-    protected:
-        void SetUpShader(GLuint program);
     private:
-        // Angular momentum of asteroid
-        glm::quat angm_;
-        float maxDepth_ = 1;
+        GLuint normalMap_;
+        HeightMap heightmap_;
 
 
     }; // class Asteroid

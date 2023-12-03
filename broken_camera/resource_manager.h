@@ -6,12 +6,15 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/constants.hpp>
 
 #include "resource.h"
 
 // Default extensions for different shader source files
 #define VERTEX_PROGRAM_EXTENSION "_vp.glsl"
 #define FRAGMENT_PROGRAM_EXTENSION "_fp.glsl"
+#define GEOMETRY_PROGRAM_EXTENSION "_gp.glsl"
 
 namespace game {
 
@@ -19,6 +22,7 @@ namespace game {
     class ResourceManager {
 
         public:
+
             // Constructor and destructor
             ResourceManager(void);
             ~ResourceManager();
@@ -36,11 +40,12 @@ namespace game {
 			// Create the geometry for a sphere
 			void CreateSphere(std::string object_name, float radius = 0.6, int num_samples_theta = 90, int num_samples_phi = 45);
 
+            void CreatePlane(std::string object_name, float length = 1, float width = 1, int num_length_samples = 100, int num_width_samples = 100, HeightMap hm = { 0 });
             // Create the geometry for a cylinder
             void CreateCylinder(std::string object_name, float height = 1.0, float radius = 0.6, int num_samples_theta = 90, int num_samples_phi = 45);
             // Create the geometry for a cone
             void CreateCone(std::string object_name, float height = 1.0, float radius = 0.6, int num_samples_theta = 90, int num_samples_phi = 45);
-
+            void CreateSphereParticles(std::string object_name, int num_particles = 500);
 			
         private:
            
@@ -50,12 +55,15 @@ namespace game {
             // Methods to load specific types of resources
             // Load shaders programs
             void LoadMaterial(const std::string name, const char *prefix);
+            float getRand();
             // Load a texture from an image file: png, jpg, etc.
             void LoadTexture(const std::string name, const char* filename);
             // Load a text file into memory (could be source code)
             std::string LoadTextFile(const char *filename);
             // Loads a mesh in obj format
             void LoadMesh(const std::string name, const char* filename);
+
+            double getAugmentedPos(glm::vec2, HeightMap);
 
     }; // class ResourceManager
 

@@ -1,29 +1,52 @@
 #include "terrain.h"
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
+#include <SOIL/SOIL.h>
+#include "path_config.h"
 
 namespace game {
 
-    Terrain::Terrain(const std::string name, const Resource* geometry, const Resource* material, const Resource* texture) : SceneNode(name, geometry, material, texture) {
+    Terrain::Terrain(const std::string name, const Resource* geometry, const Resource* material, const Resource* texture, const Resource* nMap, HeightMap h) : SceneNode(name, geometry, material, texture) {
+        
+        if (nMap != NULL) {
+            normalMap_ = nMap->GetResource();
+        }
+
+        heightmap_ = h;
     }
 
 
     Terrain::~Terrain() {
     }
 
-    void Terrain::SetUpShader(GLuint program)
+
+    void Terrain::Draw(Camera* camera)
     {
-        //make the matrix
-        glm::vec3 heightTrans = glm::vec3(0, -maxDepth_, 0);
-        glm::mat4 trans = glm::translate(glm::mat4(1), heightTrans);
-        SceneNode::SetupShader(program);
+        // Select proper material (shader program)
+        glUseProgram(material_);
 
-        GLint depth = glGetUniformLocation(program, "MaxDepth");
-        glUniform1f(depth, 5);
+        // Set geometry to draw
+        glBindBuffer(GL_ARRAY_BUFFER, array_buffer_);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_array_buffer_);
 
-        GLint height = glGetUniformLocation(program, "heightTranlation");
-        glUniformMatrix4fv(height, 1, GL_FALSE, glm::value_ptr(trans));
+        // Set globals for camera
+        camera->SetupShader(material_);
+
+
+
+        // Set world matrix and other shader input variables
+        SetupShader(material_);
+
+        // Draw geometry
+        if (mode_ == GL_POINTS) {
+            glDrawArrays(mode_, 0, size_);
+        }
+        else {
+            glDrawElements(mode_, size_, GL_UNSIGNED_INT, 0);
+        }
 
     }
+
 
 } // namespace game
