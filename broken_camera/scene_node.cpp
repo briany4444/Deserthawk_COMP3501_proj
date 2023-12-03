@@ -47,6 +47,7 @@ SceneNode::SceneNode(const std::string name, const Resource *geometry, const Res
     parent_ = NULL;
     orbiting_ = false;
     orbit_angle_ = 0;
+    blending_ = false;
 }
 
 
@@ -178,6 +179,24 @@ GLuint SceneNode::GetMaterial(void) const {
 
 void SceneNode::Draw(Camera *camera){
 
+    // Select particle blending or not
+    if (blending_) {
+        // Disable depth write
+        glDepthMask(GL_FALSE);
+
+        // Enable blending
+        glEnable(GL_BLEND);
+        //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Simpler form
+        glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glBlendEquationSeparate(GL_FUNC_ADD, GL_MAX);
+    }
+    else {
+        // Enable z-buffer
+        glDepthMask(GL_TRUE);
+        glDepthFunc(GL_LESS);
+    }
+
+
     // Select proper material (shader program)
     glUseProgram(material_);
 
@@ -237,6 +256,11 @@ void SceneNode::SetupShader(GLuint program){
 
     GLint world_mat = glGetUniformLocation(program, "world_mat");
     glUniformMatrix4fv(world_mat, 1, GL_FALSE, glm::value_ptr(transf));
+
+    // Normal matrix
+    glm::mat4 normal_matrix = glm::transpose(glm::inverse(transf));
+    GLint normal_mat = glGetUniformLocation(program, "normal_mat");
+    glUniformMatrix4fv(normal_mat, 1, GL_FALSE, glm::value_ptr(normal_matrix));
 
     // Texture
     if (texture_) {

@@ -126,12 +126,14 @@ void Game::SetupResources(void){
     resman_.CreateCone("Beacon", 2, 2, 30, 30);
     resman_.CreateCylinder("Enemy");
     resman_.CreateSphere("Powerup");
+    resman_.CreateSphereParticles("SphereParticles", 250);
 
     // Create a simple object to represent the asteroids
     resman_.CreateCone("SimpleObject", 2.0, 1.0, 10, 10);
     resman_.CreateCylinder("tree", 20, 2, 100, 100);
     resman_.CreateCylinder("branch", 5.0, 0.5, 100, 100);
     resman_.CreateCone("thorn", 0.5, 0.2, 90, 90);
+
 
     std::string filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/moon.jpg");
     resman_.LoadResource(Texture, "MoonTex", filename.c_str());
@@ -144,8 +146,12 @@ void Game::SetupResources(void){
     filename = std::string(MATERIAL_DIRECTORY) + std::string("/shaders/textured_material");
     resman_.LoadResource(Material, "RandomTexMaterial", filename.c_str());
 
-    filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/dunes.png");
+    filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/rocky.png");
     resman_.LoadResource(Texture, "TextureMaterial", filename.c_str());
+
+    // Load material to be applied to particles
+    filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/sparkle.png");
+    resman_.LoadResource(Texture, "sparkle", filename.c_str());
 
 }
 
@@ -339,6 +345,31 @@ Spaceship* Game::CreateShipInstance(std::string entity_name, std::string object_
     return ship;
 }
 
+SceneNode* Game::CreateInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name) {
+
+    Resource* geom = resman_.GetResource(object_name);
+    if (!geom) {
+        throw(GameException(std::string("Could not find resource \"") + object_name + std::string("\"")));
+    }
+
+    Resource* mat = resman_.GetResource(material_name);
+    if (!mat) {
+        throw(GameException(std::string("Could not find resource \"") + material_name + std::string("\"")));
+    }
+
+    Resource* tex = NULL;
+    if (texture_name != "") {
+        tex = resman_.GetResource(texture_name);
+        if (!tex) {
+            throw(GameException(std::string("Could not find resource \"") + material_name + std::string("\"")));
+        }
+    }
+
+    SceneNode* scn = scene_.CreateNode(entity_name, geom, mat, tex);
+    return scn;
+}
+
+
 
 Asteroid *Game::CreateAsteroidInstance(std::string entity_name, std::string object_name, std::string material_name){
 
@@ -478,12 +509,12 @@ void Game::createTerrain(const char* file_name) {
     heightMap.hmap = new GLubyte[width * height * 3]; // 3 for RGB
     heightMap.height_ = height;
     heightMap.width_ = width;
-    heightMap.max_height = 35;
+    heightMap.max_height = 5;
 
     // Read the pixels from the texture
     glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE, heightMap.hmap);
 
-    resman_.CreatePlane("terrain", 300, 300, 100, 100, heightMap);
+    resman_.CreatePlane("terrain", 100, 100, 300, 300, heightMap);
 
     Terrain* t = new Terrain("terrain", resman_.GetResource("terrain"), resman_.GetResource("RandomTexMaterial"), resman_.GetResource("TextureMaterial"), NULL, heightMap);
     t->SetPosition(glm::vec3(0, -30, 775));

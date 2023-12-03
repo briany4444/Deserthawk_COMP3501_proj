@@ -33,6 +33,8 @@ namespace game {
         // Set globals for camera
         camera->SetupShader(material_);
 
+
+
         // Set world matrix and other shader input variables
         SetupShader(material_);
 

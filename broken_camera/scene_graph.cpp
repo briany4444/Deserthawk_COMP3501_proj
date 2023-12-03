@@ -32,10 +32,10 @@ glm::vec3 SceneGraph::GetBackgroundColor(void) const {
 }
  
 
-SceneNode *SceneGraph::CreateNode(std::string node_name, Resource *geometry, Resource *material){
+SceneNode *SceneGraph::CreateNode(std::string node_name, Resource *geometry, Resource *material, Resource *tex){
 
     // Create scene node with the specified resources
-    SceneNode *scn = new SceneNode(node_name, geometry, material);
+    SceneNode *scn = new SceneNode(node_name, geometry, material, tex);
 
     // Add node to the scene
     node_.push_back(scn);

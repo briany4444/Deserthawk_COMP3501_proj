@@ -89,6 +89,7 @@ namespace game {
             Powerup* CreatePowerupInstance(std::string entity_name, std::string object_name, std::string material_name);
             void CreatePowerups();
             void createTerrain(const char* file_name);
+            SceneNode* CreateInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name = std::string(""));
 
             // handle Player-Scene node collisions
             void HandleCollisions();

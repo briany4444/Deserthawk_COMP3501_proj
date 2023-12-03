@@ -1,4 +1,4 @@
-#version 130
+#version 400
 
 // Vertex buffer
 in vec3 vertex;

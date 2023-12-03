@@ -1,6 +1,6 @@
 // Material with no illumination simulation
 
-#version 130
+#version 400
 
 // Attributes passed from the vertex shader
 in vec4 color_interp;
