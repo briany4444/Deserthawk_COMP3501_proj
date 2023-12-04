@@ -1,3 +1,4 @@
+
 #include <stdexcept>
 #include <iostream>
 #include <fstream>
@@ -120,3 +121,4 @@ void SceneGraph::Update(float delta_time){
 }
 
 } // namespace game
+

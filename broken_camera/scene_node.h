@@ -1,3 +1,4 @@
+
 #ifndef SCENE_NODE_H_
 #define SCENE_NODE_H_
 
@@ -99,7 +100,7 @@ namespace game {
             glm::vec3 joint_pos_;
             glm::vec3 scale_; // Scale of node
             // Set matrices that transform the node in a shader program
-            void SetupShader(GLuint program);
+            virtual void SetupShader(GLuint program);
 
             glm::vec3 orbit_axis_ = glm::vec3(1, 0, 0); // Orbit Axis
             bool orbiting_;     // whether obj is orbiting

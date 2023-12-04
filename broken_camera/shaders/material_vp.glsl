@@ -1,4 +1,3 @@
-
 // Material with no illumination simulation
 
 #version 400
@@ -22,3 +21,4 @@ void main()
 
     color_interp = vec4(color, 1.0);
 }
+
