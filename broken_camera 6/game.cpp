@@ -157,13 +157,15 @@ void Game::SetupScene(void){
     scene_.AddNode(playerShape);
 
     //gui
-    gui_ = new Ui("Hud", resman_.GetResource("SimpleWall"),resman_.GetResource("GuiMaterial"));
+    gui_ = new Ui("Hud", resman_.GetResource("SimpleWall"),resman_.GetResource("GuiMaterial"), &camera_);
+    //gui_->SetScale(glm::vec3(window_width_g/ (1000.0f / camera_near_clip_distance_g) ,window_height_g/ (1000.0f / camera_near_clip_distance_g), 1));
+    gui_->SetPosition(glm::vec3(0, 0, -camera_near_clip_distance_g));
     scene_.AddNode(gui_);
 
     //entities
-    CreateShips();
-    CreatePowerups();
-    CreateAsteroidField();
+    //CreateShips();
+    //CreatePowerups();
+    //CreateAsteroidField();
 }
 
 

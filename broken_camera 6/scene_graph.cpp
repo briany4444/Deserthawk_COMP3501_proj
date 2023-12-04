@@ -106,7 +106,12 @@ void SceneGraph::Draw(Camera *camera){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Draw all scene nodes
+    SceneNode* ui;
     for (int i = 0; i < node_.size(); i++){
+        if (node_[i]->GetName() == "hud") {
+            ui = node_[i];
+            continue;
+        }
         node_[i]->Draw(camera);
     }
 }

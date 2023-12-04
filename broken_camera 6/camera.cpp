@@ -109,7 +109,7 @@ namespace game {
         //side_ = s;
         glm::vec3 current_forward = orientation_ * forward_;
         current_forward.z *= 3;
-        glm::vec3 displacement = current_forward + glm::vec3(0,1,0);
+        glm::vec3 displacement = current_forward + glm::cross(current_forward, s);
         position_ = pos + displacement;
         
         

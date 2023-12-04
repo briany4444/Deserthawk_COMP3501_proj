@@ -78,7 +78,7 @@ namespace game {
             glm::quat orientation_; // Orientation of node
             glm::vec3 scale_; // Scale of node
             // Set matrices that transform the node in a shader program
-            void SetupShader(GLuint program);
+            virtual void SetupShader(GLuint program);
 
     }; // class SceneNode
 

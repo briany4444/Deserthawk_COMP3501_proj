@@ -164,7 +164,7 @@ void SceneNode::Update(float){
 }
 
 
-void SceneNode::SetupShader(GLuint program){
+void SceneNode::SetupShader(GLuint program) {
 
     // Set attributes for shaders
     GLint vertex_att = glGetAttribLocation(program, "vertex");

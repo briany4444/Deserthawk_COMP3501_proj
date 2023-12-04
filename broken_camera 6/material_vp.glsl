@@ -5,7 +5,7 @@
 // Vertex buffer
 in vec3 vertex;
 in vec3 color;
-in vec2 
+
 
 // Uniform (global) buffer
 uniform mat4 world_mat;
