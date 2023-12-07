@@ -18,7 +18,7 @@ uniform mat4 projection_mat;
 
 void main()
 {
-    gl_Position = projection_mat * view_mat * world_mat *  vec4(vertex, 1.0);
+    gl_Position = projection_mat * world_mat * vec4(vertex, 1.0);
     uv_coord = uv;
     color_in = vec4(color, 1.0);
 }

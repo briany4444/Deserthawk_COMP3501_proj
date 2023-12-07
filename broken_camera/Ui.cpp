@@ -1,9 +1,10 @@
 #include "Ui.h"
 
 
-game::Ui::Ui(const std::string name, const Resource* wallGeometry, const Resource* material, Camera* camera) : SceneNode(name, wallGeometry, material) {
+game::Ui::Ui(const std::string name, const Resource* wallGeometry, const Resource* material) : SceneNode(name, wallGeometry, material) {
 	num_collected_ = 0;
-	//parent_ = camera;
+	//height_ = 600;
+	//width_ = 800;
 }
 
 game::Ui::~Ui()
@@ -17,20 +18,20 @@ void game::Ui::IncrementCollected(void) {
 	}
 }
 
+/*void game::Ui::SetScreenSize(int w, int h)
+{
+	width_ = w;
+	height_ = h;
+}*/
+
 void game::Ui::Draw(Camera* camera) {
-	//set up 2d
-
-	setOrthographicProjection();
-
+	
 	SceneNode::Draw(camera);
 
-	//go back to 3d
-
-	restorePerspectiveProjection();
 
 }
 
-/*void game::Ui::SetupShader(GLuint program) {
+void game::Ui::SetupShader(GLuint program) {
 
 	// Set attributes for shaders
 	GLint vertex_att = glGetAttribLocation(program, "vertex");
@@ -51,11 +52,15 @@ void game::Ui::Draw(Camera* camera) {
 
 	// World transformation
 	glm::mat4 scaling = glm::scale(glm::mat4(1.0), scale_);
-	glm::mat4 rotation = glm::mat4_cast(parent_->GetOrientation());
+	glm::mat4 rotation = glm::mat4_cast(orientation_);
 	//glm::vec3 pos = glm::vec3( position_.x + parent_->GetPosition().x, position_.y + parent_->GetPosition().y, position_.z + parent_->GetPosition().z);
-	glm::mat4 translation = glm::translate(glm::mat4(1.0), position_ + parent_->GetPosition());
+	glm::mat4 translation = glm::translate(glm::mat4(1.0), position_);
 	glm::mat4 transf = translation * rotation * scaling;
 
+	// Set projection matrix in shader
+	GLint projection_mat = glGetUniformLocation(program, "projection_mat");
+	glUniformMatrix4fv(projection_mat, 1, GL_FALSE, glm::value_ptr(glm::ortho(-0.5f, 0.5f, 0.5f, -0.5f)));
+	
 	GLint world_mat = glGetUniformLocation(program, "world_mat");
 	glUniformMatrix4fv(world_mat, 1, GL_FALSE, glm::value_ptr(transf));
 
@@ -63,8 +68,8 @@ void game::Ui::Draw(Camera* camera) {
 	GLint timer_var = glGetUniformLocation(program, "timer");
 	double current_time = glfwGetTime();
 	glUniform1f(timer_var, (float)current_time);
-}*/
-
+}
+/*
 void game::Ui::setOrthographicProjection() {
 
 	// switch to projection mode
@@ -78,7 +83,9 @@ void game::Ui::setOrthographicProjection() {
 	glLoadIdentity();
 
 	// set a 2D orthographic projection
-	gluOrtho2D(0, 1, 1, 0);
+	//glOrtho();
+	glOrtho(0.0f, width_, height_, 0.0f, 0.0f, 1.0f);
+	//gluOrtho2D(0, 1, 1, 0);
 
 	// switch back to modelview mode
 	glMatrixMode(GL_MODELVIEW);
@@ -86,12 +93,12 @@ void game::Ui::setOrthographicProjection() {
 	glLoadIdentity();
 	/*glPushAttrib(GL_DEPTH_TEST);
 	glDisable(GL_DEPTH_TEST);
-	glPushMatrix();*/
+	glPushMatrix();
 }
 
 void game::Ui::restorePerspectiveProjection() {
 	/*glPopMatrix();
-	glPopAttrib();*/
+	glPopAttrib();*
 
 	glMatrixMode(GL_PROJECTION);
 	// restore previous projection matrix
@@ -100,5 +107,5 @@ void game::Ui::restorePerspectiveProjection() {
 	// get back to modelview mode
 	glMatrixMode(GL_MODELVIEW);
 
-	glPopMatrix();
-}
+	glPopMatrix(); 
+}*/

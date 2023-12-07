@@ -5,6 +5,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
 //#include <GLh>
 
 #include "scene_node.h"
@@ -16,24 +17,24 @@ namespace game {
 
     public:
         
-        Ui(const std::string name, const Resource* wallGeometry, const Resource* material, Camera* camera);
+        Ui(const std::string name, const Resource* wallGeometry, const Resource* material);
         ~Ui();
 
         //update the number of collected objectives
         void IncrementCollected(void);
 
+        void SetScreenSize(int w, int h);
 
         void Draw(Camera* camera);
 
     protected:
-        //void SetupShader(GLuint program);
+        void SetupShader(GLuint program);
         
 
     private:
         int num_collected_;
-        //Camera* parent_;
-        void setOrthographicProjection();
-        void restorePerspectiveProjection();
+        //int height_, width_;
+        
     
 
     }; // class Ui
