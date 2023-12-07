@@ -18,6 +18,7 @@
 #include "powerup.h"
 #include "terrain.h"
 #include "tree.h"
+#include "light.h"
 
 namespace game {
 
@@ -64,6 +65,7 @@ namespace game {
             // Player abstraction
             Player player_;
             Camera camera_;
+            SceneNode::light_t light_;
 
             RaceTrack racetrack_;
 
@@ -90,6 +92,7 @@ namespace game {
             void CreatePowerups();
             void createTerrain(const char* file_name, glm::vec3);
             SceneNode* CreateInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name = std::string(""));
+            Light* CreateLightInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name);
 
             // handle Player-Scene node collisions
             void HandleCollisions();
