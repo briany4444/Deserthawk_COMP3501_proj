@@ -11,7 +11,8 @@ set(HDRS
 )
  
 set(SRCS
-   asteroid.cpp beacon.cpp player.cpp camera.cpp game.cpp main.cpp powerup.cpp racetrack.cpp resource.cpp tree.cpp thorn.cpp resource_manager.cpp scene_graph.cpp scene_node.cpp spaceship.cpp material_vp.glsl material_fp.glsl terrain.cpp firefly_particle_vp.glsl firefly_particle_fp.glsl firefly_particle_gp.glsl
+   asteroid.cpp beacon.cpp player.cpp camera.cpp game.cpp main.cpp powerup.cpp racetrack.cpp resource.cpp tree.cpp thorn.cpp resource_manager.cpp scene_graph.cpp scene_node.cpp spaceship.cpp 
+   material_vp.glsl material_fp.glsl terrain.cpp firefly_particle_vp.glsl firefly_particle_fp.glsl firefly_particle_gp.glsl
 )
 
 # Add path name to configuration file

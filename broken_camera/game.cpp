@@ -46,7 +46,7 @@ void Game::Init(void){
     InitEventHandlers();
 
     // Set variables
-    game_state_ = inProgress;
+    game_state_ = init;
 }
 
        
@@ -128,7 +128,7 @@ void Game::SetupResources(void){
     resman_.CreateSphere("Powerup");
     resman_.CreateSphereParticles("SphereParticles", 250);
 
-    // Create a simple object to represent the asteroids
+    // Create a simple object to represent the tree
     resman_.CreateCone("SimpleObject", 2.0, 1.0, 10, 10);
     resman_.CreateCylinder("tree", 20, 2, 100, 100);
     resman_.CreateCylinder("branch", 5.0, 0.5, 100, 100);
@@ -174,10 +174,11 @@ void Game::SetupScene(void){
     player_.SetShape(playerShape);
     scene_.AddNode(playerShape);
 
-    createTerrain("MoonTex");
+    createTerrain("MoonTex", glm::vec3(0, -30, 790));
     CreateTrees();
     CreatePowerups();
     CreateAsteroidField();
+    game_state_ = inProgress;
 }
 
 
@@ -189,9 +190,10 @@ void Game::MainLoop(void){
         // Animate the scene
         if (game_state_ == inProgress){
             double current_time = glfwGetTime();
-            if ((current_time - last_time) > 0.05){
-                scene_.Update(current_time - last_time);
-                player_.Update(current_time - last_time);
+            double delta_time = current_time - last_time;
+            if ((delta_time) > 0.05){
+                scene_.Update(delta_time);
+                player_.Update(delta_time);
                 camera_.Update(player_.GetOrientation(), player_.GetForward(), player_.GetSide(),
                                player_.GetPosition());
                 last_time = current_time;
@@ -277,24 +279,9 @@ void Game::CreateTrees() {
 
     // Get resources
     Resource* geom = resman_.GetResource("tree");
-    if (!geom) {
-        throw(GameException(std::string("Could not find resource \"") + "tree" + std::string("\"")));
-    }
-
     Resource* mat = resman_.GetResource("ObjectMaterial");
-    if (!mat) {
-        throw(GameException(std::string("Could not find resource \"") + "ObjectMaterial" + std::string("\"")));
-    }
-
     Resource* branch_geom = resman_.GetResource("branch");
-    if (!branch_geom) {
-        throw(GameException(std::string("Could not find resource \"") + "branch" + std::string("\"")));
-    }
-
     Resource* thorn_geom = resman_.GetResource("thorn");
-    if (!thorn_geom) {
-        throw(GameException(std::string("Could not find resource \"") + "thorn" + std::string("\"")));
-    }
 
     // creates tree instance and updates attributes
     Tree* tree = new Tree("tree", geom, mat, 20, 1, thorn_geom, NULL);
@@ -495,7 +482,7 @@ void Game::HandleCollisions() {
 
 }
 
-void Game::createTerrain(const char* file_name) {
+void Game::createTerrain(const char* file_name, glm::vec3 pos) {
 
     int width, height, channels;
     width = 1024;
@@ -509,15 +496,17 @@ void Game::createTerrain(const char* file_name) {
     heightMap.hmap = new GLubyte[width * height * 3]; // 3 for RGB
     heightMap.height_ = height;
     heightMap.width_ = width;
-    heightMap.max_height = 5;
+    heightMap.max_height = 10;
 
     // Read the pixels from the texture
     glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE, heightMap.hmap);
 
-    resman_.CreatePlane("terrain", 100, 100, 300, 300, heightMap);
+    float terrain_l = 100;
+    float terrain_w = 100;
+    resman_.CreatePlane("terrain", terrain_l, terrain_w, 300, 300, heightMap);
 
-    Terrain* t = new Terrain("terrain", resman_.GetResource("terrain"), resman_.GetResource("RandomTexMaterial"), resman_.GetResource("TextureMaterial"), NULL, heightMap);
-    t->SetPosition(glm::vec3(0, -30, 775));
+    Terrain* t = new Terrain("terrain", resman_.GetResource("terrain"), resman_.GetResource("RandomTexMaterial"), resman_.GetResource("TextureMaterial"), NULL, heightMap, terrain_l, terrain_w);
+    t->SetPosition(pos);
     scene_.AddNode(t);
     terrain_ = t;
 
