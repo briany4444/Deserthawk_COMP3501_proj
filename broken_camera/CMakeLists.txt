@@ -7,12 +7,12 @@ project(${PROJ_NAME})
 # Specify project files: header files and source files
 set(HDRS
     asteroid.h beacon.h player.h camera.h game.h powerup.h racetrack.h resource.h resource_manager.h scene_graph.h scene_node.h spaceship.h terrain.h model_loader.h
-    tree.h thorn.h
+    tree.h thorn.h light.h
 )
  
 set(SRCS
    asteroid.cpp beacon.cpp player.cpp camera.cpp game.cpp main.cpp powerup.cpp racetrack.cpp resource.cpp tree.cpp thorn.cpp resource_manager.cpp scene_graph.cpp scene_node.cpp spaceship.cpp 
-   material_vp.glsl material_fp.glsl terrain.cpp firefly_particle_vp.glsl firefly_particle_fp.glsl firefly_particle_gp.glsl
+   material_vp.glsl material_fp.glsl terrain.cpp firefly_particle_vp.glsl firefly_particle_fp.glsl firefly_particle_gp.glsl light.cpp
 )
 
 # Add path name to configuration file

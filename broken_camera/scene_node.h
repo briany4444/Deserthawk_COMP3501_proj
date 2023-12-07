@@ -19,6 +19,13 @@ namespace game {
     class SceneNode {
 
         public:
+
+            struct light_t {
+                SceneNode* node;
+                glm::vec3 light_color;
+                float spec_power;
+            };
+
             // Create scene node from given resources
             SceneNode(const std::string name, const Resource *geometry, const Resource *material, const Resource* texture = NULL, const Resource* normal_map = NULL);
 
@@ -43,6 +50,8 @@ namespace game {
             inline void SetOrbiting() { orbiting_ = true; }
             inline void SetJointPos(glm::vec3 p) { joint_pos_ = p; }
             inline void SetBlending(bool b) { blending_ = b; }
+            inline void SetOrbitAxis(glm::vec3 a) { orbit_axis_ = a; }
+            inline void SetOrbitSpeed(float s) { orbit_speed_ = s; }
             
             // Perform transformations on node
             void Translate(glm::vec3 trans);
@@ -95,6 +104,7 @@ namespace game {
             glm::vec3 orbit_axis_ = glm::vec3(1, 0, 0); // Orbit Axis
             bool orbiting_;     // whether obj is orbiting
             float orbit_angle_;  // current Orbit angle
+            float orbit_speed_;
 
     }; // class SceneNode
 

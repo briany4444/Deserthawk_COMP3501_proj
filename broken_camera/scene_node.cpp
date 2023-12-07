@@ -56,6 +56,7 @@ SceneNode::SceneNode(const std::string name, const Resource *geometry, const Res
     orbiting_ = false;
     orbit_angle_ = 0;
     blending_ = false;
+    orbit_speed_ = 1;
 }
 
 
@@ -231,8 +232,8 @@ void SceneNode::Draw(Camera *camera){
 }
 
 void SceneNode::Orbit(double d) {
-    if (parent_ != NULL) {
-        orbit_angle_ += d;
+    if (orbiting_) {
+        orbit_angle_ += orbit_speed_ * d;
     }
 }
 

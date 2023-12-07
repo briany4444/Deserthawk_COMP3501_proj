@@ -134,6 +134,7 @@ void Game::SetupResources(void){
     resman_.CreateCylinder("branch", 5.0, 0.5, 100, 100);
     resman_.CreateCone("thorn", 0.5, 0.2, 90, 90);
 
+    resman_.CreateSphere("lightMesh", 0.5, 30, 30);
 
     std::string filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/moon.jpg");
     resman_.LoadResource(Texture, "MoonTex", filename.c_str());
@@ -173,6 +174,14 @@ void Game::SetupScene(void){
     SceneNode* playerShape = new SceneNode("PlayerShape", resman_.GetResource("Powerup"), resman_.GetResource("ObjectMaterial"));
     player_.SetShape(playerShape);
     scene_.AddNode(playerShape);
+
+    // Create global light source
+    Light* l = CreateLightInstance("light", "lightMesh", "RandomTexMaterial", "TextureMaterial");
+    l->SetPosition(glm::vec3(0, 0, 800));
+    l->SetJointPos(glm::vec3(0, 0, 10));
+    l->SetOrbiting();
+    l->SetOrbitSpeed(0.5);
+    l->SetOrbitAxis(glm::vec3(0, 1, 0));
 
     createTerrain("MoonTex", glm::vec3(0, -30, 790));
     CreateTrees();
@@ -578,5 +587,33 @@ void Game::createTerrain(const char* file_name, glm::vec3 pos) {
     terrain_ = t;
 
 }
+
+
+
+// Creates the light instance and the object in space associated with the light
+Light* Game::CreateLightInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name) {
+
+    Resource* geom = resman_.GetResource(object_name);
+    Resource* mat = resman_.GetResource(material_name);
+    Resource* tex = NULL;
+    if (texture_name != "") {
+        tex = resman_.GetResource(texture_name);
+    }
+
+    // creates light object and adds it to the scenegraph to be rendered
+    Light* light = new Light(8.0f, glm::vec3(1, 0, 0), entity_name, geom, mat, tex);
+    scene_.AddNode(light);
+
+    // also adds this to light_ to eventually pass into the Draw() function
+    light_.node = light;
+    light_.light_color = glm::vec3(1, 1, 1);
+    light_.spec_power = 8.0f;
+
+    return light;
+
+}
+
+
+
 
 } // namespace game
