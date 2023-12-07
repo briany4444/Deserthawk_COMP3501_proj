@@ -50,6 +50,7 @@ namespace game {
             // Run the game: keep the application active
             void MainLoop(void); 
 
+
         private:
             // GLFW window
             GLFWwindow* window_;
@@ -94,6 +95,12 @@ namespace game {
             // handle Player-Scene node collisions
             void HandleCollisions();
             void CreateTrees();
+
+            //DebugMode
+            void DebugCameraMovement();
+            bool debugCamera_ = false;
+            float debugMoveSpeed_ = 1.0f;
+            glm::vec2 lastFrameMousePosition_ = glm::vec2(0.0, 0.0);
 
 
     }; // class Game

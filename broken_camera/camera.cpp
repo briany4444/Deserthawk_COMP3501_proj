@@ -16,9 +16,6 @@ namespace game {
     Camera::~Camera() {
     }
 
-    
-
-
     glm::vec3 Camera::GetPosition(void) const {
 
         return position_;
@@ -30,14 +27,10 @@ namespace game {
         return orientation_;
     }
 
-
-    
-
-
-    
-
-    
-
+    void Camera::SetPosition(glm::vec3 position)
+    {
+        position_ = position;
+    }
 
     glm::vec3 Camera::GetForward(void) const {
 
@@ -57,11 +50,27 @@ namespace game {
         return current_up;
     }
 
-    
+    void Camera::Pitch(float angle) {
+        glm::quat rotation = glm::angleAxis(angle, GetSide());
+        orientation_ = rotation * orientation_;
+        orientation_ = glm::normalize(orientation_);
+    }
 
 
-    
+    void Camera::Yaw(float angle) {
 
+        glm::quat rotation = glm::angleAxis(angle, GetUp());
+        orientation_ = rotation * orientation_;
+        orientation_ = glm::normalize(orientation_);
+    }
+
+
+    void Camera::Roll(float angle) {
+
+        glm::quat rotation = glm::angleAxis(angle, GetForward());
+        orientation_ = rotation * orientation_; // update the orientation
+        orientation_ = glm::normalize(orientation_);
+    }
 
     void Camera::SetView(glm::vec3 position, glm::vec3 look_at, glm::vec3 up) {
 
@@ -109,10 +118,9 @@ namespace game {
         //side_ = s;
         glm::vec3 current_forward = orientation_ * forward_;
         current_forward.z *= 3;
-        glm::vec3 displacement = current_forward + glm::vec3(0,1,0);
+        glm::vec3 displacement = current_forward + glm::vec3(0, 1, 0);
         position_ = pos + displacement;
-        
-        
+
     }
 
 
@@ -153,4 +161,4 @@ namespace game {
         view_matrix_ *= trans;
     }
 
-} // namespace game
+} // namespace game

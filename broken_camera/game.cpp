@@ -194,8 +194,16 @@ void Game::MainLoop(void){
             if ((delta_time) > 0.05){
                 scene_.Update(delta_time);
                 player_.Update(delta_time);
-                camera_.Update(player_.GetOrientation(), player_.GetForward(), player_.GetSide(),
-                               player_.GetPosition());
+                if (!debugCamera_)
+                {
+                    camera_.Update(player_.GetOrientation(), player_.GetForward(), player_.GetSide(),
+                        player_.GetPosition());
+                }
+                else
+                {
+                    DebugCameraMovement();
+                }
+                
                 last_time = current_time;
             }
             HandleCollisions();
@@ -211,7 +219,6 @@ void Game::MainLoop(void){
         glfwPollEvents();
     }
 }
-
 
 void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods){
 
@@ -250,6 +257,18 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
         }
         if (key == GLFW_KEY_S) {
             game->player_.Decelerate(glfwGetTime() - last_time);
+        }
+        if (key == GLFW_KEY_B && action == GLFW_PRESS) {
+            if (game->debugCamera_)
+            {
+                game->debugCamera_ = false;
+                glfwSetInputMode(game->window_, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            }
+            else
+            {
+                game->debugCamera_ = true;
+                glfwSetInputMode(game->window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            }
         }
     }
 
@@ -295,6 +314,54 @@ void Game::CreateTrees() {
         main_branches[i]->SetOrbiting();
     }
 }
+
+void Game::DebugCameraMovement()
+{
+    double* mouseX = new double(0);
+    double* mouseY = new double(0);
+
+    glfwGetCursorPos(window_, mouseX, mouseY);
+
+    glm::vec2 mousePosition = glm::vec2(*mouseX, *mouseY);
+
+    glm::vec2 mouseSlide = mousePosition - lastFrameMousePosition_;
+
+    lastFrameMousePosition_ = mousePosition;
+
+    camera_.Yaw(-mouseSlide.x / 1000.0f);
+    camera_.Pitch(-mouseSlide.y / 1000.0f); //Honestly 1000 just seemed like a good number to control the turn speed using mouse controls
+
+    // A : Strafe Left
+    if (glfwGetKey(window_, GLFW_KEY_A)) {
+        camera_.SetPosition(camera_.GetPosition() + -camera_.GetSide() * debugMoveSpeed_);
+    }
+
+    // D : Strafe Right
+    if (glfwGetKey(window_, GLFW_KEY_D)) {
+        camera_.SetPosition(camera_.GetPosition() + camera_.GetSide() * debugMoveSpeed_);
+    }
+
+    // W : Go Foraward
+    if (glfwGetKey(window_, GLFW_KEY_W)) {
+        camera_.SetPosition(camera_.GetPosition() + camera_.GetForward() * debugMoveSpeed_);
+    }
+
+    // S : Go Backward
+    if (glfwGetKey(window_, GLFW_KEY_S)) {
+        camera_.SetPosition(camera_.GetPosition() + -camera_.GetForward() * debugMoveSpeed_);
+    }
+
+    // Space : Acsend
+    if (glfwGetKey(window_, GLFW_KEY_SPACE)) {
+        camera_.SetPosition(camera_.GetPosition() + camera_.GetUp() * debugMoveSpeed_);
+    }
+
+    // Shift : Descend
+    if (glfwGetKey(window_, GLFW_KEY_LEFT_SHIFT)) {
+        camera_.SetPosition(camera_.GetPosition() + -camera_.GetUp() * debugMoveSpeed_);
+    }
+}
+
 
 void Game::CreateShips() {
     // Create a number of ship instances

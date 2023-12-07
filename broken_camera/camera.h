@@ -20,10 +20,17 @@ namespace game {
         glm::vec3 GetPosition(void) const;
         glm::quat GetOrientation(void) const;
 
+        //DebugMode
+        void SetPosition(glm::vec3 position);
+
         // Get relative attributes of camera
         glm::vec3 GetForward(void) const;
         glm::vec3 GetSide(void) const;
         glm::vec3 GetUp(void) const;
+
+        void Pitch(float angle);
+        void Yaw(float angle);
+        void Roll(float angle);
 
         //init player
         //void SetPlayer(Player* player);
@@ -48,6 +55,10 @@ namespace game {
         glm::vec3 side_; // Initial side vector
         glm::mat4 view_matrix_; // View matrix
         glm::mat4 projection_matrix_; // Projection matrix
+
+
+        float debugModeCurrentSpeed = 2.0;
+        float debugModeMaxSpeed = 5.0;
         
         // Create view matrix from current camera parameters
         void SetupViewMatrix(void);

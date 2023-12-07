@@ -9,7 +9,7 @@
 
 namespace game {
 
-SceneNode::SceneNode(const std::string name, const Resource *geometry, const Resource *material, const Resource *texture){
+SceneNode::SceneNode(const std::string name, const Resource *geometry, const Resource *material, const Resource* texture, const Resource* normal_map){
 
     // Set name of scene node
     name_ = name;
@@ -40,6 +40,14 @@ SceneNode::SceneNode(const std::string name, const Resource *geometry, const Res
     }
     else {
         texture_ = 0;
+    }
+
+    // Set normal_map
+    if (normal_map) {
+        normal_map_ = normal_map->GetResource();
+    }
+    else {
+        normal_map_ = 0;
     }
 
     // Other attributes
@@ -273,6 +281,18 @@ void SceneNode::SetupShader(GLuint program){
         glUniform1i(tex, 0); // Assign the first texture to the map
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture_); // First texture we bind
+        // Define texture interpolation
+        glGenerateMipmap(GL_TEXTURE_2D);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    }
+
+    // Normal Map
+    if (normal_map_) {
+        GLint tex = glGetUniformLocation(program, "normal_map");
+        glUniform1i(tex, 1); // Assign the first texture to the map
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, normal_map_); // First texture we bind
         // Define texture interpolation
         glGenerateMipmap(GL_TEXTURE_2D);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
