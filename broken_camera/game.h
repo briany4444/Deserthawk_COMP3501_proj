@@ -35,7 +35,7 @@ namespace game {
     // Game application
     class Game {
 
-        enum game_state_t { won, lost, inProgress };
+        enum game_state_t { won, lost, inProgress , init};
 
         public:
             // Constructor and destructor
@@ -56,6 +56,7 @@ namespace game {
 
             // Scene graph containing all nodes to render
             SceneGraph scene_;
+            Terrain* terrain_;
 
             // Resources available to the game
             ResourceManager resman_;
@@ -65,7 +66,6 @@ namespace game {
             Camera camera_;
 
             RaceTrack racetrack_;
-            Terrain *terrain_;
 
             // current game state
             game_state_t game_state_;
@@ -88,7 +88,7 @@ namespace game {
             void CreateShips();
             Powerup* CreatePowerupInstance(std::string entity_name, std::string object_name, std::string material_name);
             void CreatePowerups();
-            void createTerrain(const char* file_name);
+            void createTerrain(const char* file_name, glm::vec3);
             SceneNode* CreateInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name = std::string(""));
 
             // handle Player-Scene node collisions

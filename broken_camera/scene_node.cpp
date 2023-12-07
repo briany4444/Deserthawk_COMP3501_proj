@@ -216,6 +216,10 @@ void SceneNode::Draw(Camera *camera){
     } else {
         glDrawElements(mode_, size_, GL_UNSIGNED_INT, 0);
     }
+
+    for (int i = 0; i < children_.size(); i++) {
+        children_[i]->Draw(camera);
+    }
 }
 
 void SceneNode::Orbit(double d) {
@@ -225,9 +229,10 @@ void SceneNode::Orbit(double d) {
 }
 
 
-void SceneNode::Update(float){
-
-    // Do nothing for this generic type of scene node
+void SceneNode::Update(float d){
+    for (int i = 0; i < children_.size(); i++) {
+        children_[i]->Update(d);
+    }
 }
 
 

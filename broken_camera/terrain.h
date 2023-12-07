@@ -22,16 +22,19 @@ namespace game {
 
     public:
         // Create asteroid from given resources
-        Terrain(const std::string name, const Resource* geometry, const Resource* material, const Resource* texture, const Resource* normalMap, HeightMap h);
+        Terrain(const std::string name, const Resource* geometry, const Resource* material, const Resource* texture, const Resource* normalMap, HeightMap h, float l, float w);
 
         // Destructor
         ~Terrain();
 
         void Draw(Camera* camera);
+        float getDistToGround(glm::vec3);
 
     private:
         GLuint normalMap_;
         HeightMap heightmap_;
+        float terrain_width_;
+        float terrain_length_;
 
 
     }; // class Asteroid
