@@ -107,10 +107,12 @@ namespace game {
         orientation_ = o;
         //forward_ = f;
         //side_ = s;
-        glm::vec3 current_forward = orientation_ * forward_;
-        current_forward.z *= 3;
-        glm::vec3 displacement = current_forward + glm::cross(current_forward, s);
+        glm::vec3 current_forward = -f ;
+        current_forward *= 2;
+        glm::vec3 displacement = glm::normalize(current_forward + glm::cross(current_forward, s));
+        displacement *= 2;
         position_ = pos + displacement;
+        //orientation_ = glm::quat_cast(glm::lookAt(position_, pos, glm::vec3(0, 1, 0)));
         
         
     }

@@ -155,17 +155,10 @@ void Game::SetupScene(void){
     //playerShape->Scale(glm::vec3(.5f, .5f, .5f));
     player_.SetShape(playerShape);
     scene_.AddNode(playerShape);
-
+    
     //gui
-    gui_ = new Ui("Hud", resman_.GetResource("SimpleWall"),resman_.GetResource("GuiMaterial"), &camera_);
-    //gui_->SetScale(glm::vec3(window_width_g/ (1000.0f / camera_near_clip_distance_g) ,window_height_g/ (1000.0f / camera_near_clip_distance_g), 1));
-    gui_->SetPosition(glm::vec3(0, 0, -camera_near_clip_distance_g));
-    scene_.AddNode(gui_);
+    gui_ = new Ui("Hud", resman_.GetResource("SimpleWall"),resman_.GetResource("GuiMaterial"));
 
-    //entities
-    //CreateShips();
-    //CreatePowerups();
-    //CreateAsteroidField();
 }
 
 
@@ -190,6 +183,7 @@ void Game::MainLoop(void){
         // Draw the scene
         //Camera_.Update();
         scene_.Draw(&camera_);
+        gui_->Draw(&camera_);
 
         // Push buffer drawn in the background onto the display
         glfwSwapBuffers(window_);
@@ -251,6 +245,12 @@ void Game::ResizeCallback(GLFWwindow* window, int width, int height){
     void* ptr = glfwGetWindowUserPointer(window);
     Game *game = (Game *) ptr;
     game->camera_.SetProjection(camera_fov_g, camera_near_clip_distance_g, camera_far_clip_distance_g, width, height);
+    
+    //update ui when screen changes size
+    //game->gui_->SetScale(glm::vec3(width / (1000.0f / camera_near_clip_distance_g), height / (1000.0f / camera_near_clip_distance_g), 1));
+    //game->gui_->SetScreenSize(width, height);
+    
+    
 }
 
 
