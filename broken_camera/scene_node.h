@@ -27,7 +27,7 @@ namespace game {
             };
 
             // Create scene node from given resources
-            SceneNode(const std::string name, const Resource *geometry, const Resource *material, const Resource *texture = NULL);
+            SceneNode(const std::string name, const Resource *geometry, const Resource *material, const Resource* texture = NULL, const Resource* normal_map = NULL);
 
             // Destructor
             ~SceneNode();
@@ -85,6 +85,7 @@ namespace game {
             GLsizei size_; // Number of primitives in geometry
             GLuint material_; // Reference to shader program
             GLuint texture_;
+            GLuint normal_map_;
             bool blending_;
             
             std::string type_ = "NoneType";
