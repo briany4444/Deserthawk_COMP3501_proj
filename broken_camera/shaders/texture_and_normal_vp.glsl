@@ -19,7 +19,7 @@ out mat3 TBN_mat;
 out vec3 light_pos;
 
 // Material attributes (constants)
-uniform vec3 light_position = vec3(-0.5, 20.5, 1.5);
+uniform vec3 light_position;
 
 
 void main()

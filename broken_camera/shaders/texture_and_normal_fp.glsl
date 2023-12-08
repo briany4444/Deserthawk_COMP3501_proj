@@ -12,6 +12,8 @@ uniform sampler2D normal_map; // Normal map
 
 // Material attributes (constants)
 uniform vec4 object_color = vec4(0.0, 1.0, 0.0, 1.0);
+uniform vec4 light_color;
+uniform int spec_power;
 
 
 void main() 
@@ -47,13 +49,13 @@ void main()
     V = TBN_mat * (- vertex_position); // We already applied the view matrix, so the camera is at the origin
     V = normalize(V);
     
-    // Blinn-Phong specular component
+    // Phong specular component
     //H = 0.5*(V + L);
     H = (V + L);
     H = normalize(H);
     
-    float spec_angle = max(dot(N, H), 0.0);
-    float specular = pow(spec_angle, 128.0);
+    float spec_angle = max(0.0,dot(V,(-L + 2*(dot(L,N))*N)));
+    float specular = pow(spec_angle, spec_power);
         
     // Assume all components have the same color but with different weights
     float ambient = 0.4;
