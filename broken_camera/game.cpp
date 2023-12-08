@@ -136,12 +136,19 @@ void Game::SetupResources(void){
 
     resman_.CreateSphere("lightMesh", 0.5, 30, 30);
 
+    resman_.CreateWall("SimpleWall"); //UI
+
     std::string filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/moon.jpg");
     resman_.LoadResource(Texture, "MoonTex", filename.c_str());
 
     // Load material to be applied to asteroids
     filename = std::string(MATERIAL_DIRECTORY) + std::string("/shaders/material");
     resman_.LoadResource(Material, "ObjectMaterial", filename.c_str());
+
+    //ui
+    // Load material to be applied to gui
+    filename = std::string(MATERIAL_DIRECTORY) + std::string("/shaders/ui");
+    resman_.LoadResource(Material, "GuiMaterial", filename.c_str());
 
     filename = std::string(MATERIAL_DIRECTORY) + std::string("/shaders/texture_and_normal");
     resman_.LoadResource(Material, "TextureNormalMaterial", filename.c_str());
