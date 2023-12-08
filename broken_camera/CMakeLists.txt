@@ -7,13 +7,12 @@ project(${PROJ_NAME})
 # Specify project files: header files and source files
 set(HDRS
     asteroid.h beacon.h player.h camera.h game.h powerup.h racetrack.h resource.h resource_manager.h scene_graph.h scene_node.h spaceship.h terrain.h model_loader.h
-    tree.h thorn.h light.h
+    tree.h thorn.h light.h Ui.h
 )
  
 set(SRCS
-   asteroid.cpp beacon.cpp player.cpp camera.cpp game.cpp main.cpp powerup.cpp racetrack.cpp resource.cpp tree.cpp thorn.cpp resource_manager.cpp scene_graph.cpp scene_node.cpp spaceship.cpp 
-   material_vp.glsl material_fp.glsl terrain.cpp firefly_particle_vp.glsl firefly_particle_fp.glsl firefly_particle_gp.glsl light.cpp
-   Ui.cpp ui_vp.glsl ui_vp.glsl
+   asteroid.cpp beacon.cpp player.cpp camera.cpp game.cpp main.cpp powerup.cpp racetrack.cpp resource.cpp tree.cpp thorn.cpp resource_manager.cpp scene_graph.cpp scene_node.cpp spaceship.cpp Ui.cpp
+   material_vp.glsl material_fp.glsl terrain.cpp firefly_particle_vp.glsl firefly_particle_fp.glsl firefly_particle_gp.glsl light.cpp ui_vp.glsl ui_vp.glsl
 )
 
 # Add path name to configuration file
@@ -29,8 +28,8 @@ target_link_libraries(${PROJ_NAME} ${OPENGL_gl_LIBRARY})
 
 # Other libraries needed
 # set(LIBRARY_PATH C:/libs/Libraries), C:\OpenGL_Libraries\Libraries, C:\Users\User\Libraries
-# set(LIBRARY_PATH "C:\OpenGL_Libraries\Libraries")
-set(LIBRARY_PATH D:/COMP\ 3501\ Libraries/Libraries) #Dylan's Libraries
+set(LIBRARY_PATH "C:\OpenGL_Libraries\Libraries")
+#set(LIBRARY_PATH D:/COMP\ 3501\ Libraries/Libraries) #Dylan's Libraries
 
 include_directories(${LIBRARY_PATH}/include)
 if(NOT WIN32)
