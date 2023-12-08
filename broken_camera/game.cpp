@@ -140,8 +140,11 @@ void Game::SetupResources(void){
     resman_.LoadResource(Texture, "MoonTex", filename.c_str());
 
     // Load material to be applied to asteroids
-    filename = std::string(MATERIAL_DIRECTORY) + std::string("/material");
+    filename = std::string(MATERIAL_DIRECTORY) + std::string("/shaders/material");
     resman_.LoadResource(Material, "ObjectMaterial", filename.c_str());
+
+    filename = std::string(MATERIAL_DIRECTORY) + std::string("/shaders/texture_and_normal");
+    resman_.LoadResource(Material, "TextureNormalMaterial", filename.c_str());
 
     // Load material to be applied to asteroids
     filename = std::string(MATERIAL_DIRECTORY) + std::string("/shaders/textured_material");
@@ -153,6 +156,21 @@ void Game::SetupResources(void){
     // Load material to be applied to particles
     filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/sparkle.png");
     resman_.LoadResource(Texture, "sparkle", filename.c_str());
+
+
+    if (/*Dylans Game Objects*/ true ) //this line is here so that this large section of code can be collasped
+    {
+        //Obelisk
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/models/Obelisk.obj");
+        resman_.LoadResource(Mesh, "ObeliskMesh", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/Obelisk_Texture.png");
+        resman_.LoadResource(Texture, "ObeliskTexture", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/Obelisk_Normal.png");
+        resman_.LoadResource(Texture, "ObeliskNormal", filename.c_str());
+
+        //
+    }
+    
 
 }
 
@@ -176,7 +194,7 @@ void Game::SetupScene(void){
     scene_.AddNode(playerShape);
 
     // Create global light source
-    Light* l = CreateLightInstance("light", "lightMesh", "RandomTexMaterial", "TextureMaterial");
+    l = CreateLightInstance("light", "lightMesh", "RandomTexMaterial", "TextureMaterial");
     l->SetPosition(glm::vec3(0, 0, 800));
     l->SetJointPos(glm::vec3(0, 0, 10));
     l->SetOrbiting();
@@ -188,6 +206,16 @@ void Game::SetupScene(void){
     CreatePowerups();
     CreateAsteroidField();
     game_state_ = inProgress;
+
+    if (/*Dylans Game Objects*/ true) //this line is here so that this large section of code can be collasped
+    {
+        //Obelisk
+        game::SceneNode* obelisk = CreateInstance("Obelisk", "ObeliskMesh", "TextureNormalMaterial", "ObeliskTexture", "ObeliskNormal");
+        obelisk->Translate(glm::vec3(0.0, 11.0, 800.0));
+        obelisk->Rotate(glm::angleAxis(glm::pi<float>() / 180.0f, glm::vec3(0.0, 5.35, 0.0)));
+
+        //
+    }
 }
 
 
@@ -212,6 +240,8 @@ void Game::MainLoop(void){
                 {
                     DebugCameraMovement();
                 }
+                camera_.UpdateLightInfo(l->GetPosition(), l->GetLightCol(), l->GetSpecPwr());
+                printf("%f, %f, %f\n", l->GetPosition().x, l->GetPosition().y, l->GetPosition().z);
                 
                 last_time = current_time;
             }
@@ -278,6 +308,12 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
                 game->debugCamera_ = true;
                 glfwSetInputMode(game->window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             }
+        }
+        if (key == GLFW_KEY_Y) {
+            game->l->Translate(glm::vec3(0.0, 2.0, 0.0));
+        }
+        if (key == GLFW_KEY_H) {
+            game->l->Translate(glm::vec3(0.0, -2.0, 0.0));
         }
     }
 
@@ -408,7 +444,7 @@ Spaceship* Game::CreateShipInstance(std::string entity_name, std::string object_
     return ship;
 }
 
-SceneNode* Game::CreateInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name) {
+SceneNode* Game::CreateInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name, std::string normal_name) {
 
     Resource* geom = resman_.GetResource(object_name);
     if (!geom) {
@@ -424,6 +460,14 @@ SceneNode* Game::CreateInstance(std::string entity_name, std::string object_name
     if (texture_name != "") {
         tex = resman_.GetResource(texture_name);
         if (!tex) {
+            throw(GameException(std::string("Could not find resource \"") + material_name + std::string("\"")));
+        }
+    }
+
+    Resource* norm = NULL;
+    if (normal_name != "") {
+        norm = resman_.GetResource(normal_name);
+        if (!norm) {
             throw(GameException(std::string("Could not find resource \"") + material_name + std::string("\"")));
         }
     }
@@ -601,13 +645,8 @@ Light* Game::CreateLightInstance(std::string entity_name, std::string object_nam
     }
 
     // creates light object and adds it to the scenegraph to be rendered
-    Light* light = new Light(8.0f, glm::vec3(1, 0, 0), entity_name, geom, mat, tex);
+    Light* light = new Light(800.0f, glm::vec3(1, 0, 0), entity_name, geom, mat, tex);
     scene_.AddNode(light);
-
-    // also adds this to light_ to eventually pass into the Draw() function
-    light_.node = light;
-    light_.light_color = glm::vec3(1, 1, 1);
-    light_.spec_power = 8.0f;
 
     return light;
 

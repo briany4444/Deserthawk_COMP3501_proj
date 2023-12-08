@@ -47,6 +47,8 @@ namespace game {
 
         void Update(glm::quat o, glm::vec3 f, glm::vec3 s, glm::vec3 pos);
 
+        void UpdateLightInfo(glm::vec3 light_position, glm::vec3 light_col, float spec_power);
+
     private:
         
         glm::vec3 position_; // Position of Player
@@ -55,6 +57,10 @@ namespace game {
         glm::vec3 side_; // Initial side vector
         glm::mat4 view_matrix_; // View matrix
         glm::mat4 projection_matrix_; // Projection matrix
+
+        glm::vec3 light_position_;
+        glm::vec3 light_col_;
+        float spec_power_;
 
 
         float debugModeCurrentSpeed = 2.0;

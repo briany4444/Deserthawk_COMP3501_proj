@@ -66,7 +66,7 @@ namespace game {
             // Player abstraction
             Player player_;
             Camera camera_;
-            SceneNode::light_t light_;
+            Light* l;
 
             RaceTrack racetrack_;
 
@@ -92,7 +92,7 @@ namespace game {
             Powerup* CreatePowerupInstance(std::string entity_name, std::string object_name, std::string material_name);
             void CreatePowerups();
             void createTerrain(const char* file_name, glm::vec3);
-            SceneNode* CreateInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name = std::string(""));
+            SceneNode* CreateInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name = std::string(""), std::string normal_name = std::string(""));
             Light* CreateLightInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name);
 
             // handle Player-Scene node collisions

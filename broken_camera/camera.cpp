@@ -109,6 +109,18 @@ namespace game {
         // Set projection matrix in shader
         GLint projection_mat = glGetUniformLocation(program, "projection_mat");
         glUniformMatrix4fv(projection_mat, 1, GL_FALSE, glm::value_ptr(projection_matrix_));
+
+        //Set Light position
+        GLint light_position = glGetUniformLocation(program, "light_position");
+        glUniform3fv(light_position, 1, glm::value_ptr(light_position_));
+
+        //Set Light color
+        GLint light_color = glGetUniformLocation(program, "light_color");
+        glUniform4fv(light_color, 1, glm::value_ptr(light_col_));
+
+        //Set Specular Power
+        GLint specular_power = glGetUniformLocation(program, "spec_power");
+        glUniform1i(specular_power, spec_power_);
     }
 
     void Camera::Update(glm::quat o, glm::vec3 f, glm::vec3 s, glm::vec3 pos)
@@ -121,6 +133,13 @@ namespace game {
         glm::vec3 displacement = current_forward + glm::vec3(0, 1, 0);
         position_ = pos + displacement;
 
+    }
+
+    void Camera::UpdateLightInfo(glm::vec3 light_position, glm::vec3 light_col, float spec_power)
+    {
+        light_position_ = light_position;
+        light_col_ = light_col;
+        spec_power_ = spec_power;
     }
 
 

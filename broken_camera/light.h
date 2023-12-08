@@ -29,6 +29,7 @@ namespace game {
         // Update geometry configuration
         void Update(float) override;
         inline float GetSpecPwr() { return spec_pwr_; }
+        inline glm::vec3 GetLightCol() { return light_color_; }
 
     private:
         glm::vec3 light_color_;
