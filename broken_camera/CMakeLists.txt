@@ -13,6 +13,7 @@ set(HDRS
 set(SRCS
    asteroid.cpp beacon.cpp player.cpp camera.cpp game.cpp main.cpp powerup.cpp racetrack.cpp resource.cpp tree.cpp thorn.cpp resource_manager.cpp scene_graph.cpp scene_node.cpp spaceship.cpp 
    material_vp.glsl material_fp.glsl terrain.cpp firefly_particle_vp.glsl firefly_particle_fp.glsl firefly_particle_gp.glsl light.cpp
+   Ui.cpp ui_vp.glsl ui_vp.glsl
 )
 
 # Add path name to configuration file
@@ -53,3 +54,4 @@ if(WIN32)
     # This will use the proper libraries in debug mode in Visual Studio
     set_target_properties(${PROJ_NAME} PROPERTIES DEBUG_POSTFIX _d)
 endif(WIN32)
+

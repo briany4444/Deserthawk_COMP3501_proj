@@ -21,3 +21,4 @@ void main()
 
     color_interp = vec4(color, 1.0);
 }
+
