@@ -50,7 +50,7 @@ namespace game {
             inline std::vector<SceneNode*> GetChildren() { return children_; }
             inline void SetOrbiting() { orbiting_ = true; }
             inline void SetJointPos(glm::vec3 p) { joint_pos_ = p; }
-            inline void SetBlending(bool b) { blending_ = b; }
+            
             inline void SetOrbitAxis(glm::vec3 a) { orbit_axis_ = a; }
             inline void SetOrbitSpeed(float s) { orbit_speed_ = s; }
             
@@ -87,7 +87,7 @@ namespace game {
             GLuint material_; // Reference to shader program
             GLuint texture_;
             GLuint normal_map_;
-            bool blending_;
+            //bool blending_;
             
             std::string type_ = "NoneType";
             float radius_ = 1.0f;

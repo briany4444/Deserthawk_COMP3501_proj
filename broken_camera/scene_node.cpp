@@ -55,7 +55,7 @@ SceneNode::SceneNode(const std::string name, const Resource *geometry, const Res
     parent_ = NULL;
     orbiting_ = false;
     orbit_angle_ = 0;
-    blending_ = false;
+  
     orbit_speed_ = 1;
 }
 
@@ -187,24 +187,6 @@ GLuint SceneNode::GetMaterial(void) const {
 
 
 void SceneNode::Draw(Camera *camera){
-
-    // Select particle blending or not
-    if (blending_) {
-        // Disable depth write
-        glDepthMask(GL_FALSE);
-
-        // Enable blending
-        glEnable(GL_BLEND);
-        //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Simpler form
-        glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glBlendEquationSeparate(GL_FUNC_ADD, GL_MAX);
-    }
-    else {
-        // Enable z-buffer
-        glDepthMask(GL_TRUE);
-        glDepthFunc(GL_LESS);
-    }
-
 
     // Select proper material (shader program)
     glUseProgram(material_);
