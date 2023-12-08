@@ -142,19 +142,19 @@ void Game::SetupResources(void){
     resman_.LoadResource(Texture, "MoonTex", filename.c_str());
 
     // Load material to be applied to asteroids
-    filename = std::string(MATERIAL_DIRECTORY) + std::string("/shaders/material");
+    filename = std::string(MATERIAL_DIRECTORY) + std::string("/material");
     resman_.LoadResource(Material, "ObjectMaterial", filename.c_str());
 
     //ui
     // Load material to be applied to gui
-    filename = std::string(MATERIAL_DIRECTORY) + std::string("/shaders/ui");
+    filename = std::string(MATERIAL_DIRECTORY) + std::string("/ui");
     resman_.LoadResource(Material, "GuiMaterial", filename.c_str());
 
-    filename = std::string(MATERIAL_DIRECTORY) + std::string("/shaders/texture_and_normal");
+    filename = std::string(MATERIAL_DIRECTORY) + std::string("/texture_and_normal");
     resman_.LoadResource(Material, "TextureNormalMaterial", filename.c_str());
 
     // Load material to be applied to asteroids
-    filename = std::string(MATERIAL_DIRECTORY) + std::string("/shaders/textured_material");
+    filename = std::string(MATERIAL_DIRECTORY) + std::string("/textured_material");
     resman_.LoadResource(Material, "RandomTexMaterial", filename.c_str());
 
     filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/rocky.png");
@@ -165,7 +165,7 @@ void Game::SetupResources(void){
     resman_.LoadResource(Texture, "sparkle", filename.c_str());
 
 
-    if (/*Dylans Game Objects*/ true ) //this line is here so that this large section of code can be collasped
+    /*Dylans Game Objects*/ if (true ) //this line is here so that this large section of code can be collasped
     {
         //Obelisk
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/models/Obelisk.obj");
@@ -175,7 +175,19 @@ void Game::SetupResources(void){
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/Obelisk_Normal.png");
         resman_.LoadResource(Texture, "ObeliskNormal", filename.c_str());
 
-        //
+        //Watch Tower
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/models/Watch_Tower.obj");
+        resman_.LoadResource(Mesh, "WatchTowerBaseMesh", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/Watch_Tower_Texture.png");
+        resman_.LoadResource(Texture, "WatchTowerBaseTexture", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/Watch_Tower_Normal.png");
+        resman_.LoadResource(Texture, "WatchTowerBaseNormal", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/models/Watch_Eye.obj");
+        resman_.LoadResource(Mesh, "WatchEyeMesh", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/Watch_Eye_Texture.png");
+        resman_.LoadResource(Texture, "WatchEyeTexture", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/Watch_Eye_Normal.png");
+        resman_.LoadResource(Texture, "WatchEyeNormal", filename.c_str());
     }
     
 
@@ -202,7 +214,7 @@ void Game::SetupScene(void){
 
     //gui
     gui_ = new Ui("Hud", resman_.GetResource("SimpleWall"),resman_.GetResource("GuiMaterial"));
-    scene_.AddNode(gui_);
+    //scene_.AddNode(gui_);
 
     // Create global light source
     l = CreateLightInstance("light", "lightMesh", "RandomTexMaterial", "TextureMaterial");
@@ -218,14 +230,35 @@ void Game::SetupScene(void){
     CreateAsteroidField();
     game_state_ = inProgress;
 
-    if (/*Dylans Game Objects*/ true) //this line is here so that this large section of code can be collasped
+    /*Dylans Game Objects*/ if (true) //this line is here so that this large section of code can be collasped
     {
         //Obelisk
         game::SceneNode* obelisk = CreateInstance("Obelisk", "ObeliskMesh", "TextureNormalMaterial", "ObeliskTexture", "ObeliskNormal");
-        obelisk->Translate(glm::vec3(0.0, 11.0, 800.0));
-        obelisk->Rotate(glm::angleAxis(glm::pi<float>() / 180.0f, glm::vec3(0.0, 5.35, 0.0)));
+        obelisk->Translate(glm::vec3(0.0, -18.0, 800.0));
 
-        //
+        int num_watchTowers = 5;
+        for (int i = 0; i < num_watchTowers; i++)
+        {
+            // Create instance name
+            std::stringstream ss;
+            ss << i;
+            std::string index = ss.str();
+
+            std::string name = "WatchTowerInstance" + index;
+            game::SceneNode* newWatchTower = CreateInstance(name, "WatchTowerBaseMesh", "TextureNormalMaterial", "WatchTowerBaseTexture", "WatchTowerBaseNormal");
+            newWatchTower->Translate(glm::vec3(0.0 + i * 5.0f, -18.0, 775.0));
+
+            name = "WatchEyeInstance" + index;
+            game::SceneNode* watchEye = CreateInstance("WatchEye", "WatchEyeMesh", "TextureNormalMaterial", "WatchEyeTexture", "WatchEyeNormal");
+            watchEye->Translate(glm::vec3(0.0 + i * 5.0f, -8.0, 775.0));
+        }
+        
+
+        //Watch Tower
+        game::SceneNode* watchTower = CreateInstance("WatchTower", "WatchTowerBaseMesh", "TextureNormalMaterial", "WatchTowerBaseTexture", "WatchTowerBaseNormal");
+        watchTower->Translate(glm::vec3(0.0, -18.0, 775.0));
+        game::SceneNode* watchEye = CreateInstance("WatchEye", "WatchEyeMesh", "TextureNormalMaterial", "WatchEyeTexture", "WatchEyeNormal");
+        watchEye->Translate(glm::vec3(0.0, -8.0, 775.0));
     }
 }
 
@@ -261,7 +294,7 @@ void Game::MainLoop(void){
 
         // Draw the scene
         scene_.Draw(&camera_);
-        gui_->Draw(&camera_);
+        //gui_->Draw(&camera_);
 
         // Push buffer drawn in the background onto the display
         glfwSwapBuffers(window_);
