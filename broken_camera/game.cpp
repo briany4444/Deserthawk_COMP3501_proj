@@ -215,6 +215,62 @@ void Game::SetupResources(void){
         resman_.LoadResource(Texture, "WatchEyeTexture", filename.c_str());
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/Watch_Eye_Normal.png");
         resman_.LoadResource(Texture, "WatchEyeNormal", filename.c_str());
+
+        //Palm Tree
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/models/Palm_tree_trunk.obj");
+        resman_.LoadResource(Mesh, "PalmTreeTrunkMesh", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/Palm_tree_trunk_Texture.png");
+        resman_.LoadResource(Texture, "PalmTreeTrunkTexture", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/Palm_tree_Normal.png");
+        resman_.LoadResource(Texture, "PalmTreeNormal", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/models/Palm_tree_head.obj");
+        resman_.LoadResource(Mesh, "PalmTreeHeadMesh", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/Palm_tree_head_Texture.png");
+        resman_.LoadResource(Texture, "PalmTreeHeadTexture", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/models/Palm_tree_leaf.obj");
+        resman_.LoadResource(Mesh, "PalmTreeLeafMesh", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/Palm_tree_leaf_Texture.png");
+        resman_.LoadResource(Texture, "PalmTreeLeafTexture", filename.c_str());
+
+        //Dry Shrub
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/models/Dry_shrub.obj");
+        resman_.LoadResource(Mesh, "DryShrubMesh", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/Dry_shrub_Texture.png");
+        resman_.LoadResource(Texture, "DryShrubMeshTexture", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/Dry_shrub_Normal.png");
+        resman_.LoadResource(Texture, "DryShrubMeshNormal", filename.c_str());
+
+        //Tree
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/models/Tree.obj");
+        resman_.LoadResource(Mesh, "TreeMesh", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/Tree_Texture.png");
+        resman_.LoadResource(Texture, "TreeTexture", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/Tree_Normal.png");
+        resman_.LoadResource(Texture, "TreeNormal", filename.c_str());
+
+        //Hut 1
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/models/Hut_1.obj");
+        resman_.LoadResource(Mesh, "Hut1Mesh", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/Hut_1_Texture.png");
+        resman_.LoadResource(Texture, "Hut1Texture", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/Hut_1_Normal.png");
+        resman_.LoadResource(Texture, "Hut1Normal", filename.c_str());
+
+        //Oasis Plant
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/models/Oasis_plant.obj");
+        resman_.LoadResource(Mesh, "OasisPlantMesh", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/Oasis_plant_Texture.png");
+        resman_.LoadResource(Texture, "OasisPlantTexture", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/Oasis_plant_Normal.png");
+        resman_.LoadResource(Texture, "OasisPlantNormal", filename.c_str());
+
+        //Tumbleweed
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/models/Tumbleweed.obj");
+        resman_.LoadResource(Mesh, "TumbleweedMesh", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/Dry_shrub_Texture.png");
+        resman_.LoadResource(Texture, "TumbleweedTexture", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/Dry_shrub_Normal.png");
+        resman_.LoadResource(Texture, "TumbleweedNormal", filename.c_str());
     }
     
 
@@ -254,14 +310,16 @@ void Game::SetupScene(void) {
 
     /*Dylans Game Objects*/ if (true) //this line is here so that this large section of code can be collasped
     {
+        int num_instances = 5; // For loops
+
         //Obelisk
         game::SceneNode* obelisk = CreateInstance("Obelisk", "ObeliskMesh", "TextureNormalMaterial", "ObeliskTexture", "ObeliskNormal");
         obelisk->Translate(glm::vec3(0.0, -18.0, 800.0));
 
-        int num_watchTowers = 5;
-        for (int i = 0; i < num_watchTowers; i++)
+        //Watch Towers
+        num_instances = 5;
+        for (int i = 0; i < num_instances; i++)
         {
-            // Create instance name
             std::stringstream ss;
             ss << i;
             std::string index = ss.str();
@@ -276,11 +334,74 @@ void Game::SetupScene(void) {
         }
 
 
-        //Watch Tower
-        game::SceneNode* watchTower = CreateInstance("WatchTower", "WatchTowerBaseMesh", "TextureNormalMaterial", "WatchTowerBaseTexture", "WatchTowerBaseNormal");
-        watchTower->Translate(glm::vec3(0.0, -18.0, 775.0));
-        game::SceneNode* watchEye = CreateInstance("WatchEye", "WatchEyeMesh", "TextureNormalMaterial", "WatchEyeTexture", "WatchEyeNormal");
-        watchEye->Translate(glm::vec3(0.0, -8.0, 775.0));
+        //Palm Tree
+        game::SceneNode* palmTreeTrunk = CreateInstance("PalmTreeTrunk", "PalmTreeTrunkMesh", "TextureNormalMaterial", "PalmTreeTrunkTexture", "PalmTreeNormal");
+        palmTreeTrunk->Translate(glm::vec3(0.0, -18.0, 760.0));
+        game::SceneNode* palmTreeHead = CreateInstance("PalmTreeHead", "PalmTreeHeadMesh", "TextureNormalMaterial", "PalmTreeHeadTexture", "PalmTreeNormal");
+        palmTreeHead->SetParent(palmTreeTrunk);
+        for (int i = 0; i < 14; i++)
+        {
+            std::stringstream ss;
+            ss << i;
+            std::string index = ss.str();
+
+            std::string name = "Leaf" + index;
+            game::SceneNode* newLeaf = CreateInstance(name, "PalmTreeLeafMesh", "TextureNormalMaterial", "PalmTreeLeafTexture", "PalmTreeNormal");
+            newLeaf->Translate(glm::vec3(0.0, 6.0, 0.0));
+            if (i > 7) newLeaf->Rotate(glm::angleAxis(0.5f + 0.04f * (float)i, glm::vec3(1, 0, 0)));
+            newLeaf->Rotate(glm::angleAxis((float)i,glm::vec3(0,1,0)));
+            newLeaf->SetParent(palmTreeHead);
+            
+        }
+
+        //Dry Shrubs
+        num_instances = 5;
+        for (int i = 0; i < num_instances; i++)
+        {
+            std::stringstream ss;
+            ss << i;
+            std::string index = ss.str();
+
+            std::string name = "DryShrub" + index;
+            game::SceneNode* newDryShrub = CreateInstance("DryShrub", "DryShrubMesh", "TextureNormalMaterial", "DryShrubMeshTexture", "DryShrubMeshNormal");
+            newDryShrub->Translate(glm::vec3(0.0 + i * 5.0f, -18.0, 750.0));
+        }
+
+        //Trees
+        num_instances = 5;
+        for (int i = 0; i < num_instances; i++)
+        {
+            std::stringstream ss;
+            ss << i;
+            std::string index = ss.str();
+
+            std::string name = "Tree" + index;
+            game::SceneNode* newTree = CreateInstance("Tree", "TreeMesh", "TextureNormalMaterial", "TreeTexture", "TreeNormal");
+            newTree->Translate(glm::vec3(0.0 + i * 5.0f, -18.0, 740.0));
+        }
+
+        //Hut1
+        game::SceneNode* hut1 = CreateInstance("Hut1", "Hut1Mesh", "TextureNormalMaterial", "Hut1Texture", "Hut1Normal");
+        hut1->Translate(glm::vec3(0.0, -18.0, 730.0));
+
+        //Oasis Plant
+        game::SceneNode* oasisPlant = CreateInstance("OasisPlant", "OasisPlantMesh", "TextureNormalMaterial", "OasisPlantTexture", "OasisPlantNormal");
+        oasisPlant->Translate(glm::vec3(0.0, -18.0, 720.0));
+
+        //Tumbleweeds
+        num_instances = 5;
+        for (int i = 0; i < num_instances; i++)
+        {
+            std::stringstream ss;
+            ss << i;
+            std::string index = ss.str();
+
+            std::string name = "Tumbleweed" + index;
+            game::SceneNode* newTumbleweed = CreateInstance("Tumbleweed", "TumbleweedMesh", "TextureNormalMaterial", "TumbleweedTexture", "TumbleweedNormal");
+            newTumbleweed->Translate(glm::vec3(0.0 + i * 5.0f, -18.0, 710.0));
+        }
+
+
     }
 
 
@@ -322,7 +443,6 @@ void Game::MainLoop(void){
                     DebugCameraMovement();
                 }
                 camera_.UpdateLightInfo(l->GetPosition(), l->GetLightCol(), l->GetSpecPwr());
-                printf("%f, %f, %f\n", l->GetPosition().x, l->GetPosition().y, l->GetPosition().z);
                 
                 last_time = current_time;
             }
@@ -665,7 +785,7 @@ void Game::HandleCollisions() {
                 std::cout << "You reached a beacon!" << std::endl;
                 if (racetrack_.UpdateRaceTrack()) {
                     std::cout << "You reached all beacons in the correct order - You Won!" << std::endl;
-                    game_state_ = won;
+                    //game_state_ = won;
                     break;
                 }
                 continue;
