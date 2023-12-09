@@ -138,7 +138,7 @@ void Game::SetupResources(void){
 
     resman_.CreateWall("SimpleWall"); //UI
 
-    std::string filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/moon.jpg");
+    std::string filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/dunes.png");
     resman_.LoadResource(Texture, "MoonTex", filename.c_str());
 
     // Load material to be applied to asteroids
@@ -157,7 +157,7 @@ void Game::SetupResources(void){
     filename = std::string(MATERIAL_DIRECTORY) + std::string("/textured_material");
     resman_.LoadResource(Material, "RandomTexMaterial", filename.c_str());
 
-    filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/rocky.png");
+    filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/sandy_with_artificial_shadows.png");
     resman_.LoadResource(Texture, "TextureMaterial", filename.c_str());
 
     // Load material to be applied to particles
