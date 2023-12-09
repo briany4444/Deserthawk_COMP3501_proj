@@ -118,13 +118,14 @@ void SceneGraph::AlphaBlending(bool set)
     }
 }
 
-void SceneGraph::Draw(Camera *camera){
+void SceneGraph::Draw(Camera *camera, bool first){
 
     // Clear background
-    glClearColor(background_color_[0], 
-                 background_color_[1],
-                 background_color_[2], 0.0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    if (first) {
+        glClearColor(background_color_[0], background_color_[1], background_color_[2], 0.0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+    
 
     // Draw all scene nodes
     for (int i = 0; i < node_.size(); i++){

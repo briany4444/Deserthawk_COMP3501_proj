@@ -17,13 +17,11 @@ namespace game {
 
     public:
         
-        Ui(const std::string name, const Resource* wallGeometry, const Resource* material);
+        Ui(const std::string name, const Resource* wallGeometry, const Resource* material, const Resource* texture);
         ~Ui();
 
         //update the number of collected objectives
         void IncrementCollected(void);
-
-        void SetScreenSize(int w, int h);
 
         void Draw(Camera* camera);
 

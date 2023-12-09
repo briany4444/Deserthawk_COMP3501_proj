@@ -53,7 +53,7 @@ namespace game {
             static void AlphaBlending(bool set);
 
             // Draw the entire scene
-            void Draw(Camera *camera);
+            void Draw(Camera *camera, bool first = true);
 
             // Update entire scene
             void Update(float);

@@ -185,12 +185,13 @@ void Game::SetupResources(void){
 
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/rocky.png");
         resman_.LoadResource(Texture, "Texture1", filename.c_str());
+        
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/noise.png");
+        resman_.LoadResource(Texture, "NoiseTex", filename.c_str());
 
     }
 
     
-    
-
 
     /*Dylans Game Objects*/ if (true ) //this line is here so that this large section of code can be collasped
     {
@@ -227,8 +228,6 @@ void Game::SetupScene(void) {
 
     // Set background color for the scene
     scene_.SetBackgroundColor(viewport_background_color_g);
-    effects_.SetBackgroundColor(viewport_background_color_g);
-
 
     //player
     SceneNode* playerShape = new SceneNode("PlayerShape", resman_.GetResource("Powerup"), resman_.GetResource("ObjectMaterial"));
@@ -236,7 +235,7 @@ void Game::SetupScene(void) {
     scene_.AddNode(playerShape);
 
     //gui
-    gui_ = new Ui("Hud", resman_.GetResource("SimpleWall"), resman_.GetResource("GuiMaterial"));
+    gui_ = new Ui("Hud", resman_.GetResource("SimpleWall"), resman_.GetResource("GuiMaterial"), resman_.GetResource("NoiseTex"));
 
 
     // Create global light source
@@ -333,7 +332,7 @@ void Game::MainLoop(void){
         scene_.Draw(&camera_);
 
         effects_.AlphaBlending(true);
-        //effects_.Draw(&camera_);
+        effects_.Draw(&camera_, false);
         gui_->Draw(&camera_);
         effects_.AlphaBlending(false);
 
