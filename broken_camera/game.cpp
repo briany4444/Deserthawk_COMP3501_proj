@@ -140,8 +140,8 @@ void Game::SetupResources(void){
 
     resman_.CreateWall("SimpleWall"); //UI
 
+  
     std::string filename;
-
 
     ////// MATERIALS //////
     {
@@ -174,7 +174,7 @@ void Game::SetupResources(void){
 
     ////// TEXTURES ////// 
     {
-        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/moon.jpg");
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/dunes.png");
         resman_.LoadResource(Texture, "MoonTex", filename.c_str());
 
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/sparkle.png");
@@ -183,8 +183,8 @@ void Game::SetupResources(void){
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/SandParticle.png");
         resman_.LoadResource(Texture, "SandParticle", filename.c_str());
 
-        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/rocky.png");
-        resman_.LoadResource(Texture, "Texture1", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/sandy_with_artificial_shadows.png");
+         resman_.LoadResource(Texture, "TextureMaterial", filename.c_str());
 
     }
 
