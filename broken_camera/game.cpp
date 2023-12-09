@@ -129,40 +129,67 @@ void Game::SetupResources(void){
     resman_.CreateSphereParticles("SphereParticles", 250);
 
     // Create a simple object to represent the tree
+    {
     resman_.CreateCone("SimpleObject", 2.0, 1.0, 10, 10);
     resman_.CreateCylinder("tree", 20, 2, 100, 100);
     resman_.CreateCylinder("branch", 5.0, 0.5, 100, 100);
     resman_.CreateCone("thorn", 0.5, 0.2, 90, 90);
+    }
 
     resman_.CreateSphere("lightMesh", 0.5, 30, 30);
 
     resman_.CreateWall("SimpleWall"); //UI
 
-    std::string filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/dunes.png");
-    resman_.LoadResource(Texture, "MoonTex", filename.c_str());
+  
+    std::string filename;
 
-    // Load material to be applied to asteroids
-    filename = std::string(MATERIAL_DIRECTORY) + std::string("/material");
-    resman_.LoadResource(Material, "ObjectMaterial", filename.c_str());
+    ////// MATERIALS //////
+    {
+        
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/material");
+        resman_.LoadResource(Material, "ObjectMaterial", filename.c_str());
 
-    //ui
-    // Load material to be applied to gui
-    filename = std::string(MATERIAL_DIRECTORY) + std::string("/ui");
-    resman_.LoadResource(Material, "GuiMaterial", filename.c_str());
+        // Load material to be applied to gui
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/ui");
+        resman_.LoadResource(Material, "GuiMaterial", filename.c_str());
 
-    filename = std::string(MATERIAL_DIRECTORY) + std::string("/texture_and_normal");
-    resman_.LoadResource(Material, "TextureNormalMaterial", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/texture_and_normal");
+        resman_.LoadResource(Material, "TextureNormalMaterial", filename.c_str());
 
-    // Load material to be applied to asteroids
-    filename = std::string(MATERIAL_DIRECTORY) + std::string("/textured_material");
-    resman_.LoadResource(Material, "RandomTexMaterial", filename.c_str());
+        
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textured_material");
+        resman_.LoadResource(Material, "RandomTexMaterial", filename.c_str());
 
-    filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/sandy_with_artificial_shadows.png");
-    resman_.LoadResource(Texture, "TextureMaterial", filename.c_str());
 
-    // Load material to be applied to particles
-    filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/sparkle.png");
-    resman_.LoadResource(Texture, "sparkle", filename.c_str());
+        /// Particle Systems ///
+
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/Sand-nato");
+        resman_.LoadResource(Material, "PS-SandTornatoMaterial", filename.c_str());
+
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/firefly_particle");
+        resman_.LoadResource(Material, "PS-FirFlyMaterial", filename.c_str());
+
+        
+    }
+
+    ////// TEXTURES ////// 
+    {
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/dunes.png");
+        resman_.LoadResource(Texture, "MoonTex", filename.c_str());
+
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/sparkle.png");
+        resman_.LoadResource(Texture, "sparkle", filename.c_str());
+
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/SandParticle.png");
+        resman_.LoadResource(Texture, "SandParticle", filename.c_str());
+
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/sandy_with_artificial_shadows.png");
+         resman_.LoadResource(Texture, "TextureMaterial", filename.c_str());
+
+    }
+
+    
+    
 
 
     /*Dylans Game Objects*/ if (true ) //this line is here so that this large section of code can be collasped
@@ -250,18 +277,14 @@ void Game::SetupResources(void){
 }
 
 
-void Game::SetupScene(void){
+void Game::SetupScene(void) {
 
     std::srand(time(NULL));
 
     // Set background color for the scene
     scene_.SetBackgroundColor(viewport_background_color_g);
+    effects_.SetBackgroundColor(viewport_background_color_g);
 
-    // init Racetrack
-    std::vector<Beacon*> beacons = racetrack_.InitBeacons(resman_);
-    for (int i = 0; i < beacons.size(); i++) {
-        scene_.AddNode(beacons[i]);
-    }
 
     //player
     SceneNode* playerShape = new SceneNode("PlayerShape", resman_.GetResource("Powerup"), resman_.GetResource("ObjectMaterial"));
@@ -269,11 +292,11 @@ void Game::SetupScene(void){
     scene_.AddNode(playerShape);
 
     //gui
-    gui_ = new Ui("Hud", resman_.GetResource("SimpleWall"),resman_.GetResource("GuiMaterial"));
-    //scene_.AddNode(gui_);
+    gui_ = new Ui("Hud", resman_.GetResource("SimpleWall"), resman_.GetResource("GuiMaterial"));
+
 
     // Create global light source
-    l = CreateLightInstance("light", "lightMesh", "RandomTexMaterial", "TextureMaterial");
+    l = CreateLightInstance("light", "lightMesh", "RandomTexMaterial", "Texture1");
     l->SetPosition(glm::vec3(0, 0, 800));
     l->SetJointPos(glm::vec3(0, 0, 10));
     l->SetOrbiting();
@@ -282,8 +305,7 @@ void Game::SetupScene(void){
 
     createTerrain("MoonTex", glm::vec3(0, -30, 790));
     CreateTrees();
-    CreatePowerups();
-    CreateAsteroidField();
+
     game_state_ = inProgress;
 
     /*Dylans Game Objects*/ if (true) //this line is here so that this large section of code can be collasped
@@ -310,7 +332,7 @@ void Game::SetupScene(void){
             game::SceneNode* watchEye = CreateInstance("WatchEye", "WatchEyeMesh", "TextureNormalMaterial", "WatchEyeTexture", "WatchEyeNormal");
             watchEye->Translate(glm::vec3(0.0 + i * 5.0f, -8.0, 775.0));
         }
-        
+
 
         //Palm Tree
         game::SceneNode* palmTreeTrunk = CreateInstance("PalmTreeTrunk", "PalmTreeTrunkMesh", "TextureNormalMaterial", "PalmTreeTrunkTexture", "PalmTreeNormal");
@@ -381,6 +403,21 @@ void Game::SetupScene(void){
 
 
     }
+
+
+    ////// PARTICLE SYSTEMS ////// 
+    {
+    
+
+
+
+
+
+
+    }
+
+
+
 }
 
 
@@ -414,7 +451,11 @@ void Game::MainLoop(void){
 
         // Draw the scene
         scene_.Draw(&camera_);
-        //gui_->Draw(&camera_);
+
+        effects_.AlphaBlending(true);
+        //effects_.Draw(&camera_);
+        gui_->Draw(&camera_);
+        effects_.AlphaBlending(false);
 
         // Push buffer drawn in the background onto the display
         glfwSwapBuffers(window_);
@@ -790,7 +831,7 @@ void Game::createTerrain(const char* file_name, glm::vec3 pos) {
     float terrain_w = 100;
     resman_.CreatePlane("terrain", terrain_l, terrain_w, 300, 300, heightMap);
 
-    Terrain* t = new Terrain("terrain", resman_.GetResource("terrain"), resman_.GetResource("RandomTexMaterial"), resman_.GetResource("TextureMaterial"), NULL, heightMap, terrain_l, terrain_w);
+    Terrain* t = new Terrain("terrain", resman_.GetResource("terrain"), resman_.GetResource("RandomTexMaterial"), resman_.GetResource("Texture1"), NULL, heightMap, terrain_l, terrain_w);
     t->SetPosition(pos);
     scene_.AddNode(t);
     terrain_ = t;

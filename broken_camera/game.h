@@ -59,6 +59,7 @@ namespace game {
 
             // Scene graph containing all nodes to render
             SceneGraph scene_;
+            SceneGraph effects_;
             Terrain* terrain_;
 
             // Resources available to the game

@@ -98,6 +98,26 @@ std::vector<SceneNode *>::const_iterator SceneGraph::end() const {
 }
 
 
+void SceneGraph::AlphaBlending(bool set)
+{
+    if (set) {
+        // Disable depth write
+        glDepthMask(GL_FALSE);
+
+        // Enable blending
+        glEnable(GL_BLEND);
+        //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Simpler form
+        glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glBlendEquationSeparate(GL_FUNC_ADD, GL_MAX);
+    }
+    else {
+        // Enable z-buffer
+        glDepthMask(GL_TRUE);
+        glDepthFunc(GL_LESS);
+        glDisable(GL_BLEND);
+    }
+}
+
 void SceneGraph::Draw(Camera *camera){
 
     // Clear background

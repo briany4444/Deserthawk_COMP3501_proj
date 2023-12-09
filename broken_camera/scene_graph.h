@@ -49,6 +49,9 @@ namespace game {
             inline std::vector<SceneNode *> GetGraph() { return node_; }
             inline std::vector<SceneNode *> GetCollidables() { return collidable_nodes_; }
 
+            //Alpha Blending
+            static void AlphaBlending(bool set);
+
             // Draw the entire scene
             void Draw(Camera *camera);
 
