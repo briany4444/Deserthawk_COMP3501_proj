@@ -174,7 +174,7 @@ void Game::SetupResources(void){
 
     ////// TEXTURES ////// 
     {
-        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/dunes.png");
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/t.png");
         resman_.LoadResource(Texture, "MoonTex", filename.c_str());
 
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/sparkle.png");
@@ -814,8 +814,8 @@ void Game::HandleCollisions() {
 void Game::createTerrain(const char* file_name, glm::vec3 pos) {
 
     int width, height, channels;
-    width = 1024;
-    height = 1024;
+    width = 4096;
+    height = 4096;
     channels = 3;
 
     glBindTexture(GL_TEXTURE_2D, resman_.GetResource(file_name)->GetResource());
@@ -830,9 +830,9 @@ void Game::createTerrain(const char* file_name, glm::vec3 pos) {
     // Read the pixels from the texture
     glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE, heightMap.hmap);
 
-    float terrain_l = 100;
-    float terrain_w = 100;
-    resman_.CreatePlane("terrain", terrain_l, terrain_w, 300, 300, heightMap);
+    float terrain_l = 1000;
+    float terrain_w = 1000;
+    resman_.CreatePlane("terrain", terrain_l, terrain_w, terrain_l, terrain_w, heightMap);
 
     Terrain* t = new Terrain("terrain", resman_.GetResource("terrain"), resman_.GetResource("RandomTexMaterial"), resman_.GetResource("Texture1"), NULL, heightMap, terrain_l, terrain_w);
     t->SetPosition(pos);
