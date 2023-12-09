@@ -65,17 +65,19 @@ void main()
 	
 
 	//flicker out of night vision for a couple seconds and then back in
-	float phase = mod(timer-10, 20);
-	int compA = abs(int( round(10*sin(.28 * phase)) ));
-	int compB = abs(int( round(8*sin(.31 * phase)) ));
-	int compC = abs(int( round(3*cos(.1 * phase)) ));
+	float phase = mod(timer/2, 28);
+	int compA = abs(int( round(12*sin(.31 * phase)) ));
+	int compB = abs(int( round(10*sin(.32 * phase)) ));
+	int compC = abs(int( round(3*cos(.13 * phase)) ));
 	int onOff = min(min(compA, min(compB, compC)), 1); // clamp at 1, already clamp at 0 implicitly
 
 	vec4 overlay_green = vec4(0.2196 * onOff, .750 * onOff, 0.20196 * onOff, 0.2);
 
 
 	//sample the noise texture as a function 
-	//uv_coord.x = abs(sin(timer*timer)) + abs(sin(timer)) * uv_coord;
+	//float t = timer/3;
+	//float uv_x = mod( (abs(sin(t*t) * cos(timer)) + abs(sin(t)) * uv_coord.x) /2, 1.0f);
+	//float uv_y = mod( ( abs(sin(t*t)/ sin(timer)) - abs(cos(uv_coord.y)) )/2, 1.0f);
 	vec4 color = texture2D(texture_map, uv_coord);
 	//might need to invert 
 	color = vec4(color.r * overlay_green.r, color.g * overlay_green.g, color.b * overlay_green.b, overlay_green.a);
@@ -123,13 +125,12 @@ void main()
 		}
 	}
 
-	// Check for transparency  --remove when blending is on--
-    if(color.a < 0.2)
+
+	// Check for transparency
+    if(color.a <= 0.001)
     {
             discard;
     }
-
-	
 
 	
 

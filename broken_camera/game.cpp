@@ -234,8 +234,7 @@ void Game::SetupScene(void) {
     player_.SetShape(playerShape);
     scene_.AddNode(playerShape);
 
-    //gui
-    gui_ = new Ui("Hud", resman_.GetResource("SimpleWall"), resman_.GetResource("GuiMaterial"), resman_.GetResource("NoiseTex"));
+    
 
 
     // Create global light source
@@ -283,12 +282,12 @@ void Game::SetupScene(void) {
     }
 
 
+    //gui
+    gui_ = new Ui("Hud", resman_.GetResource("SimpleWall"), resman_.GetResource("GuiMaterial"), resman_.GetResource("NoiseTex"));
+
     ////// PARTICLE SYSTEMS ////// 
     {
     
-
-
-
 
 
 
