@@ -174,7 +174,7 @@ void Game::SetupResources(void){
 
     ////// TEXTURES ////// 
     {
-        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/t.png");
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/t2.png");
         resman_.LoadResource(Texture, "MoonTex", filename.c_str());
 
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/sparkle.png");
