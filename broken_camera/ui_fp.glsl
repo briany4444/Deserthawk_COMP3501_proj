@@ -7,7 +7,9 @@ in vec4 color_in;
 in vec2 uv_coord;
 
 //uniforms
+uniform sampler2D texture_map; // Texture Map
 uniform int num_collected = 0;
+uniform float timer;
 
 
 void inerDotsHelper(inout vec4 color, in vec4 red,in vec4 objective_yellow) {
@@ -59,11 +61,29 @@ void main()
 	vec4 objective_yellow = vec4(.98, 1, .02, 1);
 	vec4 red = vec4(1,0,0,1);
 	vec4 dark_green = vec4( 0.32549, 0.77647, 0.32549, 1);
-	vec4 overlay_green = vec4(0.2196, .750, 0.20196, 0.2);
 	vec4 light_gray = vec4(.7,.7,.7, 1);
 	
 
-	vec4 color = overlay_green;
+	//flicker out of night vision for a couple seconds and then back in
+	float phase = mod(timer/2, 28);
+	int compA = abs(int( round(12*sin(.31 * phase)) ));
+	int compB = abs(int( round(10*sin(.32 * phase)) ));
+	int compC = abs(int( round(3*cos(.13 * phase)) ));
+	int onOff = min(min(compA, min(compB, compC)), 1); // clamp at 1, already clamp at 0 implicitly
+
+	vec4 overlay_green = vec4(0.2196 * onOff, .750 * onOff, 0.20196 * onOff, 0.2);
+
+
+	//sample the noise texture as a function 
+	//float t = timer/3;
+	//float uv_x = mod( (abs(sin(t*t) * cos(timer)) + abs(sin(t)) * uv_coord.x) /2, 1.0f);
+	//float uv_y = mod( ( abs(sin(t*t)/ sin(timer)) - abs(cos(uv_coord.y)) )/2, 1.0f);
+	vec4 color = texture2D(texture_map, uv_coord);
+	//might need to invert 
+	color = vec4(color.r * overlay_green.r, color.g * overlay_green.g, color.b * overlay_green.b, overlay_green.a);
+	
+	
+	
 	
 	/*
 	// texture
@@ -74,10 +94,7 @@ void main()
 			}
 	*/
 
-	//noise
-
-
-
+	
 	// botton left corner represent num collected as dots
 
 	//95% down to 98% down
@@ -108,13 +125,12 @@ void main()
 		}
 	}
 
-	// Check for transparency  --remove when blending is on--
-    if(color.a < 0.2)
+
+	// Check for transparency
+    if(color.a <= 0.001)
     {
             discard;
     }
-
-	
 
 	
 

@@ -1,7 +1,7 @@
 #include "Ui.h"
 
 
-game::Ui::Ui(const std::string name, const Resource* wallGeometry, const Resource* material) : SceneNode(name, wallGeometry, material) {
+game::Ui::Ui(const std::string name, const Resource* wallGeometry, const Resource* material, const Resource* texture) : SceneNode(name, wallGeometry, material, texture) {
 	num_collected_ = 0;
 	//height_ = 600;
 	//width_ = 800;
@@ -17,12 +17,6 @@ void game::Ui::IncrementCollected(void) {
 		num_collected_ = NUM_OBJECTIVES;
 	}
 }
-
-/*void game::Ui::SetScreenSize(int w, int h)
-{
-	width_ = w;
-	height_ = h;
-}*/
 
 void game::Ui::Draw(Camera* camera) {
 	
