@@ -2,6 +2,7 @@
 #include <time.h>
 #include <sstream>
 
+
 #include "game.h"
 #include "path_config.h"
 #include <string>
@@ -177,7 +178,7 @@ void Game::SetupResources(void){
 
     ////// TEXTURES ////// 
     {
-        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/t2.png");
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/moon.jpg");
         resman_.LoadResource(Texture, "MoonTex", filename.c_str());
 
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/sparkle.png");
@@ -316,7 +317,7 @@ void Game::SetupScene(void) {
 
     // terrain
     {
-        createTerrain("MoonTex", glm::vec3(0, -30, 790));
+        createTerrain("/textures/Moon.jpg", glm::vec3(0, -30, 790));
         CreateTrees();
     }
 
@@ -824,25 +825,14 @@ void Game::HandleCollisions() {
 
 void Game::createTerrain(const char* file_name, glm::vec3 pos) {
 
-    int width, height, channels;
-    width = 4096;
-    height = 4096;
-    channels = 3;
-
-    glBindTexture(GL_TEXTURE_2D, resman_.GetResource(file_name)->GetResource());
-
-    // Allocate memory for reading pixels
     HeightMap heightMap;
-    heightMap.hmap = new GLubyte[width * height * 3]; // 3 for RGB
-    heightMap.height_ = height;
-    heightMap.width_ = width;
     heightMap.max_height = 10;
 
-    // Read the pixels from the texture
-    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE, heightMap.hmap);
+    std::string f_name = std::string(MATERIAL_DIRECTORY) + std::string(file_name);
+    heightMap.hmap = SOIL_load_image(f_name.c_str(), &heightMap.width_, &heightMap.height_, 0, SOIL_LOAD_RGB);
 
-    float terrain_l = 1000;
-    float terrain_w = 1000;
+    float terrain_l = 300;
+    float terrain_w = 300;
     resman_.CreatePlane("terrain", terrain_l, terrain_w, terrain_l, terrain_w, heightMap);
 
     Terrain* t = new Terrain("terrain", resman_.GetResource("terrain"), resman_.GetResource("TerrainMat"), resman_.GetResource("Texture1"), resman_.GetResource("Texture2"), heightMap, terrain_l, terrain_w);
