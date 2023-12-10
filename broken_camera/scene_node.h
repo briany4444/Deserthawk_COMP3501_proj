@@ -21,12 +21,6 @@ namespace game {
 
         public:
 
-            struct light_t {
-                SceneNode* node;
-                glm::vec3 light_color;
-                float spec_power;
-            };
-
             // Create scene node from given resources
             SceneNode(const std::string name, const Resource *geometry, const Resource *material, const Resource* texture = NULL, const Resource* normal_map = NULL);
 

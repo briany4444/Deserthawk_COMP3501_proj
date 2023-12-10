@@ -197,7 +197,6 @@ void Game::SetupResources(void){
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/sandy_with_artificial_shadows.png");
          resman_.LoadResource(Texture, "TextureMaterial", filename.c_str());
 
-
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/normal_map2.png");
         resman_.LoadResource(Texture, "Texture2", filename.c_str());
 
@@ -456,7 +455,8 @@ void Game::MainLoop(void){
                 {
                     DebugCameraMovement();
                 }
-                camera_.UpdateLightInfo(l->GetPosition(), l->GetLightCol(), l->GetSpecPwr());
+
+                camera_.UpdateLightInfo(l->GetTransf() * glm::vec4(l->GetPosition(), 1.0), l->GetLightCol(), l->GetSpecPwr());
                 
                 last_time = current_time;
             }
@@ -565,12 +565,12 @@ void Game::CreateTrees() {
 
     // Get resources
     Resource* geom = resman_.GetResource("tree");
-    Resource* mat = resman_.GetResource("ObjectMaterial");
+    Resource* mat = resman_.GetResource("RandomTexMaterial");
     Resource* branch_geom = resman_.GetResource("branch");
     Resource* thorn_geom = resman_.GetResource("thorn");
 
     // creates tree instance and updates attributes
-    Tree* tree = new Tree("tree", geom, mat, 20, 1, thorn_geom, NULL);
+    Tree* tree = new Tree("tree", geom, mat, 20, 1, thorn_geom, resman_.GetResource("MoonTex"));
     tree->SetPosition(glm::vec3(0, -5, 790));
     scene_.AddNode(tree);
     tree->createBranches(branch_geom, mat, 4);
