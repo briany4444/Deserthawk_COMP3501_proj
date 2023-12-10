@@ -8,17 +8,15 @@ in vec3 light_pos;
 
 // Uniform (global) buffer
 uniform sampler2D texture_map; // Normal map
+uniform sampler2D normal_map;
 
 // Material attributes (constants)
-uniform vec4 object_color = vec4(0.79, 0.96, 0.60, 1.0);
 
 
 void main() 
 {
 
-// Incomplete demo -- does matrix multiplication in fragment shader.
-// Left as exercise: move matrix multiplication to vertex shader,
-// use interpolated L, V in fragment shader
+    vec4 object_color = vec4(0.92968, 0.820, 0.0078, 1.0);
 
     // Blinn-Phong shading
 
@@ -30,7 +28,7 @@ void main()
     // Get substitute normal in tangent space from the normal map
     vec2 coord = vertex_uv;
     coord.y = 1.0 - coord.y;
-    N = normalize(texture2D(texture_map, coord).rgb*2.0 - 1.0);
+    N = normalize(texture2D(normal_map, coord).rgb*2.0 - 1.0);
 
     // Work in tangent space by multiplying our vectors by TBN_mat    
     // Get light direction
@@ -56,7 +54,7 @@ void main()
     // Assume all components have the same color but with different weights
     float ambient = 0.4;
     if (gl_FrontFacing){
-        gl_FragColor = (0.75*ambient + 0.7*lambertian + 1.0*specular)*object_color;
+        gl_FragColor = (0.25*ambient + 0.5*lambertian + 1.0*specular)*object_color;
     } else {
         gl_FragColor = object_color;
     }

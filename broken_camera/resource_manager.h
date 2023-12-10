@@ -18,6 +18,11 @@
 
 namespace game {
 
+    struct Vertex {
+        glm::vec3 position;
+        glm::vec3 normals;
+    };
+
     // Class that manages all resources
     class ResourceManager {
 
@@ -48,6 +53,8 @@ namespace game {
             void CreateSphereParticles(std::string object_name, int num_particles = 500);
 
             void CreateWall(std::string object_name); // used for ui
+            void CalculateNormalTan(GLfloat *vertices, int, int, int);
+            void AverageNormalTan(GLfloat*, int, int, int);
 			
         private:
            
@@ -64,7 +71,6 @@ namespace game {
             std::string LoadTextFile(const char *filename);
             // Loads a mesh in obj format
             void LoadMesh(const std::string name, const char* filename);
-
             double getAugmentedPos(glm::vec2, HeightMap);
 
     }; // class ResourceManager
