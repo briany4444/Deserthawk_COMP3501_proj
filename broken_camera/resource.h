@@ -12,7 +12,7 @@ namespace game {
     typedef enum Type { Material, PointSet, Mesh, Texture} ResourceType;
 
     typedef struct {
-        GLubyte* hmap;
+        unsigned char* hmap;
         int width_;
         int height_;
         float max_height;
