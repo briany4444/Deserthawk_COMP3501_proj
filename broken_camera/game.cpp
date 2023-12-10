@@ -444,6 +444,7 @@ void Game::MainLoop(void){
             double current_time = glfwGetTime();
             double delta_time = current_time - last_time;
             if ((delta_time) > 0.05){
+                glEnable(GL_CULL_FACE);
                 scene_.Update(delta_time);
                 player_.Update(delta_time);
                 if (!debugCamera_)
