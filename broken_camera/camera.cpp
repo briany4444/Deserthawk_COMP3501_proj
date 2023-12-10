@@ -138,9 +138,9 @@ namespace game {
 
     }
 
-    void Camera::UpdateLightInfo(glm::vec3 light_position, glm::vec3 light_col, float spec_power)
+    void Camera::UpdateLightInfo(glm::vec4 light_position, glm::vec3 light_col, float spec_power)
     {
-        light_position_ = light_position;
+        light_position_ = glm::vec3(light_position);
         light_col_ = light_col;
         spec_power_ = spec_power;
     }

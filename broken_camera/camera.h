@@ -13,6 +13,7 @@ namespace game {
     class Camera {
 
     public:
+
         Camera(void);
         ~Camera();
 
@@ -47,7 +48,7 @@ namespace game {
 
         void Update(glm::quat o, glm::vec3 f, glm::vec3 s, glm::vec3 pos);
 
-        void UpdateLightInfo(glm::vec3 light_position, glm::vec3 light_col, float spec_power);
+        void UpdateLightInfo(glm::vec4 light_position, glm::vec3 light_col, float spec_power);
 
     private:
         
@@ -61,7 +62,6 @@ namespace game {
         glm::vec3 light_position_;
         glm::vec3 light_col_;
         float spec_power_;
-
 
         float debugModeCurrentSpeed = 2.0;
         float debugModeMaxSpeed = 5.0;
