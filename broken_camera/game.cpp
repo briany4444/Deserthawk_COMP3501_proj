@@ -160,14 +160,17 @@ void Game::SetupResources(void){
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/textured_material");
         resman_.LoadResource(Material, "RandomTexMaterial", filename.c_str());
 
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/normal_map");
+        resman_.LoadResource(Material, "TerrainMat", filename.c_str());
+
 
         /// Particle Systems ///
 
-        filename = std::string(MATERIAL_DIRECTORY) + std::string("/Sand-nato");
-        resman_.LoadResource(Material, "PS-SandTornatoMaterial", filename.c_str());
+        // filename = std::string(MATERIAL_DIRECTORY) + std::string("/Sand-nato");
+        // resman_.LoadResource(Material, "PS-SandTornatoMaterial", filename.c_str());
 
-        filename = std::string(MATERIAL_DIRECTORY) + std::string("/firefly_particle");
-        resman_.LoadResource(Material, "PS-FirFlyMaterial", filename.c_str());
+        // filename = std::string(MATERIAL_DIRECTORY) + std::string("/firefly_particle");
+        // resman_.LoadResource(Material, "PS-FirFlyMaterial", filename.c_str());
 
         
     }
@@ -193,6 +196,9 @@ void Game::SetupResources(void){
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/sandy_with_artificial_shadows.png");
          resman_.LoadResource(Texture, "TextureMaterial", filename.c_str());
 
+
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/normal_map2.png");
+        resman_.LoadResource(Texture, "Texture2", filename.c_str());
 
     }
 
@@ -289,27 +295,30 @@ void Game::SetupScene(void) {
 
     // Set background color for the scene
     scene_.SetBackgroundColor(viewport_background_color_g);
+    effects_.SetBackgroundColor(viewport_background_color_g);
 
     //player
     SceneNode* playerShape = new SceneNode("PlayerShape", resman_.GetResource("Powerup"), resman_.GetResource("ObjectMaterial"));
     player_.SetShape(playerShape);
     scene_.AddNode(playerShape);
-
-    
-
+    //gui
+    //gui_ = new Ui("Hud", resman_.GetResource("SimpleWall"), resman_.GetResource("GuiMaterial"));
 
     // Create global light source
-    l = CreateLightInstance("light", "lightMesh", "RandomTexMaterial", "Texture1");
-    l->SetPosition(glm::vec3(0, 0, 800));
-    l->SetJointPos(glm::vec3(0, 0, 10));
-    l->SetOrbiting();
-    l->SetOrbitSpeed(0.5);
-    l->SetOrbitAxis(glm::vec3(0, 1, 0));
+    {
+        l = CreateLightInstance("light", "lightMesh", "RandomTexMaterial", "Texture1");
+        l->SetPosition(glm::vec3(0, 0, 800));
+        l->SetJointPos(glm::vec3(0, 0, 10));
+        l->SetOrbiting();
+        l->SetOrbitSpeed(0.5);
+        l->SetOrbitAxis(glm::vec3(0, 1, 0));
+    }
 
-    createTerrain("MoonTex", glm::vec3(0, -30, 790));
-    CreateTrees();
-
-    game_state_ = inProgress;
+    // terrain
+    {
+        createTerrain("MoonTex", glm::vec3(0, -30, 790));
+        CreateTrees();
+    }
 
     /*Dylans Game Objects*/ if (true) //this line is here so that this large section of code can be collasped
     {
@@ -419,7 +428,7 @@ void Game::SetupScene(void) {
 
     }
 
-
+    game_state_ = inProgress;
 
 }
 
@@ -456,8 +465,10 @@ void Game::MainLoop(void){
         scene_.Draw(&camera_);
 
         effects_.AlphaBlending(true);
-        effects_.Draw(&camera_, false);
-        gui_->Draw(&camera_);
+        //effects_.Draw(&camera_, false);
+        //gui_->Draw(&camera_);
+        //effects_.Draw(&camera_);
+       // gui_->Draw(&camera_);
         effects_.AlphaBlending(false);
 
         // Push buffer drawn in the background onto the display
@@ -834,7 +845,7 @@ void Game::createTerrain(const char* file_name, glm::vec3 pos) {
     float terrain_w = 1000;
     resman_.CreatePlane("terrain", terrain_l, terrain_w, terrain_l, terrain_w, heightMap);
 
-    Terrain* t = new Terrain("terrain", resman_.GetResource("terrain"), resman_.GetResource("RandomTexMaterial"), resman_.GetResource("Texture1"), NULL, heightMap, terrain_l, terrain_w);
+    Terrain* t = new Terrain("terrain", resman_.GetResource("terrain"), resman_.GetResource("TerrainMat"), resman_.GetResource("Texture1"), resman_.GetResource("Texture2"), heightMap, terrain_l, terrain_w);
     t->SetPosition(pos);
     scene_.AddNode(t);
     terrain_ = t;

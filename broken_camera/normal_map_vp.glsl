@@ -1,4 +1,4 @@
-#version 430
+#version 130
 
 // Vertex buffer
 in vec3 vertex;
@@ -19,22 +19,15 @@ out mat3 TBN_mat;
 out vec3 light_pos;
 
 // Material attributes (constants)
-uniform vec3 light_position = vec3(-0.5, -0.5, 1.5);
+uniform vec3 light_position = vec3(0, 10, 800);
 
-uniform sampler2D height_map;
-uniform float MaxDepth;
 
 void main()
-{   
-    float grayscalePercentage = texture2D(height_map, uv).r;
-    //vec3 result = vec3(grayscalePercentage);
-    
+{
+    gl_Position = projection_mat * view_mat * world_mat * vec4(vertex, 1.0);
 
-    vec4 v =  vec4(vertex, 1.0) + vec4((normal * ((grayscalePercentage)*MaxDepth)), 1);
-    gl_Position = projection_mat * view_mat * world_mat * v;
-    
     // Do not apply projection to "vertex_position"
-    vertex_position = vec3(view_mat * world_mat * v);
+    vertex_position = vec3(view_mat * world_mat * vec4(vertex, 1.0));
     
     // Define vertex tangent, bitangent and normal (TBN)
     // These are used to create the tangent space transformation matrix

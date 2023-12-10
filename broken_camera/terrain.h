@@ -27,7 +27,6 @@ namespace game {
         // Destructor
         ~Terrain();
 
-        void Draw(Camera* camera);
         float getDistToGround(glm::vec3);
 
     private:

@@ -1147,6 +1147,7 @@ namespace game {
         glm::vec3 vertex_normal;
         glm::vec3 vertex_color;
         glm::vec2 vertex_coord;
+        std::vector<Vertex> vertices;
 
         for (int i = 0; i < num_length_samples; i++) { // z
 
@@ -1155,14 +1156,13 @@ namespace game {
                 vertex_coord = glm::vec2(((float)j / num_width_samples), ((float)i / num_length_samples));
 
                 double y = getAugmentedPos(vertex_coord, hm);
-
                 vertex_coord[0] *= 10.0;
                 vertex_coord[1] *= 10.0;
 
                 // Define position, normal and color of vertex
-                vertex_normal = glm::vec3(0, 1, 0);
+                vertex_normal = glm::vec3(0, 0, 0);
                 vertex_position = glm::vec3((j * (width / num_width_samples)) - (width / 2), y, (i * (length / num_length_samples)) - (length / 2));
-                vertex_color = glm::vec3(1, 1, 1); //white
+                vertex_color = glm::vec3(0, 0, 0); //white
 
                 // Add vectors to the data buffer
                 for (int k = 0; k < 3; k++) {
@@ -1178,21 +1178,35 @@ namespace game {
         // Create triangles
         for (int i = 0; i < num_length_samples - 1; i++) {
             for (int j = 0; j < num_width_samples - 1; j++) {
+
+                int t1_v1 = (i + 1) * num_width_samples + j;
+                int t1_v2 = i * num_width_samples + (j + 1);
+                int t1_v3 = i * num_width_samples + j;
                 // Two triangles per quad
                 glm::vec3 t1((i + 1) * num_width_samples + j,
                     i * num_width_samples + (j + 1),
                     i * num_width_samples + j);
+                CalculateNormalTan(vertex, t1_v1 * vertex_att, t1_v2*vertex_att, t1_v3*vertex_att);
+
+                int t2_v1 = (i + 1) * num_width_samples + j;
+                int t2_v2 = (i + 1) * num_width_samples + (j + 1);
+                int t2_v3 = i * num_width_samples + (j + 1);
                 glm::vec3 t2((i + 1) * num_width_samples + j,
                     (i + 1) * num_width_samples + (j + 1),
                     i * num_width_samples + (j + 1));
+                CalculateNormalTan(vertex, t2_v1 * vertex_att, t2_v2 * vertex_att, t2_v3 * vertex_att);
+
                 // Add two triangles to the data buffer
                 for (int k = 0; k < 3; k++) {
                     face[(i * num_width_samples + j) * face_att * 2 + k] = (GLuint)t1[k];
                     face[(i * num_width_samples + j) * face_att * 2 + k + face_att] = (GLuint)t2[k];
                 }
+
+                
             }
         }
 
+        AverageNormalTan(vertex, num_width_samples, num_length_samples, vertex_att);
 
         GLuint vbo, ebo;
         glGenBuffers(1, &vbo);
@@ -1324,6 +1338,52 @@ namespace game {
         float height = hm.hmap[row * hm.width_ * 3 + col * 3] / 255.0;
 
         return hm.max_height * height;
+    }
+
+
+
+    void ResourceManager::CalculateNormalTan(GLfloat *vertices, int v1, int v2, int v3) {
+        glm::vec3 v1_pos = glm::vec3(vertices[v1], vertices[v1+1], vertices[v1+2]);
+        glm::vec3 v2_pos = glm::vec3(vertices[v2], vertices[v2+1], vertices[v2+2]);
+        glm::vec3 v3_pos = glm::vec3(vertices[v3], vertices[v3+1], vertices[v3+2]);
+
+        glm::vec3 e1 = glm::normalize(v2_pos - v1_pos);
+        glm::vec3 e2 = glm::normalize(v2_pos - v3_pos);
+
+        glm::vec3 normal = glm::normalize(glm::cross(e1, e2));
+        glm::vec3 tan = e1;
+
+        for (int i = 0; i < 3; i++) {
+            vertices[v1 + (i + 3)] += normal[i];
+            vertices[v2 + (i + 3)] += normal[i];
+            vertices[v3 + (i + 3)] += normal[i];
+        }
+
+        for (int i = 0; i < 3; i++) {
+            vertices[v1 + (i + 6)] += tan[i];
+            vertices[v2 + (i + 6)] += tan[i];
+            vertices[v3 + (i + 6)] += tan[i];
+        }
+
+    }
+
+    void ResourceManager::AverageNormalTan(GLfloat *vertices, int num_width, int num_length, int v_att) {
+
+        for (int i = 0; i < num_length; i++) {
+            for (int j = 0; j < num_width; j++) {
+
+                int v = (i * num_width + j) * v_att;       // vertex index
+                glm::vec3 normal = glm::normalize(glm::vec3(vertices[v+3], vertices[v+4], vertices[v+5]));
+                glm::vec3 tan = glm::normalize(glm::vec3(vertices[v+6], vertices[v+7], vertices[v+8]));
+                
+                for (int k = 0; k < 3; k++) {
+                    vertices[v + k + 3] = normal[k];
+                    vertices[v + k + 6] = tan[k];
+                }
+
+            }
+        }
+
     }
 
 
