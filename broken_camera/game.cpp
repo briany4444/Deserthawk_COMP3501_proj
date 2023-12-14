@@ -121,6 +121,9 @@ void Game::InitEventHandlers(void){
 
 void Game::SetupResources(void){
 
+    // Setup drawing to texture
+    scene_.SetupDrawToTexture();
+
     // Create a simple object to represent the asteroids
     resman_.CreateCone("Asteroid", 2.0, 1.0, 10, 10);
     resman_.CreateTorus("Target", 1);
@@ -164,6 +167,8 @@ void Game::SetupResources(void){
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/normal_map");
         resman_.LoadResource(Material, "TerrainMat", filename.c_str());
 
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/screen_space");
+        resman_.LoadResource(Material, "ScreenSpaceMaterial", filename.c_str());
 
         /// Particle Systems ///
 
@@ -295,8 +300,7 @@ void Game::SetupScene(void) {
 
     // Set background color for the scene
     scene_.SetBackgroundColor(viewport_background_color_g);
-    effects_.SetBackgroundColor(viewport_background_color_g);
-
+    
     //player
     SceneNode* playerShape = new SceneNode("PlayerShape", resman_.GetResource("Powerup"), resman_.GetResource("ObjectMaterial"));
     player_.SetShape(playerShape);
@@ -463,15 +467,23 @@ void Game::MainLoop(void){
             HandleCollisions();
         }
 
-        // Draw the scene
-        scene_.Draw(&camera_);
+        if (true) { // if player NOT dead
+            // Draw to the scene
+            scene_.Draw(&camera_);
 
-        effects_.AlphaBlending(true);
-        //effects_.Draw(&camera_, false);
-        //gui_->Draw(&camera_);
-        //effects_.Draw(&camera_);
-       // gui_->Draw(&camera_);
-        effects_.AlphaBlending(false);
+            scene_.AlphaBlending(true);
+            //scene_.Draw(&camera_,SceneGraph::EFFECTS, false);
+            gui_->Draw(&camera_);
+            scene_.AlphaBlending(false);
+        }
+        else {
+            // Draw the scene to a texture
+            scene_.DrawToTexture(&camera_);
+            // Process the texture with a screen-space effect and display
+            // the texture
+            scene_.DisplayTexture(resman_.GetResource("ScreenSpaceMaterial")->GetResource());
+        }
+            
 
         // Push buffer drawn in the background onto the display
         glfwSwapBuffers(window_);

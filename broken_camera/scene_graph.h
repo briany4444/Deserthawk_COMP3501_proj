@@ -11,6 +11,10 @@
 #include "resource.h"
 #include "camera.h"
 
+// Size of the texture that we will draw
+#define FRAME_BUFFER_WIDTH 1024
+#define FRAME_BUFFER_HEIGHT 768
+
 namespace game {
 
     // Class that manages all the objects in a scene
@@ -24,9 +28,28 @@ namespace game {
             std::vector<SceneNode *> node_;
             std::vector<SceneNode*> collidable_nodes_;
 
+            //Particle effect
+            std::vector<SceneNode*> effects_;
+
+
+            // Frame buffer for drawing to texture
+            GLuint frame_buffer_;
+            // Quad vertex array for drawing from texture
+            GLuint quad_array_buffer_;
+            // Render targets
+            GLuint texture_;
+            GLuint depth_buffer_;
+
+            double startTime_;
+
             void RemoveNode(std::string);
 
         public:
+
+            enum Options
+            {
+                OBJ, EFFECTS
+            };
             // Constructor and destructor
             SceneGraph(void);
             ~SceneGraph();
@@ -52,8 +75,18 @@ namespace game {
             //Alpha Blending
             static void AlphaBlending(bool set);
 
+            // Drawing from/to a texture
+            // Setup the texture
+            void SetupDrawToTexture(void);
+            // Draw the scene into a texture
+            void DrawToTexture(Camera* camera);
+            // Process and draw the texture on the screen
+            void DisplayTexture(GLuint program);
+            // Save texture to a file in ppm format
+            void SaveTexture(char* filename);
+
             // Draw the entire scene
-            void Draw(Camera *camera, bool first = true);
+            void Draw(Camera *camera, Options x = OBJ,  bool first = true);
 
             // Update entire scene
             void Update(float);
