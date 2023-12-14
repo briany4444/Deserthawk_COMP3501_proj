@@ -61,7 +61,7 @@ namespace game {
             // Create a scene node from the specified resources
             SceneNode *CreateNode(std::string node_name, Resource *geometry, Resource *material, Resource* texture = NULL, Resource* normal_map = NULL);
             // Add an already-created node
-            void AddNode(SceneNode *node);
+            void AddNode(SceneNode *node, Options x = OBJ);
             // Find a scene node with a specific name
             SceneNode *GetNode(std::string node_name) const;
             void RemoveCollidable(std::string node_name);
@@ -81,7 +81,7 @@ namespace game {
             // Draw the scene into a texture
             void DrawToTexture(Camera* camera);
             // Process and draw the texture on the screen
-            void DisplayTexture(GLuint program);
+            float DisplayTexture(GLuint program);
             // Save texture to a file in ppm format
             void SaveTexture(char* filename);
 

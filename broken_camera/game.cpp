@@ -101,10 +101,27 @@ void Game::InitView(void){
     camera_ = Camera();
     // Set current view
     camera_.SetView(camera_position_g, camera_look_at_g, camera_up_g);
+
+    
+
     // Set projection
     camera_.SetProjection(camera_fov_g, camera_near_clip_distance_g, camera_far_clip_distance_g, width, height);
 
     
+
+    // set loading screen
+    glClearColor(viewport_background_color_g[0], viewport_background_color_g[1], viewport_background_color_g[2], 0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    resman_.CreateWall("SimpleWall"); //UI and images
+    std::string filename = std::string(MATERIAL_DIRECTORY) + std::string("/textured_material");
+    resman_.LoadResource(Material, "PlainTexMaterial", filename.c_str());
+    filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/loading.png");
+    resman_.LoadResource(Texture, "Loading", filename.c_str());
+    gui_ = new Ui("LoadingScreen", resman_.GetResource("SimpleWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("Loading"));
+    gui_->Draw(&camera_);
+    std::cout << "loading..." << std::endl;
+    // Push buffer drawn in the background onto the display
+    glfwSwapBuffers(window_);
 }
 
 
@@ -142,7 +159,7 @@ void Game::SetupResources(void){
 
     resman_.CreateSphere("lightMesh", 0.5, 30, 30);
 
-    resman_.CreateWall("SimpleWall"); //UI
+    
 
   
     std::string filename;
@@ -161,7 +178,7 @@ void Game::SetupResources(void){
         resman_.LoadResource(Material, "TextureNormalMaterial", filename.c_str());
 
         
-        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textured_material");
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/random_textured_material");
         resman_.LoadResource(Material, "RandomTexMaterial", filename.c_str());
 
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/normal_map");
@@ -204,6 +221,12 @@ void Game::SetupResources(void){
 
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/normal_map2.png");
         resman_.LoadResource(Texture, "Texture2", filename.c_str());
+
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/startScreen.png");
+        resman_.LoadResource(Texture, "Start", filename.c_str());
+
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/GameOver.png");
+        resman_.LoadResource(Texture, "GameOver", filename.c_str());
 
     }
 
@@ -305,8 +328,7 @@ void Game::SetupScene(void) {
     SceneNode* playerShape = new SceneNode("PlayerShape", resman_.GetResource("Powerup"), resman_.GetResource("ObjectMaterial"));
     player_.SetShape(playerShape);
     scene_.AddNode(playerShape);
-    //gui
-    //gui_ = new Ui("Hud", resman_.GetResource("SimpleWall"), resman_.GetResource("GuiMaterial"));
+    
 
     // Create global light source
     {
@@ -421,8 +443,6 @@ void Game::SetupScene(void) {
     }
 
 
-    //gui
-    gui_ = new Ui("Hud", resman_.GetResource("SimpleWall"), resman_.GetResource("GuiMaterial"), resman_.GetResource("NoiseTex"));
 
     ////// PARTICLE SYSTEMS ////// 
     {
@@ -432,8 +452,17 @@ void Game::SetupScene(void) {
 
     }
 
-    game_state_ = inProgress;
-
+    //game_state_ = inProgress;
+    // exit loading screen into start screen
+    glClearColor(viewport_background_color_g[0], viewport_background_color_g[1], viewport_background_color_g[2], 0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   
+    delete gui_;
+    gui_ = new Ui("StartScreen", resman_.GetResource("SimpleWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("Start"));
+    gui_->Draw(&camera_);
+    std::cout << "start" << std::endl;
+    // Push buffer drawn in the background onto the display
+    glfwSwapBuffers(window_);
 }
 
 
@@ -442,6 +471,7 @@ void Game::MainLoop(void){
     // Loop while the user did not close the window
     while (!glfwWindowShouldClose(window_)){
 
+        
         // Animate the scene
         if (game_state_ == inProgress){
             double current_time = glfwGetTime();
@@ -466,6 +496,24 @@ void Game::MainLoop(void){
             }
             HandleCollisions();
         }
+        else if (game_state_ == init) {
+            //in start screen, spin-wait for space input
+            std::cout << "in init..." << std::endl;
+            // Update other events like input handling
+            glfwPollEvents();
+            continue;
+        }
+        else if (game_state_ == lost) {
+            //print end screen 
+            if (glfwGetTime() - last_time > 10) {
+                return;
+            }
+            continue;
+        }
+        else if (game_state_ == won) { 
+            //show win screen
+        }
+
 
         if (true) { // if player NOT dead
             // Draw to the scene
@@ -481,7 +529,14 @@ void Game::MainLoop(void){
             scene_.DrawToTexture(&camera_);
             // Process the texture with a screen-space effect and display
             // the texture
-            scene_.DisplayTexture(resman_.GetResource("ScreenSpaceMaterial")->GetResource());
+            float death_duration = scene_.DisplayTexture(resman_.GetResource("ScreenSpaceMaterial")->GetResource());
+            if (death_duration >= 5) {
+                game_state_ = lost;
+                //update display to game over screen
+                delete gui_;
+                gui_ = new Ui("LossScreen", resman_.GetResource("SimpleWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("GameOver"));
+                gui_->Draw(&camera_);
+            }
         }
             
 
@@ -549,6 +604,13 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
         if (key == GLFW_KEY_H) {
             game->l->Translate(glm::vec3(0.0, -2.0, 0.0));
         }
+    }
+    else if (game->game_state_ == init && key == GLFW_KEY_SPACE) {
+        game->game_state_ = inProgress;
+
+        //init game gui
+        delete game->gui_;
+        game->gui_ = new Ui("Hud", game->resman_.GetResource("SimpleWall"), game->resman_.GetResource("GuiMaterial"), game->resman_.GetResource("NoiseTex"));
     }
 
  

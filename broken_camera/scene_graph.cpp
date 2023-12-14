@@ -46,11 +46,17 @@ SceneNode *SceneGraph::CreateNode(std::string node_name, Resource *geometry, Res
 }
 
 
-void SceneGraph::AddNode(SceneNode *node){
+void SceneGraph::AddNode(SceneNode *node, Options x){
     if (node->GetCollidable()) {
         collidable_nodes_.push_back(node);
     }
-    node_.push_back(node);
+    if (x == OBJ) {
+        node_.push_back(node);
+    }
+    else if (x == EFFECTS) {
+        effects_.push_back(node);
+    }
+    
 }
 
 
@@ -232,7 +238,7 @@ void SceneGraph::DrawToTexture(Camera* camera) {
 }
 
 
-void SceneGraph::DisplayTexture(GLuint program) {
+float SceneGraph::DisplayTexture(GLuint program) {
 
     if (startTime_ == 0) {
         startTime_ = glfwGetTime();
@@ -260,7 +266,8 @@ void SceneGraph::DisplayTexture(GLuint program) {
     // Timer
     GLint timer_var = glGetUniformLocation(program, "timer");
     float current_time = glfwGetTime();
-    glUniform1f(timer_var, current_time - startTime_);
+    float deltaT = current_time - startTime_;
+    glUniform1f(timer_var, deltaT);
 
     // Bind texture
     glActiveTexture(GL_TEXTURE0);
@@ -271,6 +278,8 @@ void SceneGraph::DisplayTexture(GLuint program) {
 
     // Reset current geometry
     glEnable(GL_DEPTH_TEST);
+
+    return deltaT;
 }
 
 
