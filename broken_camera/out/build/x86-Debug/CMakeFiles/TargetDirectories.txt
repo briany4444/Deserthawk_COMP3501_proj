@@ -1,0 +1,3 @@
+C:/Github/COMP4900 Repo/3501_Proj/broken_camera/out/build/x86-Debug/CMakeFiles/CameraDemo.dir
+C:/Github/COMP4900 Repo/3501_Proj/broken_camera/out/build/x86-Debug/CMakeFiles/edit_cache.dir
+C:/Github/COMP4900 Repo/3501_Proj/broken_camera/out/build/x86-Debug/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,20 @@
+# ninja log v5
+2	1493	7243850816087030	CMakeFiles/CameraDemo.dir/asteroid.cpp.obj	419739388a82313
+7	1528	7243850816617008	CMakeFiles/CameraDemo.dir/beacon.cpp.obj	895df6bbcbba9b1d
+10	1710	7243850818436991	CMakeFiles/CameraDemo.dir/player.cpp.obj	34cdeda056bb2b39
+13	1893	7243850820136997	CMakeFiles/CameraDemo.dir/camera.cpp.obj	452c005bf46ee39d
+16	2146	7243850822547009	CMakeFiles/CameraDemo.dir/game.cpp.obj	5c95cd1ceaa13697
+19	2237	7243850823597004	CMakeFiles/CameraDemo.dir/main.cpp.obj	d03313de2c3e2a66
+1710	2678	7243850827977000	CMakeFiles/CameraDemo.dir/resource.cpp.obj	39e65e70dfd95676
+1517	2979	7243850830916988	CMakeFiles/CameraDemo.dir/powerup.cpp.obj	3dbd523f493e303
+1893	3888	7243850840026991	CMakeFiles/CameraDemo.dir/tree.cpp.obj	d735593593a068ce
+1528	3894	7243850840207020	CMakeFiles/CameraDemo.dir/racetrack.cpp.obj	5699dc9ce3def98c
+2147	3976	7243850841167006	CMakeFiles/CameraDemo.dir/thorn.cpp.obj	b4cf9c8ae9bc6184
+2237	4797	7243850848957015	CMakeFiles/CameraDemo.dir/resource_manager.cpp.obj	a5c9a65211bb3a41
+2678	4888	7243850849847009	CMakeFiles/CameraDemo.dir/scene_graph.cpp.obj	ab93948175c93101
+2979	5222	7243850853616995	CMakeFiles/CameraDemo.dir/scene_node.cpp.obj	390ee465c13f93f8
+3888	5289	7243850853936997	CMakeFiles/CameraDemo.dir/spaceship.cpp.obj	ea7d27c4671aa0f3
+3977	5400	7243850855407044	CMakeFiles/CameraDemo.dir/terrain.cpp.obj	4c8b2faf8de45bc7
+3894	5542	7243850856847011	CMakeFiles/CameraDemo.dir/Ui.cpp.obj	de3c470e46a8f1ed
+4797	5848	7243850859912049	CMakeFiles/CameraDemo.dir/light.cpp.obj	d43cc1e9c64775c7
+5849	8424	7243850885375897	CameraDemo_d.exe	e14b52c9f90dd63f

@@ -1,0 +1,4 @@
+{
+  "enableCMake": true,
+  "sourceDirectory": "broken_camera"
+}

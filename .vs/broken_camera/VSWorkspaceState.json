@@ -1,0 +1,10 @@
+{
+  "OutputFoldersPerTargetSystem": {
+    "Local Machine": [
+      "broken_camera\\out\\build\\x64-Debug",
+      "broken_camera\\out\\install\\x64-Debug",
+      "broken_camera\\out\\build\\x86-Debug",
+      "broken_camera\\out\\install\\x86-Debug"
+    ]
+  }
+}
