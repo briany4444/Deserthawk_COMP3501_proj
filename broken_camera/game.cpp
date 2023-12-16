@@ -13,7 +13,7 @@ namespace game {
 // They are written here as global variables, but ideally they should be loaded from a configuration file
 
 // Main window settings
-const std::string window_title_g = "A2 Race";
+const std::string window_title_g = "Final Project";
 const unsigned int window_width_g = 800;
 const unsigned int window_height_g = 600;
 const bool window_full_screen_g = false;
@@ -23,8 +23,8 @@ float camera_near_clip_distance_g = 0.01;
 float camera_far_clip_distance_g = 1000.0;
 float camera_fov_g = 60.0; // Field-of-view of Player (degrees)
 const glm::vec3 viewport_background_color_g(0, 0.0, 0.0);
-glm::vec3 camera_position_g(0.0, 0.0, 800.0);
-glm::vec3 camera_look_at_g(0.0, 0.0, 0.0);
+glm::vec3 camera_position_g(glm::vec3(-370, 40, 420));
+glm::vec3 camera_look_at_g(-51,67,800);
 glm::vec3 camera_up_g(0.0, 1.0, 0.0);
 static double last_time = 0;
 
@@ -327,6 +327,7 @@ void Game::SetupScene(void) {
     //player
     SceneNode* playerShape = new SceneNode("PlayerShape", resman_.GetResource("Powerup"), resman_.GetResource("ObjectMaterial"));
     player_.SetShape(playerShape);
+    player_.SetPosition(glm::vec3(-370, 40, 420));
     scene_.AddNode(playerShape);
     
 
@@ -341,11 +342,8 @@ void Game::SetupScene(void) {
         l->SetScale(glm::vec3(5, 5, 5));
     }
 
-    // terrain
-    {
-        createTerrain("/textures/T5.png", glm::vec3(0, -30, 790));
-        CreateTrees();
-    }
+    // create world   
+    CreateWorld();
 
     /*Dylans Game Objects*/ if (true) //this line is here so that this large section of code can be collasped
     {
@@ -353,8 +351,9 @@ void Game::SetupScene(void) {
 
         //Obelisk
         game::SceneNode* obelisk = CreateInstance("Obelisk", "ObeliskMesh", "TextureNormalMaterial", "ObeliskTexture", "ObeliskNormal");
-        obelisk->Translate(glm::vec3(0.0, -18.0, 800.0));
-
+        obelisk->SetScale(glm::vec3(15, 15, 15));
+        PlaceObject(obelisk, -48.5, 8, 800);
+        
         //Watch Towers
         num_instances = 5;
         for (int i = 0; i < num_instances; i++)
@@ -478,8 +477,7 @@ void Game::MainLoop(void){
             double current_time = glfwGetTime();
             double delta_time = current_time - last_time;
             if ((delta_time) > 0.05){
-                glEnable(GL_CULL_FACE);
-                std::cout << "bruh" << terrain_->getDistToGround(player_.GetPosition()) << std::endl;
+                glEnable(GL_CULL_FACE);             
 
                 camera_.UpdateLightInfo(l->GetTransf() * glm::vec4(l->GetPosition(), 1.0), l->GetLightCol(), l->GetSpecPwr());
                 scene_.Update(delta_time);
@@ -610,9 +608,13 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
             game->l->Translate(glm::vec3(0.0, -2.0, 0.0));
         }
         if (key == GLFW_KEY_C) {
-            std::cout << "x:" << game->camera_.GetPosition().x << std::endl;
-            std::cout << "y:" << game->camera_.GetPosition().y << std::endl;
-            std::cout << "z:" << game->camera_.GetPosition().z << std::endl;
+            float x = game->camera_.GetPosition().x;
+            float y = game->camera_.GetPosition().y;
+            float z = game->camera_.GetPosition().z;
+            std::cout << "x:" << x << std::endl;
+            std::cout << "y:" << y << std::endl;
+            std::cout << "z:" << z << std::endl;
+            std::cout << "t-height:" << game->terrain_->getTerrainY(glm::vec3(x,0,z)) << std::endl;
         }
     }
     else if (game->game_state_ == init && key == GLFW_KEY_SPACE) {
@@ -955,7 +957,40 @@ Light* Game::CreateLightInstance(std::string entity_name, std::string object_nam
 
 }
 
+void Game::PlaceObject(SceneNode* obj, float x, float offSetY, float z) {
+    float y = terrain_->getTerrainY(glm::vec3(x, 0, z));
+    y += offSetY;
+    obj->SetPosition(glm::vec3(x, y, z));
+}
 
+void Game::createObeliskZone() {
+    // place obelisk with 4 watch towers around it
+}
+
+void Game::createVillage() {
+    // pace several houses with some dead trees
+}
+
+void Game::createOasis() {
+    // place pond with palm trees, flowers, and fireflies
+}
+
+void Game::createSandNadoZone() {
+    // place several sand nados 
+}
+
+void Game::generateTerrainFeatures(float x, float z) {
+    // generate rocks and bushes around the specified position. 
+}
+
+void Game::CreateWorld() {
+    createTerrain("/textures/T5.png", glm::vec3(0, -30, 790));
+    createObeliskZone();
+    createVillage();
+    createOasis();
+    createSandNadoZone();
+
+}
 
 
 } // namespace game
