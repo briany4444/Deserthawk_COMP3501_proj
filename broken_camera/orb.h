@@ -15,16 +15,16 @@
 namespace game {
 
     // Abstraction of an asteroid
-    class Powerup : public SceneNode {
+    class Orb : public SceneNode {
 
     public:
         // Create asteroid from given resources
-        Powerup(const std::string name, const Resource* geometry, const Resource* material);
+        Orb(const std::string name, const Resource* geometry, const Resource* material, const Resource *tex);
 
         // Destructor
-        ~Powerup();
+        ~Orb();
 
-    }; // class Powerup
+    }; // class Orb
 
 } // namespace game
 

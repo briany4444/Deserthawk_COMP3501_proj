@@ -142,11 +142,10 @@ void Game::SetupResources(void){
     scene_.SetupDrawToTexture();
 
     // Create a simple object to represent the asteroids
-    resman_.CreateCone("Asteroid", 2.0, 1.0, 10, 10);
     resman_.CreateTorus("Target", 1);
     resman_.CreateCone("Beacon", 2, 2, 30, 30);
     resman_.CreateCylinder("Enemy");
-    resman_.CreateSphere("Powerup");
+    resman_.CreateSphere("Orb");
     resman_.CreateSphereParticles("SphereParticles", 250);
 
     // Create a simple object to represent the tree
@@ -325,7 +324,7 @@ void Game::SetupScene(void) {
     scene_.SetBackgroundColor(viewport_background_color_g);
     
     //player
-    SceneNode* playerShape = new SceneNode("PlayerShape", resman_.GetResource("Powerup"), resman_.GetResource("ObjectMaterial"));
+    SceneNode* playerShape = new SceneNode("PlayerShape", resman_.GetResource("Orb"), resman_.GetResource("ObjectMaterial"));
     player_.SetShape(playerShape);
     scene_.AddNode(playerShape);
     
@@ -344,6 +343,13 @@ void Game::SetupScene(void) {
     {
         createTerrain("/textures/T5.png", glm::vec3(0, -30, 790));
         CreateTrees();
+    }
+
+
+    // orbs
+    {
+        Orb* orb = createOrbInstance("Orb1", "Orb", "ObjectMaterial", "Texture1");
+        orb->SetPosition(glm::vec3(0, 0, 775));
     }
 
     /*Dylans Game Objects*/ if (true) //this line is here so that this large section of code can be collasped
@@ -452,7 +458,6 @@ void Game::SetupScene(void) {
 
     }
 
-    //game_state_ = inProgress;
     // exit loading screen into start screen
     glClearColor(viewport_background_color_g[0], viewport_background_color_g[1], viewport_background_color_g[2], 0.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -463,6 +468,7 @@ void Game::SetupScene(void) {
     std::cout << "start" << std::endl;
     // Push buffer drawn in the background onto the display
     glfwSwapBuffers(window_);
+
 }
 
 
@@ -477,9 +483,7 @@ void Game::MainLoop(void){
             double current_time = glfwGetTime();
             double delta_time = current_time - last_time;
             if ((delta_time) > 0.05){
-                glEnable(GL_CULL_FACE);
-                std::cout << "bruh" << terrain_->getDistToGround(player_.GetPosition()) << std::endl;
-
+ 
                 camera_.UpdateLightInfo(l->GetTransf() * glm::vec4(l->GetPosition(), 1.0), l->GetLightCol(), l->GetSpecPwr());
                 scene_.Update(delta_time);
                 player_.Update(delta_time);
@@ -710,41 +714,6 @@ void Game::DebugCameraMovement()
 }
 
 
-void Game::CreateShips() {
-    // Create a number of ship instances
-    for (int i = 0; i < 4; i++) {
-        // Create instance name
-        std::stringstream ss;
-        ss << i;
-        std::string index = ss.str();
-        std::string name = "Enemy" + index;
-
-        // Create ship instance
-        Spaceship* ship = CreateShipInstance(name, "Enemy", "ObjectMaterial");
-        ship->SetPosition(glm::vec3(-3, 0, 800 - (i+1) * 40));
-        ship->SetScale(glm::vec3(0.5, 0.5, 0.5));
-        ship->SetOrientation(glm::normalize(glm::angleAxis(glm::pi<float>() * ((float)rand() / RAND_MAX), glm::vec3(((float)rand() / RAND_MAX), ((float)rand() / RAND_MAX), ((float)rand() / RAND_MAX)))));
-    }
-}
-
-
-Spaceship* Game::CreateShipInstance(std::string entity_name, std::string object_name, std::string material_name) {
-    // Get resources
-    Resource* geom = resman_.GetResource(object_name);
-    if (!geom) {
-        throw(GameException(std::string("Could not find resource \"") + object_name + std::string("\"")));
-    }
-
-    Resource* mat = resman_.GetResource(material_name);
-    if (!mat) {
-        throw(GameException(std::string("Could not find resource \"") + material_name + std::string("\"")));
-    }
-
-    // Create ship
-    Spaceship* ship = new Spaceship(&player_, entity_name, geom, mat);
-    scene_.AddNode(ship);
-    return ship;
-}
 
 SceneNode* Game::CreateInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name, std::string normal_name) {
 
@@ -780,91 +749,6 @@ SceneNode* Game::CreateInstance(std::string entity_name, std::string object_name
 
 
 
-Asteroid *Game::CreateAsteroidInstance(std::string entity_name, std::string object_name, std::string material_name){
-
-    // Get resources
-    Resource *geom = resman_.GetResource(object_name);
-    if (!geom){
-        throw(GameException(std::string("Could not find resource \"")+object_name+std::string("\"")));
-    }
-
-    Resource *mat = resman_.GetResource(material_name);
-    if (!mat){
-        throw(GameException(std::string("Could not find resource \"")+material_name+std::string("\"")));
-    }
-
-    // Create asteroid instance
-    Asteroid *ast = new Asteroid(entity_name, geom, mat);
-    scene_.AddNode(ast);
-    return ast;
-}
-
-
-void Game::CreateAsteroidField(int num_asteroids){
-
-    // Create a number of asteroid instances
-    for (int i = 0; i < num_asteroids; i++){
-        // Create instance name
-        std::stringstream ss;
-        ss << i;
-        std::string index = ss.str();
-        std::string name = "AsteroidInstance" + index;
-
-        // Create asteroid instance
-        Asteroid *ast = CreateAsteroidInstance(name, "Asteroid", "ObjectMaterial");
-
-        // Set attributes of asteroid: random position, orientation, and
-        // angular momentum
-        ast->SetPosition(glm::vec3(-300.0 + 600.0*((float) rand() / RAND_MAX), -300.0 + 600.0*((float) rand() / RAND_MAX), 600.0*((float) rand() / RAND_MAX)));
-        ast->SetOrientation(glm::normalize(glm::angleAxis(glm::pi<float>()*((float) rand() / RAND_MAX), glm::vec3(((float) rand() / RAND_MAX), ((float) rand() / RAND_MAX), ((float) rand() / RAND_MAX)))));
-        ast->SetAngM(glm::normalize(glm::angleAxis(0.05f*glm::pi<float>()*((float) rand() / RAND_MAX), glm::vec3(((float) rand() / RAND_MAX), ((float) rand() / RAND_MAX), ((float) rand() / RAND_MAX)))));
-    }
-}
-
-Powerup* Game::CreatePowerupInstance(std::string entity_name, std::string object_name, std::string material_name) {
-
-    // Get resources
-    Resource* geom = resman_.GetResource(object_name);
-    if (!geom) {
-        throw(GameException(std::string("Could not find resource \"") + object_name + std::string("\"")));
-    }
-
-    Resource* mat = resman_.GetResource(material_name);
-    if (!mat) {
-        throw(GameException(std::string("Could not find resource \"") + material_name + std::string("\"")));
-    }
-
-    // Create Powerup instance
-    Powerup* pu = new Powerup(entity_name, geom, mat);
-    scene_.AddNode(pu);
-    return pu;
-}
-
-void Game::CreatePowerups() {
-
-    // init the target Powerup
-    Powerup* close_pu = CreatePowerupInstance("Powerup0", "Powerup", "ObjectMaterial");
-    close_pu->SetPosition(glm::vec3(0, 0, 795));
-    close_pu->SetScale(glm::vec3(0.5, 0.5, 0.5));
-    close_pu->SetOrientation(glm::normalize(glm::angleAxis(glm::pi<float>() * ((float)rand() / RAND_MAX), glm::vec3(((float)rand() / RAND_MAX), ((float)rand() / RAND_MAX), ((float)rand() / RAND_MAX)))));
-
-    for (int i = 0; i < 4; i++) {
-
-        // Create instance name
-        std::stringstream ss;
-        ss << i+1;
-        std::string index = ss.str();
-        std::string name = "Powerup" + index;
-
-        // Create asteroid instance
-        Powerup* pu = CreatePowerupInstance(name, "Powerup", "ObjectMaterial");
-        pu->SetScale(glm::vec3(0.75, 0.75, 0.75));
-        pu->SetPosition(glm::vec3 (0, 0, 800 - (i+1) * 40));
-        pu->SetOrientation(glm::normalize(glm::angleAxis(glm::pi<float>() * ((float)rand() / RAND_MAX), glm::vec3(((float)rand() / RAND_MAX), ((float)rand() / RAND_MAX), ((float)rand() / RAND_MAX)))));
-    }
-}
-
-
 void Game::HandleCollisions() {
 
     if (terrain_->getDistToGround(player_.GetPosition()) - player_.GetRadius() < 0) {
@@ -879,32 +763,47 @@ void Game::HandleCollisions() {
 
         // if collision occurred
         if (player_.GetRadius() + curr_node->GetRadius() > node_dist) {
-            // handles Player - Beacon collision
-            if (curr_node->GetName() == "targetBeacon") {
-                scene_.RemoveCollidable(racetrack_.GetNextName());
-                std::cout << "You reached a beacon!" << std::endl;
-                if (racetrack_.UpdateRaceTrack()) {
-                    std::cout << "You reached all beacons in the correct order - You Won!" << std::endl;
-                    //game_state_ = won;
-                    break;
-                }
-                continue;
-
-            // handles Player - Enemy Collision
-            } else if (curr_node->GetType() == "Spaceship") {
-                game_state_ = lost;
-                std::cout << "Collided with the enemy cylinder-ships - You lost!" << std::endl;
-                break;
 
             // handles Player - Power Up Collision
-            } else if (curr_node->GetType() == "Powerup") {
-                player_.AddMaxSpeed(4.0f);
+            if (curr_node->GetType() == "Orb") {
+                orbs_left_ -= 1;
+                if (orbs_left_ == 0) {
+                    game_state_ = won;
+                }
                 std::cout << "You collected a powerup! Max speed increased by 4 units" << std::endl;
                 scene_.RemoveCollidable(curr_node->GetName());
             }
         }
         i++;
     }
+
+}
+
+Orb* Game::createOrbInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name) {
+
+    Resource* geom = resman_.GetResource(object_name);
+    if (!geom) {
+        throw(GameException(std::string("Could not find resource \"") + object_name + std::string("\"")));
+    }
+
+    Resource* mat = resman_.GetResource(material_name);
+    if (!mat) {
+        throw(GameException(std::string("Could not find resource \"") + material_name + std::string("\"")));
+    }
+
+    Resource* tex = NULL;
+    if (texture_name != "") {
+        tex = resman_.GetResource(texture_name);
+        if (!tex) {
+            throw(GameException(std::string("Could not find resource \"") + material_name + std::string("\"")));
+        }
+    }
+
+    Orb *orb = new Orb(entity_name, geom, mat, tex);
+    scene_.AddNode(orb);
+    orbs_left_++;
+
+    return orb;
 
 }
 

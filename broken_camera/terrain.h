@@ -29,6 +29,7 @@ namespace game {
 
         float getDistToGround(glm::vec3);
         float getTerrainY(glm::vec3);
+        void Draw(Camera*) override;
 
     private:
         GLuint normalMap_;

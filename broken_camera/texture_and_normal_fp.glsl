@@ -55,12 +55,12 @@ void main()
     H = normalize(H);
     
     float spec_angle = max(0.0,dot(V,(-L + 2*(dot(L,N))*N)));
-    float specular = pow(spec_angle, spec_power);
+    float specular = 0;
         
     // Assume all components have the same color but with different weights
     float ambient = 0.4;
     if (gl_FrontFacing){
-        gl_FragColor = (0.25*ambient + 0.7*lambertian + 1.0*specular)*pixel;
+        gl_FragColor = (ambient + 0*lambertian + 0*specular)*pixel;
     } else {
         gl_FragColor = pixel;
     }

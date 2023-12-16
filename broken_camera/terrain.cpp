@@ -22,6 +22,12 @@ namespace game {
     Terrain::~Terrain() {
     }
 
+    void Terrain::Draw(Camera* c) {
+        glEnable(GL_CULL_FACE);
+        SceneNode::Draw(c);
+        glDisable(GL_CULL_FACE);
+    }
+
 
     float Terrain::getDistToGround(glm::vec3 pos){
 
