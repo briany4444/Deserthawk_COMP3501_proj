@@ -869,6 +869,7 @@ void Game::HandleCollisions() {
 
     if (terrain_->getDistToGround(player_.GetPosition()) - player_.GetRadius() < 0) {
         game_state_ = lost;
+        return;
     }
 
     std::vector<SceneNode*> collidables = scene_.GetCollidables();
@@ -878,7 +879,6 @@ void Game::HandleCollisions() {
 
         // if collision occurred
         if (player_.GetRadius() + curr_node->GetRadius() > node_dist) {
-            std::cout << "c" << std::endl;
             // handles Player - Beacon collision
             if (curr_node->GetName() == "targetBeacon") {
                 scene_.RemoveCollidable(racetrack_.GetNextName());

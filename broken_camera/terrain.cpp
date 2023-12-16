@@ -25,21 +25,21 @@ namespace game {
 
     float Terrain::getDistToGround(glm::vec3 pos){
 
-        return abs(getTerrainY(pos) - pos.y);
+        return abs(getTerrainY(pos) - pos[1]);
     }
 
     float Terrain::getTerrainY(glm::vec3 pos) {
         float u, v;
-        u = (pos[0] - position_.x + (terrain_width_ / 2));
-        v = pos[2] - position_.z + (terrain_length_ / 2);
+        u = (pos[0] - position_[0] + (terrain_width_ / 2)) / terrain_width_;
+        v = (pos[2] - position_[2] + (terrain_length_ / 2)) / terrain_length_;
 
-        int row = floor(v);
-        int col = floor(u);
+        int row = floor(v * heightmap_.height_);
+        int col = floor(u * heightmap_.width_);
         int index = row * heightmap_.width_ * 3 + col * 3;
 
         float height = (heightmap_.hmap[index] / 255.0) * heightmap_.max_height;
         
-        return position_.y + height;
+        return position_[1] + height;
     }
 
 
