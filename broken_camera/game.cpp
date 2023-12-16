@@ -478,19 +478,21 @@ void Game::MainLoop(void){
             double delta_time = current_time - last_time;
             if ((delta_time) > 0.05){
                 glEnable(GL_CULL_FACE);
+                std::cout << "bruh" << terrain_->getDistToGround(player_.GetPosition()) << std::endl;
+
+                camera_.UpdateLightInfo(l->GetTransf() * glm::vec4(l->GetPosition(), 1.0), l->GetLightCol(), l->GetSpecPwr());
                 scene_.Update(delta_time);
                 player_.Update(delta_time);
+
                 if (!debugCamera_)
                 {
                     camera_.Update(player_.GetOrientation(), player_.GetForward(), player_.GetSide(),
-                        player_.GetPosition());
+                    player_.GetPosition());
                 }
                 else
                 {
                     DebugCameraMovement();
                 }
-
-                camera_.UpdateLightInfo(l->GetTransf() * glm::vec4(l->GetPosition(), 1.0), l->GetLightCol(), l->GetSpecPwr());
                 
                 last_time = current_time;
             }
@@ -498,7 +500,8 @@ void Game::MainLoop(void){
         }
         else if (game_state_ == init) {
             //in start screen, spin-wait for space input
-            std::cout << "in init..." << std::endl;
+           // std::cout << "in init..." << std::endl;
+
             // Update other events like input handling
             glfwPollEvents();
             continue;
@@ -582,6 +585,7 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
         }
         if (key == GLFW_KEY_W) {
             game->player_.Accelerate(glfwGetTime() - last_time);
+
         }
         if (key == GLFW_KEY_S) {
             game->player_.Decelerate(glfwGetTime() - last_time);
@@ -701,6 +705,8 @@ void Game::DebugCameraMovement()
     if (glfwGetKey(window_, GLFW_KEY_LEFT_SHIFT)) {
         camera_.SetPosition(camera_.GetPosition() + -camera_.GetUp() * debugMoveSpeed_);
     }
+
+
 }
 
 
@@ -860,6 +866,10 @@ void Game::CreatePowerups() {
 
 
 void Game::HandleCollisions() {
+
+    if (terrain_->getDistToGround(player_.GetPosition()) - player_.GetRadius() < 0) {
+        game_state_ = lost;
+    }
 
     std::vector<SceneNode*> collidables = scene_.GetCollidables();
     for (int i = 0; i < collidables.size(); ) {

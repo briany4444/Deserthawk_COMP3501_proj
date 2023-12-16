@@ -28,6 +28,7 @@ namespace game {
         ~Terrain();
 
         float getDistToGround(glm::vec3);
+        float getTerrainY(glm::vec3);
 
     private:
         GLuint normalMap_;
