@@ -38,7 +38,7 @@ void main()
 
     // Work in tangent space by multiplying our vectors by TBN_mat    
     // Get light direction
-    L = TBN_mat * (light_pos - vertex_position);
+    L = TBN_mat * (vertex_position - light_pos);
     L = normalize(L);
     
     // Compute diffuse lighting intensity

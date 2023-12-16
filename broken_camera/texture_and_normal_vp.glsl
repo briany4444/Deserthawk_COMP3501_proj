@@ -32,9 +32,9 @@ void main()
     
     // Define vertex tangent, bitangent and normal (TBN)
     // These are used to create the tangent space transformation matrix
-    vec3 vertex_normal = vec3(normal_mat * vec4(normal, 0.0));
+    vec3 vertex_normal = vec3(normal_mat * view_mat * vec4(normal, 0.0));
     vec3 tangent = color; // We stored the tangent in the vertex color
-    vec3 vertex_tangent_ts = vec3(normal_mat * vec4(tangent, 0.0));
+    vec3 vertex_tangent_ts = vec3(normal_mat * view_mat * vec4(tangent, 0.0));
     vec3 vertex_bitangent_ts = cross(vertex_normal, vertex_tangent_ts);
 
     // Send tangent space transformation matrix to the fragment shader
