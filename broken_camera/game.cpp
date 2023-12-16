@@ -333,10 +333,10 @@ void Game::SetupScene(void) {
     // Create global light source
     {
         l = CreateLightInstance("light", "lightMesh", "RandomTexMaterial", "Texture1");
-        l->SetPosition(glm::vec3(0, 50, 800));
-        l->SetJointPos(glm::vec3(0, 0, 10));
-        l->SetOrbiting();
-        l->SetOrbitSpeed(0.5);
+        l->SetPosition(glm::vec3(0, 200, 500));
+        l->SetJointPos(glm::vec3(0, 0, 100));
+        //l->SetOrbiting();
+        //l->SetOrbitSpeed(1.0);
         l->SetOrbitAxis(glm::vec3(0, 1, 0));
         l->SetScale(glm::vec3(5, 5, 5));
     }
@@ -917,7 +917,7 @@ void Game::HandleCollisions() {
 void Game::createTerrain(const char* file_name, glm::vec3 pos) {
 
     HeightMap heightMap;
-    heightMap.max_height = 70;
+    heightMap.max_height = 90;
     
     std::string f_name = std::string(MATERIAL_DIRECTORY) + std::string(file_name);
     heightMap.hmap = SOIL_load_image(f_name.c_str(), &heightMap.width_, &heightMap.height_, 0, SOIL_LOAD_RGB);
