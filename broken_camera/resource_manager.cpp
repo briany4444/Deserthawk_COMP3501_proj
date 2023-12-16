@@ -1156,8 +1156,8 @@ namespace game {
                 vertex_coord = glm::vec2(((float)j / num_width_samples), ((float)i / num_length_samples));
 
                 double y = getAugmentedPos(vertex_coord, hm);
-                vertex_coord[0] *= 10.0;
-                vertex_coord[1] *= 10.0;
+                //vertex_coord[0] *= 10.0;
+                //vertex_coord[1] *= 10.0;
 
                 // Define position, normal and color of vertex
                 vertex_normal = glm::vec3(0, 0, 0);
