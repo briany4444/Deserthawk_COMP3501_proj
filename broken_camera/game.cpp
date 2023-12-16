@@ -333,11 +333,12 @@ void Game::SetupScene(void) {
     // Create global light source
     {
         l = CreateLightInstance("light", "lightMesh", "RandomTexMaterial", "Texture1");
-        l->SetPosition(glm::vec3(0, 0, 800));
+        l->SetPosition(glm::vec3(0, 50, 800));
         l->SetJointPos(glm::vec3(0, 0, 10));
         l->SetOrbiting();
         l->SetOrbitSpeed(0.5);
         l->SetOrbitAxis(glm::vec3(0, 1, 0));
+        l->SetScale(glm::vec3(5, 5, 5));
     }
 
     // terrain
@@ -607,6 +608,11 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
         }
         if (key == GLFW_KEY_H) {
             game->l->Translate(glm::vec3(0.0, -2.0, 0.0));
+        }
+        if (key == GLFW_KEY_C) {
+            std::cout << "x:" << game->camera_.GetPosition().x << std::endl;
+            std::cout << "y:" << game->camera_.GetPosition().y << std::endl;
+            std::cout << "z:" << game->camera_.GetPosition().z << std::endl;
         }
     }
     else if (game->game_state_ == init && key == GLFW_KEY_SPACE) {

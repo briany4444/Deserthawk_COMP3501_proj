@@ -27,8 +27,8 @@ include_directories(${OPENGL_INCLUDE_DIR})
 target_link_libraries(${PROJ_NAME} ${OPENGL_gl_LIBRARY})
 
 # Other libraries needed
-# set(LIBRARY_PATH C:/libs/Libraries), C:\OpenGL_Libraries\Libraries, C:\Users\User\Libraries
-set(LIBRARY_PATH "C:\OpenGL_Libraries\Libraries")
+set(LIBRARY_PATH C:/libs/Libraries)
+#set(LIBRARY_PATH "C:\OpenGL_Libraries\Libraries")
 #set(LIBRARY_PATH C:\Users\User\Libraries) # Brian's Libraries
 #set(LIBRARY_PATH D:/COMP\ 3501\ Libraries/Libraries) #Dylan's Libraries
 
