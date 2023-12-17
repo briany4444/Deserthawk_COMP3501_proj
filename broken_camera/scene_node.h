@@ -82,7 +82,6 @@ namespace game {
             GLuint material_; // Reference to shader program
             GLuint texture_;
             GLuint normal_map_;
-            //bool blending_;
             
             std::string type_ = "NoneType";
             float radius_ = 1.0f;

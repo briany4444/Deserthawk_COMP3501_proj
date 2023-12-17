@@ -240,7 +240,7 @@ void Game::SetupResources(void){
 
     
 
-    /*Dylans Game Objects*/ if (true ) //this line is here so that this large section of code can be collasped
+    /*Dylans Game Objects*/ if (true) //this line is here so that this large section of code can be collasped
     {
         //Obelisk
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/models/Obelisk.obj");
@@ -361,28 +361,6 @@ void Game::SetupScene(void) {
     
     }
 
-    /*Dylans Game Objects*/ if (true) //this line is here so that this large section of code can be collasped
-    {
-        int num_instances = 5; // For loops       
-
-        //Tumbleweeds
-        num_instances = 5;
-        for (int i = 0; i < num_instances; i++)
-        {
-            std::stringstream ss;
-            ss << i;
-            std::string index = ss.str();
-
-            std::string name = "Tumbleweed" + index;
-            game::SceneNode* newTumbleweed = CreateInstance("Tumbleweed", "TumbleweedMesh", "TextureNormalMaterial", "TumbleweedTexture", "TumbleweedNormal");
-            newTumbleweed->Translate(glm::vec3(0.0 + i * 5.0f, -18.0, 710.0));
-        }
-
-
-    }
-
-
-
     ////// PARTICLE SYSTEMS ////// 
     {
     
@@ -460,9 +438,8 @@ void Game::MainLoop(void){
         if (true) { // if player NOT dead
             // Draw to the scene
             scene_.Draw(&camera_);
-
             scene_.AlphaBlending(true);
-            //scene_.Draw(&camera_,SceneGraph::EFFECTS, false);
+            scene_.Draw(&camera_,SceneGraph::EFFECTS, false);
             gui_->Draw(&camera_);
             scene_.AlphaBlending(false);
         }
@@ -554,7 +531,7 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
             std::cout << "x:" << x << std::endl;
             std::cout << "y:" << y << std::endl;
             std::cout << "z:" << z << std::endl;
-            std::cout << "flower_positions.push_back(glm::vec3(" << x << "," << 0 << "," << z << "));" << std::endl;
+            std::cout << "positions.push_back(glm::vec3(" << x << "," << 0 << "," << z << "));" << std::endl;
         }
     }
     else if (game->game_state_ == init && key == GLFW_KEY_SPACE) {
@@ -923,7 +900,12 @@ void Game::createOasis() {
         oasisPlant->SetScale(glm::vec3(18, 18, 18));
         oasisPlant->Rotate(glm::angleAxis(3 * glm::pi<float>() / 4, glm::vec3(0, 1, 0)));
         PlaceObject(oasisPlant, FlowerPos.x, FlowerPos.y, FlowerPos.z);
-    }    
+    }   
+
+    // place fireflies 
+    //game::SceneNode* fireflies = new SceneNode("Fireflies", resman_.GetResource("SphereParticles"), resman_.GetResource("PS-FirFlyMaterial"), resman_.GetResource("sparkle"));
+    //fireflies->SetPosition(glm::vec3(386,75,1099));
+    //scene_.AddNode(fireflies, SceneGraph::EFFECTS);
 }
 
 void Game::createSandNadoZone() {
@@ -932,7 +914,43 @@ void Game::createSandNadoZone() {
 }
 
 void Game::generateTerrainFeatures(float x, float z) {
-    // generate rocks and bushes around the specified position. 
+    // generate tumbleweeds and bushes around the specified position. 
+    glm::vec3 topLeft(x, 0, z);
+
+    int featureDensity = 7;
+    float distBPoints = 20;
+    int numFails = 0; // number of attempts it fails in a row
+
+    int gridSide = 10;
+    std::vector<std::vector<bool>> grid(gridSide, std::vector<bool>(gridSide, false));
+
+    for (int i = featureDensity; i > 0; --i) {
+        int col = rand() % gridSide;
+        int row = rand() % gridSide;
+
+        game::SceneNode* bush;
+        game::SceneNode* newTumbleweed;
+        if (!grid[row][col]) {
+            int choice = rand() % 2;
+            if (choice) {
+                bush = CreateInstance(row + col + "DryShrub" + i, "DryShrubMesh", "TextureNormalMaterial", "DryShrubMeshTexture", "DryShrubMeshNormal");
+                bush->SetScale(glm::vec3(8, 8, 8));
+                PlaceObject(bush, x - distBPoints * row, -0.5, z + distBPoints * col);
+            }
+            else {
+                newTumbleweed = CreateInstance(col + row + "Tumbleweed" + i, "TumbleweedMesh", "TextureNormalMaterial", "TumbleweedTexture", "TumbleweedNormal");
+                newTumbleweed->SetScale(glm::vec3(18, 18, 18));
+                PlaceObject(newTumbleweed, x - distBPoints * row, 2, z + distBPoints * col);
+            }           
+
+            numFails = 0;
+            grid[row][col] = true;
+        }
+        else {
+            i++;
+            numFails++;
+        }
+    }
 }
 
 void Game::CreateWorld() {
@@ -941,6 +959,22 @@ void Game::CreateWorld() {
     createVillage();
     createOasis();
     createSandNadoZone();
+
+    // list of points to generate features.
+    std::vector<glm::vec3> positions;
+    positions.push_back(glm::vec3(-273.46, 0, 463.368));
+    positions.push_back(glm::vec3(-96.6231, 0, 486.843));
+    positions.push_back(glm::vec3(142.756, 0, 491.982));
+    positions.push_back(glm::vec3(300.191, 0, 717.446));
+    positions.push_back(glm::vec3(-23.5003, 0, 1081.79));
+    positions.push_back(glm::vec3(-287.054, 0, 795.625));
+
+    for (int i = 0; i < positions.size(); ++i) {
+        generateTerrainFeatures(positions[i].x, positions[i].z);
+    }
+
+    // place orbs
+
 
 }
 
