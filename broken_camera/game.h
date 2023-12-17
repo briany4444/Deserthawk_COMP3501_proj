@@ -91,6 +91,7 @@ namespace game {
             // handle Player-Scene node collisions
             void HandleCollisions();
             void CreateTrees();
+            SceneNode* makePalmTree(int treeNum, glm::vec3 pos);
 
             //DebugMode
             void DebugCameraMovement();
