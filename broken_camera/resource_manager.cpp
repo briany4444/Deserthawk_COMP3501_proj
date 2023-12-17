@@ -1225,6 +1225,62 @@ namespace game {
         AddResource(Mesh, object_name, vbo, ebo, face_num * face_att);
     }
 
+    void ResourceManager::CreateCubeInverted(std::string object_name) {
+
+                     //ceiling
+     //back   left   front     right
+                     //bottom
+
+    //texture maps to inside, only need them to be quads, so 8 points
+
+        GLfloat vertex[] = {                     //use color to identify ceiling/bottom
+            // Position,          normal,          color,(NO touch)  texture coordinates  | world space | #
+            //face 1 (== front)
+            -0.50, -0.50, -0.50,  0.0, 0.0,   1.0,  -1.0, 0.0, 0.0,  0.50, 0.6,          //bottom left   0
+            -0.50,  0.50, -0.50,  0.0, 0.0,   1.0,  1.00, 0.0, 0.0,  0.50, 0.4,          //top left      1
+             0.50,  0.50, -0.50,  0.0, 0.0,   1.0,  1.00, 0.0, 0.0,  0.75, 0.4,          //top right     2 
+             0.50, -0.50, -0.50,  0.0, 0.0,   1.0,  -1.0, 0.0, 0.0,  0.75, 0.6 ,         //bottom right  3
+            //face 2 (== back)
+            -0.50, -0.50, 0.50,   0.0, 0.0,  -1.0,  -1.0, 1.0, 0.0,  0.25, 0.6,          //bottom left   4
+            -0.50,  0.50, 0.50,   0.0, 0.0,  -1.0,  1.00, 1.0, 0.0,  0.25, 0.4,          //top left      5
+             0.50,  0.50, 0.50,   0.0, 0.0,  -1.0,  1.00, 1.0, 1.0,  0.05, 0.4,          //top right     6
+             0.50, -0.50, 0.50,   0.0, 0.0,  -1.0,  -1.0, 1.0, 1.0,  0.05, 0.6,           //bottom right  7
+
+             //face 3 used for to and bottom
+            -0.50, -0.50, 0.50,   0.0, 0.0,  -1.0,  -1.0, 1.0, 0.0,  0.55, .900,          //bottom left   8
+            -0.50,  0.50, 0.50,   0.0, 0.0,  -1.0,  1.00, 1.0, 0.0,  0.55, 0.05,          //top left      9
+             0.50,  0.50, 0.50,   0.0, 0.0,  -1.0,  1.00, 1.0, 0.0,  0.7, 0.05,          //top right     10
+             0.50, -0.50, 0.50,   0.0, 0.0,  -1.0,  -1.0, 1.0, 0.0,  0.7, .900,           //bottom right  11
+
+             0.50,  0.50, 0.50,   0.0, 0.0,  -1.0,  1.00, 1.0, 1.0,  .900, 0.4,          //top right     12
+             0.50, -0.50, 0.50,   0.0, 0.0,  -1.0,  -1.0, 1.0, 1.0,  .900, 0.6           //bottom right 13
+        };
+
+        // two triangles per quad, 6 quads
+        //                t1        t2
+        GLuint face[] = { 7, 5, 6,  7, 4, 5, //1
+                          4, 1, 5,  4, 0, 1, //2
+                          0, 2, 1,  0, 3, 2, //3
+                          3, 12, 2,  3, 13, 12, //4
+                          1, 10, 9,  1, 2, 10, //5 top
+                          8, 3, 0,  8, 11, 3, //6 bottom
+        };
+
+        // Create OpenGL buffers and copy data
+        GLuint vbo, ebo;
+
+        glGenBuffers(1, &vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, 14 * 11 * sizeof(GLfloat), vertex, GL_STATIC_DRAW);
+
+        glGenBuffers(1, &ebo);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2 * 3 * 6 * sizeof(GLuint), face, GL_STATIC_DRAW);
+
+        // Create resource
+        AddResource(Mesh, object_name, vbo, ebo, 2 * 3 * 6);
+    }
+
     void ResourceManager::CreateWall(std::string object_name) {
 
         // Definition of the wall

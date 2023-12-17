@@ -134,6 +134,11 @@ void SceneGraph::Draw(Camera *camera, Options x, bool first){
     }
     
     if (x == OBJ) {
+        glDepthMask(GL_FALSE);
+        skyBox_->Draw(camera);
+        glDepthMask(GL_TRUE);
+
+
         // Draw all scene nodes
         for (int i = 0; i < node_.size(); i++){
             node_[i]->Draw(camera);

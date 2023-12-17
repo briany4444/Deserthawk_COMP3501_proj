@@ -159,6 +159,8 @@ void Game::SetupResources(void){
 
     resman_.CreateSphere("lightMesh", 0.5, 30, 30);
 
+    resman_.CreateCubeInverted("SkyBox");
+
     
 
   
@@ -186,6 +188,9 @@ void Game::SetupResources(void){
 
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/screen_space");
         resman_.LoadResource(Material, "ScreenSpaceMaterial", filename.c_str());
+
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/shaders/cubemap_material");
+        resman_.LoadResource(Material, "SkyboxMaterial", filename.c_str());
 
         /// Particle Systems ///
 
@@ -223,10 +228,13 @@ void Game::SetupResources(void){
         resman_.LoadResource(Texture, "Texture2", filename.c_str());
 
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/startScreen.png");
-        resman_.LoadResource(Texture, "Start", filename.c_str());
+        resman_.LoadResource(Texture, "StartScreen", filename.c_str());
 
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/GameOver.png");
         resman_.LoadResource(Texture, "GameOver", filename.c_str());
+
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/SkyBoxCubeMap.png");
+        resman_.LoadResource(Texture, "CubeMap", filename.c_str());
 
     }
 
@@ -346,6 +354,14 @@ void Game::SetupScene(void) {
         CreateTrees();
     }
 
+    {
+    //sky
+    SceneNode* skyBox = new SceneNode("SkyBox", resman_.GetResource("SkyBox"), resman_.GetResource("SkyboxMaterial"), resman_.GetResource("CubeMap"));
+    skyBox->Scale(glm::vec3(camera_far_clip_distance_g)); // same dist as far cliping plane from the center of the box
+    scene_.skyBox_ = skyBox;
+    
+    }
+
     /*Dylans Game Objects*/ if (true) //this line is here so that this large section of code can be collasped
     {
         int num_instances = 5; // For loops
@@ -458,7 +474,7 @@ void Game::SetupScene(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    
     delete gui_;
-    gui_ = new Ui("StartScreen", resman_.GetResource("SimpleWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("Start"));
+    gui_ = new Ui("StartScreen", resman_.GetResource("SimpleWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("StartScreen"));
     gui_->Draw(&camera_);
     std::cout << "start" << std::endl;
     // Push buffer drawn in the background onto the display
@@ -483,6 +499,7 @@ void Game::MainLoop(void){
                 camera_.UpdateLightInfo(l->GetTransf() * glm::vec4(l->GetPosition(), 1.0), l->GetLightCol(), l->GetSpecPwr());
                 scene_.Update(delta_time);
                 player_.Update(delta_time);
+                scene_.skyBox_->SetPosition(player_.GetPosition());
 
                 if (!debugCamera_)
                 {
