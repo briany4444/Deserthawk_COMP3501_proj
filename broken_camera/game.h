@@ -108,6 +108,10 @@ namespace game {
             void createSandNadoZone();
             void generateTerrainFeatures(float x, float z);
 
+            //create diferent screens
+            void LoadScreen();
+            void StartScreen();
+
     }; // class Game
 
 } // namespace game

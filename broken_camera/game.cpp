@@ -110,22 +110,7 @@ void Game::InitView(void){
     
 
     // set loading screen
-    glClearColor(viewport_background_color_g[0], viewport_background_color_g[1], viewport_background_color_g[2], 0.0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
-    resman_.CreateWall("SimpleWall"); //UI and images
-
-    std::string filename = std::string(MATERIAL_DIRECTORY) + std::string("/SS_textured_material");
-    resman_.LoadResource(Material, "PlainTexMaterial", filename.c_str());
-
-    filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/loading.png");
-    resman_.LoadResource(Texture, "Loading", filename.c_str());
-
-    Ui* a = new Ui("LoadingScreen", resman_.GetResource("SimpleWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("Loading"));
-    a->Draw(&camera_);
-    
-    // Push buffer drawn in the background onto the display
-    glfwSwapBuffers(window_);
+    LoadScreen();
 }
 
 
@@ -164,6 +149,8 @@ void Game::SetupResources(void){
     resman_.CreateSphere("lightMesh", 0.5, 30, 30);
 
     resman_.CreateCubeInverted("SkyBox");
+
+    resman_.CreateWall("SimpleWall"); //UI and images
 
     
 
@@ -370,25 +357,9 @@ void Game::SetupScene(void) {
     
     }
 
-    ////// PARTICLE SYSTEMS ////// 
-    {
-    
-
-
-
-    }
-
     //game_state_ = inProgress;
     // exit loading screen into start screen
-    glClearColor(viewport_background_color_g[0], viewport_background_color_g[1], viewport_background_color_g[2], 0.0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   
-    
-    Ui* a = new Ui("StartScreen", resman_.GetResource("SimpleWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("StartScreen"));
-    a->Draw(&camera_);
-    std::cout << "start" << std::endl;
-    // Push buffer drawn in the background onto the display
-    glfwSwapBuffers(window_);
+    StartScreen();
 }
 
 
@@ -454,7 +425,11 @@ void Game::MainLoop(void){
             scene_.Draw(&camera_);
             scene_.AlphaBlending(true);
             scene_.Draw(&camera_,SceneGraph::EFFECTS, false);
+            
+
             gui_->Draw(&camera_);
+            //glfwSwapBuffers(window_);
+            
             scene_.AlphaBlending(false);
         }
         else {
@@ -912,14 +887,18 @@ void Game::createOasis() {
     }   
 
     // place fireflies 
-    //game::SceneNode* fireflies = new SceneNode("Fireflies", resman_.GetResource("SphereParticles"), resman_.GetResource("PS-FirFlyMaterial"), resman_.GetResource("sparkle"));
-    //fireflies->SetPosition(glm::vec3(386,75,1099));
-    //scene_.AddNode(fireflies, SceneGraph::EFFECTS);
+    /*game::SceneNode* fireflies = new SceneNode("Fireflies", resman_.GetResource("SphereParticles"), resman_.GetResource("PS-FirFlyMaterial"), resman_.GetResource("sparkle"));
+    fireflies->SetPosition(glm::vec3(386,75,1099));
+    fireflies->SetScale(glm::vec3(1000));
+    scene_.AddNode(fireflies, SceneGraph::EFFECTS);*/
 }
 
 void Game::createSandNadoZone() {
     // place several sand nados 
-
+    game::SceneNode* fireflies = new SceneNode("SandNato1", resman_.GetResource("SphereParticles"), resman_.GetResource("PS-SandTornatoMaterial"), resman_.GetResource("SandParticle"));
+    fireflies->SetPosition(glm::vec3(386, 75, 1099));
+    fireflies->SetScale(glm::vec3(1000));
+    scene_.AddNode(fireflies, SceneGraph::EFFECTS);
 }
 
 void Game::generateTerrainFeatures(float x, float z) {
@@ -960,6 +939,46 @@ void Game::generateTerrainFeatures(float x, float z) {
             numFails++;
         }
     }
+}
+
+void Game::LoadScreen()
+{
+    glClearColor(viewport_background_color_g[0], viewport_background_color_g[1], viewport_background_color_g[2], 0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glfwSwapBuffers(window_);
+
+    glClearColor(viewport_background_color_g[0], viewport_background_color_g[1], viewport_background_color_g[2], 0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    resman_.CreateWall("SWall"); //UI and images
+
+    std::string filename = std::string(MATERIAL_DIRECTORY) + std::string("/SS_textured_material");
+    resman_.LoadResource(Material, "PlainTexMaterial", filename.c_str());
+
+    filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/loading.png");
+    resman_.LoadResource(Texture, "Loading", filename.c_str());
+
+    Ui* a = new Ui("LoadingScreen", resman_.GetResource("SWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("Loading"));
+    a->Draw(&camera_);
+
+    // Push buffer drawn in the background onto the display
+    glfwSwapBuffers(window_);
+}
+
+void Game::StartScreen()
+{
+    glClearColor(viewport_background_color_g[0], viewport_background_color_g[1], viewport_background_color_g[2], 0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //resman_.CreateWall("SimpleWall"); //UI and images
+
+    
+    
+    Ui* dead = new Ui("StartScreen", resman_.GetResource("SimpleWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("Start"));
+    Ui* a = new Ui("StartScreen", resman_.GetResource("SimpleWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("Start"));
+    a->Draw(&camera_);
+    
+    // Push buffer drawn in the background onto the display
+    glfwSwapBuffers(window_);
 }
 
 void Game::CreateWorld() {

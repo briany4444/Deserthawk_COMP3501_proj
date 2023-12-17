@@ -377,6 +377,7 @@ namespace game {
         }
 
         if (geometry_program) {
+            std::cout << "GP worjking" << std::endl;
             // Create a shader from the geometry program source code
             gs = glCreateShader(GL_GEOMETRY_SHADER);
             const char* source_gp = gp.c_str();
