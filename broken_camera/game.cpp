@@ -141,29 +141,22 @@ void Game::SetupResources(void){
     // Setup drawing to texture
     scene_.SetupDrawToTexture();
 
-    // Create a simple object to represent the asteroids
-    resman_.CreateCone("Asteroid", 2.0, 1.0, 10, 10);
-    resman_.CreateTorus("Target", 1);
-    resman_.CreateCone("Beacon", 2, 2, 30, 30);
-    resman_.CreateCylinder("Enemy");
-    resman_.CreateSphere("Powerup");
-    resman_.CreateSphereParticles("SphereParticles", 250);
-
     // Create a simple object to represent the tree
     {
-    resman_.CreateCone("SimpleObject", 2.0, 1.0, 10, 10);
-    resman_.CreateCylinder("tree", 20, 2, 100, 100);
-    resman_.CreateCylinder("branch", 5.0, 0.5, 100, 100);
-    resman_.CreateCone("thorn", 0.5, 0.2, 90, 90);
+        resman_.CreateCone("SimpleObject", 2.0, 1.0, 10, 10);
+        resman_.CreateCylinder("tree", 20, 2, 100, 100);
+        resman_.CreateCylinder("branch", 5.0, 0.5, 100, 100);
+        resman_.CreateCone("thorn", 0.5, 0.2, 90, 90);
     }
 
     resman_.CreateSphere("lightMesh", 0.5, 30, 30);
-
     resman_.CreateCubeInverted("SkyBox");
+    resman_.CreateTorus("Ring", 1);
+    resman_.CreateSphere("Orb");
+    resman_.CreateSphereParticles("SphereParticles", 250);
 
     
 
-  
     std::string filename;
 
     ////// MATERIALS //////
@@ -194,11 +187,11 @@ void Game::SetupResources(void){
 
         /// Particle Systems ///
 
-        filename = std::string(MATERIAL_DIRECTORY) + std::string("/Sand-nato");
-        resman_.LoadResource(Material, "PS-SandTornatoMaterial", filename.c_str());
+        // filename = std::string(MATERIAL_DIRECTORY) + std::string("/Sand-nato");
+        // resman_.LoadResource(Material, "PS-SandTornatoMaterial", filename.c_str());
 
-        filename = std::string(MATERIAL_DIRECTORY) + std::string("/firefly_particle");
-        resman_.LoadResource(Material, "PS-FirFlyMaterial", filename.c_str());
+        // filename = std::string(MATERIAL_DIRECTORY) + std::string("/firefly_particle");
+        // resman_.LoadResource(Material, "PS-FirFlyMaterial", filename.c_str());
 
         
     }
@@ -333,7 +326,7 @@ void Game::SetupScene(void) {
     scene_.SetBackgroundColor(viewport_background_color_g);
     
     //player
-    SceneNode* playerShape = new SceneNode("PlayerShape", resman_.GetResource("Powerup"), resman_.GetResource("ObjectMaterial"));
+    SceneNode* playerShape = new SceneNode("PlayerShape", resman_.GetResource("Orb"), resman_.GetResource("ObjectMaterial"));
     player_.SetShape(playerShape);
     player_.SetPosition(glm::vec3(-370, 40, 420));
     scene_.AddNode(playerShape);
@@ -352,6 +345,11 @@ void Game::SetupScene(void) {
 
     // create world   
     CreateWorld();
+
+    {
+        Orb* orb = createOrbInstance("Orb1", "Orb", "RandomTexMaterial", "Texture1");
+        orb->SetPosition(glm::vec3(-370, 40, 452));
+    }
 
     {
     //sky
@@ -659,7 +657,6 @@ void Game::DebugCameraMovement()
 
 
 
-
 SceneNode* Game::CreateInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name, std::string normal_name) {
 
     Resource* geom = resman_.GetResource(object_name);
@@ -694,17 +691,65 @@ SceneNode* Game::CreateInstance(std::string entity_name, std::string object_name
 
 void Game::HandleCollisions() {
 
+    // terrain collisions
     if (terrain_->getDistToGround(player_.GetPosition()) - player_.GetRadius() < 0) {
         game_state_ = lost;
         return;
     }
 
+    // world Object collisions
     std::vector<SceneNode*> collidables = scene_.GetCollidables();
     for (int i = 0; i < collidables.size(); ) {
         SceneNode* curr_node = collidables[i];
         float node_dist = glm::length(curr_node->GetPosition() - player_.GetPosition());
+        if (player_.GetRadius() + curr_node->GetRadius() > node_dist) {
+
+            // handles Player - Power Up Collision
+            if (curr_node->GetType() == "Orb") {
+                orbs_left_ -= 1;
+                if (orbs_left_ == 0) {
+                    std::cout << "You Have WON!" << std::endl;
+                    game_state_ = won;
+                }
+                std::cout << "You collected an Orb!" << std::endl;
+                scene_.RemoveCollidable(curr_node->GetName());
+            }
+        }
+        i++;
     }
-  
+ 
+}
+
+
+Orb* Game::createOrbInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name) {
+
+    Resource* geom = resman_.GetResource(object_name);
+    if (!geom) {
+        throw(GameException(std::string("Could not find resource \"") + object_name + std::string("\"")));
+    }
+
+    Resource* mat = resman_.GetResource(material_name);
+    if (!mat) {
+        throw(GameException(std::string("Could not find resource \"") + material_name + std::string("\"")));
+    }
+
+    Resource* tex = NULL;
+    if (texture_name != "") {
+        tex = resman_.GetResource(texture_name);
+        if (!tex) {
+            throw(GameException(std::string("Could not find resource \"") + material_name + std::string("\"")));
+        }
+    }
+
+    Orb* orb = new Orb(entity_name, geom, mat, tex);
+    scene_.AddNode(orb);
+    orbs_left_++;
+
+    orb->AddChild("Ring", resman_.GetResource("Ring"), resman_.GetResource("RandomTexMaterial"), resman_.GetResource("Texture1"));
+    orb->AddChild("Ring2", resman_.GetResource("Ring"), resman_.GetResource("RandomTexMaterial"), resman_.GetResource("Texture1"));
+    orb->AddChild("Ring3", resman_.GetResource("Ring"), resman_.GetResource("RandomTexMaterial"), resman_.GetResource("Texture1"));
+
+    return orb;
 
 }
 
@@ -936,6 +981,7 @@ void Game::generateTerrainFeatures(float x, float z) {
 }
 
 void Game::CreateWorld() {
+    orbs_left_ = 0;
     createTerrain("/textures/T5.png", glm::vec3(0, -30, 790));
     createObeliskZone();
     createVillage();
