@@ -665,41 +665,7 @@ void Game::DebugCameraMovement()
 }
 
 
-void Game::CreateShips() {
-    // Create a number of ship instances
-    for (int i = 0; i < 4; i++) {
-        // Create instance name
-        std::stringstream ss;
-        ss << i;
-        std::string index = ss.str();
-        std::string name = "Enemy" + index;
 
-        // Create ship instance
-        Spaceship* ship = CreateShipInstance(name, "Enemy", "ObjectMaterial");
-        ship->SetPosition(glm::vec3(-3, 0, 800 - (i+1) * 40));
-        ship->SetScale(glm::vec3(0.5, 0.5, 0.5));
-        ship->SetOrientation(glm::normalize(glm::angleAxis(glm::pi<float>() * ((float)rand() / RAND_MAX), glm::vec3(((float)rand() / RAND_MAX), ((float)rand() / RAND_MAX), ((float)rand() / RAND_MAX)))));
-    }
-}
-
-
-Spaceship* Game::CreateShipInstance(std::string entity_name, std::string object_name, std::string material_name) {
-    // Get resources
-    Resource* geom = resman_.GetResource(object_name);
-    if (!geom) {
-        throw(GameException(std::string("Could not find resource \"") + object_name + std::string("\"")));
-    }
-
-    Resource* mat = resman_.GetResource(material_name);
-    if (!mat) {
-        throw(GameException(std::string("Could not find resource \"") + material_name + std::string("\"")));
-    }
-
-    // Create ship
-    Spaceship* ship = new Spaceship(&player_, entity_name, geom, mat);
-    scene_.AddNode(ship);
-    return ship;
-}
 
 SceneNode* Game::CreateInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name, std::string normal_name) {
 
@@ -733,93 +699,6 @@ SceneNode* Game::CreateInstance(std::string entity_name, std::string object_name
     return scn;
 }
 
-
-
-Asteroid *Game::CreateAsteroidInstance(std::string entity_name, std::string object_name, std::string material_name){
-
-    // Get resources
-    Resource *geom = resman_.GetResource(object_name);
-    if (!geom){
-        throw(GameException(std::string("Could not find resource \"")+object_name+std::string("\"")));
-    }
-
-    Resource *mat = resman_.GetResource(material_name);
-    if (!mat){
-        throw(GameException(std::string("Could not find resource \"")+material_name+std::string("\"")));
-    }
-
-    // Create asteroid instance
-    Asteroid *ast = new Asteroid(entity_name, geom, mat);
-    scene_.AddNode(ast);
-    return ast;
-}
-
-
-void Game::CreateAsteroidField(int num_asteroids){
-
-    // Create a number of asteroid instances
-    for (int i = 0; i < num_asteroids; i++){
-        // Create instance name
-        std::stringstream ss;
-        ss << i;
-        std::string index = ss.str();
-        std::string name = "AsteroidInstance" + index;
-
-        // Create asteroid instance
-        Asteroid *ast = CreateAsteroidInstance(name, "Asteroid", "ObjectMaterial");
-
-        // Set attributes of asteroid: random position, orientation, and
-        // angular momentum
-        ast->SetPosition(glm::vec3(-300.0 + 600.0*((float) rand() / RAND_MAX), -300.0 + 600.0*((float) rand() / RAND_MAX), 600.0*((float) rand() / RAND_MAX)));
-        ast->SetOrientation(glm::normalize(glm::angleAxis(glm::pi<float>()*((float) rand() / RAND_MAX), glm::vec3(((float) rand() / RAND_MAX), ((float) rand() / RAND_MAX), ((float) rand() / RAND_MAX)))));
-        ast->SetAngM(glm::normalize(glm::angleAxis(0.05f*glm::pi<float>()*((float) rand() / RAND_MAX), glm::vec3(((float) rand() / RAND_MAX), ((float) rand() / RAND_MAX), ((float) rand() / RAND_MAX)))));
-    }
-}
-
-Powerup* Game::CreatePowerupInstance(std::string entity_name, std::string object_name, std::string material_name) {
-
-    // Get resources
-    Resource* geom = resman_.GetResource(object_name);
-    if (!geom) {
-        throw(GameException(std::string("Could not find resource \"") + object_name + std::string("\"")));
-    }
-
-    Resource* mat = resman_.GetResource(material_name);
-    if (!mat) {
-        throw(GameException(std::string("Could not find resource \"") + material_name + std::string("\"")));
-    }
-
-    // Create Powerup instance
-    Powerup* pu = new Powerup(entity_name, geom, mat);
-    scene_.AddNode(pu);
-    return pu;
-}
-
-void Game::CreatePowerups() {
-
-    // init the target Powerup
-    Powerup* close_pu = CreatePowerupInstance("Powerup0", "Powerup", "ObjectMaterial");
-    close_pu->SetPosition(glm::vec3(0, 0, 795));
-    close_pu->SetScale(glm::vec3(0.5, 0.5, 0.5));
-    close_pu->SetOrientation(glm::normalize(glm::angleAxis(glm::pi<float>() * ((float)rand() / RAND_MAX), glm::vec3(((float)rand() / RAND_MAX), ((float)rand() / RAND_MAX), ((float)rand() / RAND_MAX)))));
-
-    for (int i = 0; i < 4; i++) {
-
-        // Create instance name
-        std::stringstream ss;
-        ss << i+1;
-        std::string index = ss.str();
-        std::string name = "Powerup" + index;
-
-        // Create asteroid instance
-        Powerup* pu = CreatePowerupInstance(name, "Powerup", "ObjectMaterial");
-        pu->SetScale(glm::vec3(0.75, 0.75, 0.75));
-        pu->SetPosition(glm::vec3 (0, 0, 800 - (i+1) * 40));
-        pu->SetOrientation(glm::normalize(glm::angleAxis(glm::pi<float>() * ((float)rand() / RAND_MAX), glm::vec3(((float)rand() / RAND_MAX), ((float)rand() / RAND_MAX), ((float)rand() / RAND_MAX)))));
-    }
-}
-
-
 void Game::HandleCollisions() {
 
     if (terrain_->getDistToGround(player_.GetPosition()) - player_.GetRadius() < 0) {
@@ -831,35 +710,8 @@ void Game::HandleCollisions() {
     for (int i = 0; i < collidables.size(); ) {
         SceneNode* curr_node = collidables[i];
         float node_dist = glm::length(curr_node->GetPosition() - player_.GetPosition());
-
-        // if collision occurred
-        if (player_.GetRadius() + curr_node->GetRadius() > node_dist) {
-            // handles Player - Beacon collision
-            if (curr_node->GetName() == "targetBeacon") {
-                scene_.RemoveCollidable(racetrack_.GetNextName());
-                std::cout << "You reached a beacon!" << std::endl;
-                if (racetrack_.UpdateRaceTrack()) {
-                    std::cout << "You reached all beacons in the correct order - You Won!" << std::endl;
-                    //game_state_ = won;
-                    break;
-                }
-                continue;
-
-            // handles Player - Enemy Collision
-            } else if (curr_node->GetType() == "Spaceship") {
-                game_state_ = lost;
-                std::cout << "Collided with the enemy cylinder-ships - You lost!" << std::endl;
-                break;
-
-            // handles Player - Power Up Collision
-            } else if (curr_node->GetType() == "Powerup") {
-                player_.AddMaxSpeed(4.0f);
-                std::cout << "You collected a powerup! Max speed increased by 4 units" << std::endl;
-                scene_.RemoveCollidable(curr_node->GetName());
-            }
-        }
-        i++;
     }
+  
 
 }
 
