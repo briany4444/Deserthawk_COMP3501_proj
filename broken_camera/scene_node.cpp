@@ -226,6 +226,13 @@ void SceneNode::Update(float d){
     }
 }
 
+void SceneNode::AddChild(std::string f, const Resource* geom, const Resource* mat, const Resource* tex) { 
+
+    SceneNode* scn = new SceneNode(f, geom, mat, tex);
+    children_.push_back(scn);
+    scn->parent_ = this;
+}
+
 
 void SceneNode::SetupShader(GLuint program) {
 

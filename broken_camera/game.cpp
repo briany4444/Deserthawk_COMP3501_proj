@@ -141,19 +141,19 @@ void Game::SetupResources(void){
     // Setup drawing to texture
     scene_.SetupDrawToTexture();
 
-    // Create a simple object to represent the asteroids
-    resman_.CreateTorus("Target", 1);
-    resman_.CreateCone("Beacon", 2, 2, 30, 30);
-    resman_.CreateCylinder("Enemy");
-    resman_.CreateSphere("Orb");
-    resman_.CreateSphereParticles("SphereParticles", 250);
+    // orbs
+    {
+        resman_.CreateTorus("Ring", 1);
+        resman_.CreateSphere("Orb");
+        resman_.CreateSphereParticles("SphereParticles", 250);
+    }
 
     // Create a simple object to represent the tree
     {
-    resman_.CreateCone("SimpleObject", 2.0, 1.0, 10, 10);
-    resman_.CreateCylinder("tree", 20, 2, 100, 100);
-    resman_.CreateCylinder("branch", 5.0, 0.5, 100, 100);
-    resman_.CreateCone("thorn", 0.5, 0.2, 90, 90);
+        resman_.CreateCone("SimpleObject", 2.0, 1.0, 10, 10);
+        resman_.CreateCylinder("tree", 20, 2, 100, 100);
+        resman_.CreateCylinder("branch", 5.0, 0.5, 100, 100);
+        resman_.CreateCone("thorn", 0.5, 0.2, 90, 90);
     }
 
     resman_.CreateSphere("lightMesh", 0.5, 30, 30);
@@ -348,8 +348,10 @@ void Game::SetupScene(void) {
 
     // orbs
     {
+        orbs_left_ = 0;
         Orb* orb = createOrbInstance("Orb1", "Orb", "ObjectMaterial", "Texture1");
         orb->SetPosition(glm::vec3(0, 0, 775));
+        orb->AddChild("Ring1", resman_.GetResource("Ring"), resman_.GetResource("ObjectMaterial"), resman_.GetResource("Texture1"));
     }
 
     /*Dylans Game Objects*/ if (true) //this line is here so that this large section of code can be collasped
@@ -770,7 +772,7 @@ void Game::HandleCollisions() {
                 if (orbs_left_ == 0) {
                     game_state_ = won;
                 }
-                std::cout << "You collected a powerup! Max speed increased by 4 units" << std::endl;
+                std::cout << "You collected an Orb!" << std::endl;
                 scene_.RemoveCollidable(curr_node->GetName());
             }
         }
