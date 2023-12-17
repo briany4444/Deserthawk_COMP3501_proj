@@ -365,30 +365,6 @@ void Game::SetupScene(void) {
     {
         int num_instances = 5; // For loops       
 
-        //Palm Tree
-        game::SceneNode* palmTreeTrunk = CreateInstance("PalmTreeTrunk", "PalmTreeTrunkMesh", "TextureNormalMaterial", "PalmTreeTrunkTexture", "PalmTreeNormal");
-        palmTreeTrunk->Translate(glm::vec3(0.0, -18.0, 760.0));
-        game::SceneNode* palmTreeHead = CreateInstance("PalmTreeHead", "PalmTreeHeadMesh", "TextureNormalMaterial", "PalmTreeHeadTexture", "PalmTreeNormal");
-        palmTreeHead->SetParent(palmTreeTrunk);
-        for (int i = 0; i < 14; i++)
-        {
-            std::stringstream ss;
-            ss << i;
-            std::string index = ss.str();
-
-            std::string name = "Leaf" + index;
-            game::SceneNode* newLeaf = CreateInstance(name, "PalmTreeLeafMesh", "TextureNormalMaterial", "PalmTreeLeafTexture", "PalmTreeNormal");
-            newLeaf->Translate(glm::vec3(0.0, 6.0, 0.0));
-            if (i > 7) newLeaf->Rotate(glm::angleAxis(0.5f + 0.04f * (float)i, glm::vec3(1, 0, 0)));
-            newLeaf->Rotate(glm::angleAxis((float)i,glm::vec3(0,1,0)));
-            newLeaf->SetParent(palmTreeHead);
-            
-        }
-
-        //Oasis Plant
-        game::SceneNode* oasisPlant = CreateInstance("OasisPlant", "OasisPlantMesh", "TextureNormalMaterial", "OasisPlantTexture", "OasisPlantNormal");
-        oasisPlant->Translate(glm::vec3(0.0, -18.0, 720.0));
-
         //Tumbleweeds
         num_instances = 5;
         for (int i = 0; i < num_instances; i++)
@@ -578,7 +554,7 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
             std::cout << "x:" << x << std::endl;
             std::cout << "y:" << y << std::endl;
             std::cout << "z:" << z << std::endl;
-            std::cout << "t-height:" << game->terrain_->getTerrainY(glm::vec3(x,0,z)) << std::endl;
+            std::cout << "flower_positions.push_back(glm::vec3(" << x << "," << 0 << "," << z << "));" << std::endl;
         }
     }
     else if (game->game_state_ == init && key == GLFW_KEY_SPACE) {
@@ -830,7 +806,7 @@ void Game::createObeliskZone() {
 }
 
 void Game::createVillage() {
-    // pace several houses with some dead bushes. tumbleweed, and a spiky tree thing
+    // pace several houses with some dead bushes and a spiky tree thing
     std::vector<glm::vec3> x_z_positions;
     x_z_positions.push_back(glm::vec3(-388, -0.5, 1153));
     x_z_positions.push_back(glm::vec3(-485, -0.5, 1088));
@@ -867,6 +843,10 @@ void Game::createVillage() {
     bush_positions.push_back(glm::vec3(-432, -0.5, 1164));
     bush_positions.push_back(glm::vec3(-466, -0.5, 1239));
     bush_positions.push_back(glm::vec3(-432, -0.5, 1164));
+    bush_positions.push_back(glm::vec3(-386, -0.5, 1223));
+    bush_positions.push_back(glm::vec3(-329, -0.5, 1268));
+    bush_positions.push_back(glm::vec3(-198, -0.5, 1251));
+    bush_positions.push_back(glm::vec3(-276, -0.5, 1212));
 
 
     game::SceneNode* bush;
@@ -879,8 +859,71 @@ void Game::createVillage() {
     }
 }
 
+SceneNode* Game::makePalmTree(int treeNum, glm::vec3 pos) {
+    //Palm Tree
+    game::SceneNode* palmTreeTrunk = CreateInstance("PalmTreeTrunk" + treeNum, "PalmTreeTrunkMesh", "TextureNormalMaterial", "PalmTreeTrunkTexture", "PalmTreeNormal");
+    palmTreeTrunk->SetScale(glm::vec3(8,8,8));
+    game::SceneNode* palmTreeHead = CreateInstance("PalmTreeHead" + treeNum, "PalmTreeHeadMesh", "TextureNormalMaterial", "PalmTreeHeadTexture", "PalmTreeNormal");
+    palmTreeHead->SetScale(glm::vec3(8, 8, 8));
+    palmTreeHead->SetParent(palmTreeTrunk);
+
+    for (int i = 0; i < 14; i++)
+    {
+        std::string name = treeNum + "Leaf" + i;
+        game::SceneNode* newLeaf = CreateInstance(name, "PalmTreeLeafMesh", "TextureNormalMaterial", "PalmTreeLeafTexture", "PalmTreeNormal");
+        newLeaf->SetScale(glm::vec3(8, 8, 8));
+        newLeaf->Translate(glm::vec3(0.0, 48.0, 0.0));
+        if (i > 7) newLeaf->Rotate(glm::angleAxis(0.5f + 0.04f * (float)i, glm::vec3(1, 0, 0)));
+        newLeaf->Rotate(glm::angleAxis((float)i, glm::vec3(0, 1, 0)));
+        newLeaf->SetParent(palmTreeHead);
+    }
+
+    return palmTreeTrunk;
+}
+
 void Game::createOasis() {
     // place pond with palm trees, flowers, and fireflies
+
+    //palm trees
+    std::vector<glm::vec3> pTree_positions;
+    pTree_positions.push_back(glm::vec3(117, 0, 1288));
+    pTree_positions.push_back(glm::vec3(249, 0, 1299));
+    pTree_positions.push_back(glm::vec3(326, 0, 1283));
+    pTree_positions.push_back(glm::vec3(413, 0, 1246));
+    pTree_positions.push_back(glm::vec3(453, 0, 1196));
+    pTree_positions.push_back(glm::vec3(480, 0, 1047));
+    pTree_positions.push_back(glm::vec3(473, 0, 994));
+    pTree_positions.push_back(glm::vec3(433, 0, 962));
+    pTree_positions.push_back(glm::vec3(483, 0, 1120));
+    pTree_positions.push_back(glm::vec3(172, 0, 1292));
+
+    
+    game::SceneNode* pTree;
+    for (int i = 0; i < pTree_positions.size(); ++i) {
+        pTree = makePalmTree(i, pTree_positions[i]);
+        glm::vec3 pTreePos = pTree_positions[i];
+        PlaceObject(pTree, pTreePos.x, pTreePos.y, pTreePos.z);
+    }
+
+    // flowers
+    std::vector<glm::vec3> flower_positions;
+    flower_positions.push_back(glm::vec3(446, 0, 1232));
+    flower_positions.push_back(glm::vec3(468.885, 0, 1164.15));
+    flower_positions.push_back(glm::vec3(479.159, 0, 1095.66));
+    flower_positions.push_back(glm::vec3(464.649, 0, 1032.86));    
+    flower_positions.push_back(glm::vec3(372.454, 0, 1241.44));   
+    flower_positions.push_back(glm::vec3(304.66, 0, 1277.98));
+    flower_positions.push_back(glm::vec3(225.744, 0, 1285.89));
+    flower_positions.push_back(glm::vec3(419.017, 0, 989.477));
+
+    game::SceneNode* oasisPlant;
+    for (int j = 0; j < flower_positions.size(); ++j) {
+        oasisPlant = CreateInstance("OasisPlant", "OasisPlantMesh", "TextureNormalMaterial", "OasisPlantTexture", "OasisPlantNormal");
+        glm::vec3 FlowerPos = flower_positions[j];
+        oasisPlant->SetScale(glm::vec3(18, 18, 18));
+        oasisPlant->Rotate(glm::angleAxis(3 * glm::pi<float>() / 4, glm::vec3(0, 1, 0)));
+        PlaceObject(oasisPlant, FlowerPos.x, FlowerPos.y, FlowerPos.z);
+    }    
 }
 
 void Game::createSandNadoZone() {
