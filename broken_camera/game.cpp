@@ -895,10 +895,11 @@ void Game::createOasis() {
 
 void Game::createSandNadoZone() {
     // place several sand nados 
-    game::SceneNode* fireflies = new SceneNode("SandNato1", resman_.GetResource("SphereParticles"), resman_.GetResource("PS-SandTornatoMaterial"), resman_.GetResource("SandParticle"));
-    fireflies->SetPosition(glm::vec3(386, 75, 1099));
-    fireflies->SetScale(glm::vec3(1000));
-    scene_.AddNode(fireflies, SceneGraph::EFFECTS);
+    game::SceneNode* nado = new SceneNode("SandNato1", resman_.GetResource("SphereParticles"), resman_.GetResource("PS-SandTornatoMaterial"), resman_.GetResource("SandParticle"));
+    glm::vec3 pos = glm::vec3(359.867, 0, 477.787);
+    PlaceObject(nado, pos.x, 0, pos.z);
+    nado->SetScale(glm::vec3(1000));
+    scene_.AddNode(nado, SceneGraph::EFFECTS);
 }
 
 void Game::generateTerrainFeatures(float x, float z) {
