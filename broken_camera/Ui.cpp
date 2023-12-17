@@ -1,7 +1,7 @@
 #include "Ui.h"
 
 
-game::Ui::Ui(const std::string name, const Resource* wallGeometry, const Resource* material, const Resource* texture) : SceneNode(name, wallGeometry, material, texture) {
+game::Ui::Ui(const std::string name, const Resource* wallGeometry, const Resource* material, const Resource* texture) : SceneNode(name, wallGeometry, material, texture, NULL) {
 	num_collected_ = 0;
 	//height_ = 600;
 	//width_ = 800;
@@ -9,6 +9,7 @@ game::Ui::Ui(const std::string name, const Resource* wallGeometry, const Resourc
 
 game::Ui::~Ui()
 {
+	
 }
 
 void game::Ui::IncrementCollected(void) {

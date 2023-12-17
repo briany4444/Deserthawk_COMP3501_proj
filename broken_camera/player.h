@@ -2,7 +2,6 @@
 #define PLAYER_H_
 
 #define GLEW_STATIC
-#define INIT_MAX_SPEED 1.9
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -37,6 +36,10 @@ namespace game {
             void Accelerate(float);
             void Decelerate(float);
 
+            void MoveForward();
+            void MoveBackward();
+            void MoveStop();
+
             // Get relative attributes of Player
             glm::vec3 GetForward(void) const;
             glm::vec3 GetSide(void) const;
@@ -66,7 +69,7 @@ namespace game {
             double speed_ = 0.0f;  // Current Speed
             float accel_magnitude = 4.0f;
             float radius_ = 1.0f;
-            float max_speed_ = INIT_MAX_SPEED;
+            float max_speed_ = 10;
 
             
 

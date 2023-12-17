@@ -37,14 +37,16 @@ SceneNode::SceneNode(const std::string name, const Resource *geometry, const Res
     // Set texture
     if (texture) {
         texture_ = texture->GetResource();
+        std::cout << "aaaaahhhhhhhhhhh" << std::endl;
     }
     else {
         texture_ = 0;
     }
 
     // Set normal_map
-    if (normal_map) {
+    if (normal_map != NULL) {
         normal_map_ = normal_map->GetResource();
+        std::cout << "blah" << std::endl;
     }
     else {
         normal_map_ = 0;
@@ -61,6 +63,7 @@ SceneNode::SceneNode(const std::string name, const Resource *geometry, const Res
 
 
 SceneNode::~SceneNode(){
+
 }
 
 glm::mat4 SceneNode::GetTransf() {

@@ -20,7 +20,24 @@ Player::~Player(){
 
 void Player::Update(double delta_time) {
     position_ += float(speed_ * delta_time) * GetForward();
+    // player bounds
+    if (position_.x < -530) {
+        position_.x = -530;
+    }
+    else if (position_.x > 530) {
+        position_.x = 530;
+    }
 
+    if (position_.z > 1330) {
+        position_.z = 1330;
+    } else if (position_.z > 1330) {
+        position_.z = -250;
+    }
+
+    if (position_.y > 60) {
+        position_.y = 60;
+    }
+    speed_ = 0;
     //update shape
     shape_->SetPosition(position_);
     shape_->SetOrientation(orientation_);
@@ -82,6 +99,19 @@ void Player::Decelerate(float s) {
     }
 }
 
+void Player::MoveForward() {
+    speed_ = 10;
+}
+
+void Player::MoveBackward(){
+    speed_ = -10;
+}
+
+void Player::MoveStop()
+{
+    max_speed_ = 0;
+}
+
 void Player::AddMaxSpeed(float s) {
     max_speed_ += s;
 }
@@ -116,7 +146,7 @@ void Player::Pitch(float angle){
 
 void Player::Yaw(float angle){
 
-    glm::quat rotation = glm::angleAxis(angle, GetUp()); 
+    glm::quat rotation = glm::angleAxis(angle, glm::cross(forward_, side_));
     orientation_ = rotation * orientation_;
     orientation_ = glm::normalize(orientation_);
 }
@@ -124,7 +154,7 @@ void Player::Yaw(float angle){
 
 void Player::Roll(float angle){
 
-    glm::quat rotation = glm::angleAxis(angle, GetForward()); 
+    glm::quat rotation = glm::angleAxis(angle, forward_); 
     orientation_ = rotation * orientation_; // update the orientation
     orientation_ = glm::normalize(orientation_);
 }

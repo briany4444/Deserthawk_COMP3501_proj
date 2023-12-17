@@ -35,7 +35,7 @@ namespace game {
     // Game application
     class Game {
 
-        enum game_state_t { won, lost, inProgress , init};
+        enum game_state_t { won, lost, inProgress , init, dead};
 
         public:
             // Constructor and destructor
