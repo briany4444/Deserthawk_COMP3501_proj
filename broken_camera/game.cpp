@@ -356,11 +356,6 @@ void Game::SetupScene(void) {
     CreateWorld();
 
     {
-        Orb* orb = createOrbInstance("Orb1", "Orb", "RandomTexMaterial", "Texture1");
-        orb->SetPosition(glm::vec3(-370, 40, 452));
-    }
-
-    {
     //sky
     SceneNode* skyBox = new SceneNode("SkyBox", resman_.GetResource("SkyBox"), resman_.GetResource("SkyboxMaterial"), resman_.GetResource("CubeMap"));
     skyBox->Scale(glm::vec3(camera_far_clip_distance_g*1.1)); // same dist as far cliping plane from the center of the box
@@ -538,7 +533,7 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
             std::cout << "x:" << x << std::endl;
             std::cout << "y:" << y << std::endl;
             std::cout << "z:" << z << std::endl;
-            std::cout << "positions.push_back(glm::vec3(" << x << "," << 0 << "," << z << "));" << std::endl;
+            std::cout << "orb_positions.push_back(glm::vec3(" << x << "," << y << "," << z << "));" << std::endl;
         }
     }
     else if (game->game_state_ == init && key == GLFW_KEY_SPACE) {
@@ -728,12 +723,18 @@ Orb* Game::createOrbInstance(std::string entity_name, std::string object_name, s
     }
 
     Orb* orb = new Orb(entity_name, geom, mat, tex);
+    orb->SetScale(glm::vec3(10, 10, 10));
     scene_.AddNode(orb);
     orbs_left_++;
 
     orb->AddChild("Ring", resman_.GetResource("Ring"), resman_.GetResource("RandomTexMaterial"), resman_.GetResource("Texture1"));
     orb->AddChild("Ring2", resman_.GetResource("Ring"), resman_.GetResource("RandomTexMaterial"), resman_.GetResource("Texture1"));
     orb->AddChild("Ring3", resman_.GetResource("Ring"), resman_.GetResource("RandomTexMaterial"), resman_.GetResource("Texture1"));
+
+    std::vector<SceneNode*> children = orb->GetChildren();
+    for (int i = 0; i < children.size(); ++i) {
+        children[i]->SetScale(glm::vec3(10, 10, 10));
+    }
 
     return orb;
 
@@ -1029,8 +1030,17 @@ void Game::CreateWorld() {
     }
 
     // place orbs
+    std::vector<glm::vec3> orb_positions;
+    orb_positions.push_back(glm::vec3(68.062, 64.7692, 808.75));
+    orb_positions.push_back(glm::vec3(-382.8, 46.6105, 1091.44));
+    orb_positions.push_back(glm::vec3(318.562, 71.4704, 1121.69));
+    orb_positions.push_back(glm::vec3(341.851, 68.7377, 467.923));
 
-
+    Orb* orb;
+    for (int j = 0; j < orb_positions.size(); ++j) {
+        orb = createOrbInstance("Orb" + j, "Orb", "RandomTexMaterial", "Texture1");
+        orb->SetPosition(glm::vec3(orb_positions[j].x, orb_positions[j].y, orb_positions[j].z));
+    }
 }
 
 
