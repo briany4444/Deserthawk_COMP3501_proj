@@ -27,6 +27,7 @@ namespace game {
             // Scene nodes to render
             std::vector<SceneNode *> node_;
             std::vector<SceneNode*> collidable_nodes_;
+            
 
             //Particle effect
             std::vector<SceneNode*> effects_;
@@ -46,6 +47,8 @@ namespace game {
 
         public:
 
+            SceneNode* skyBox_;
+            
             enum Options
             {
                 OBJ, EFFECTS

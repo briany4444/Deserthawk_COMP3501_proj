@@ -52,6 +52,9 @@ namespace game {
             void CreateCone(std::string object_name, float height = 1.0, float radius = 0.6, int num_samples_theta = 90, int num_samples_phi = 45);
             void CreateSphereParticles(std::string object_name, int num_particles = 500);
 
+            //skybox
+            void CreateCubeInverted(std::string object_name);
+
             void CreateWall(std::string object_name); // used for ui
             void CalculateNormalTan(GLfloat *vertices, int, int, int);
             void AverageNormalTan(GLfloat*, int, int, int);
