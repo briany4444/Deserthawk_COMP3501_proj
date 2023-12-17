@@ -13,7 +13,7 @@ namespace game {
 // They are written here as global variables, but ideally they should be loaded from a configuration file
 
 // Main window settings
-const std::string window_title_g = "A2 Race";
+const std::string window_title_g = "Final Project";
 const unsigned int window_width_g = 800;
 const unsigned int window_height_g = 600;
 const bool window_full_screen_g = false;
@@ -23,8 +23,8 @@ float camera_near_clip_distance_g = 0.01;
 float camera_far_clip_distance_g = 1000.0;
 float camera_fov_g = 60.0; // Field-of-view of Player (degrees)
 const glm::vec3 viewport_background_color_g(0, 0.0, 0.0);
-glm::vec3 camera_position_g(0.0, 0.0, 800.0);
-glm::vec3 camera_look_at_g(0.0, 0.0, 0.0);
+glm::vec3 camera_position_g(glm::vec3(-370, 40, 420));
+glm::vec3 camera_look_at_g(-51,67,800);
 glm::vec3 camera_up_g(0.0, 1.0, 0.0);
 static double last_time = 0;
 
@@ -141,19 +141,20 @@ void Game::SetupResources(void){
     // Setup drawing to texture
     scene_.SetupDrawToTexture();
 
-    // orbs
-    {
-        resman_.CreateTorus("Ring", 1);
-        resman_.CreateSphere("Orb");
-        resman_.CreateSphereParticles("SphereParticles", 250);
-    }
+    // Create a simple object to represent the asteroids
+    resman_.CreateCone("Asteroid", 2.0, 1.0, 10, 10);
+    resman_.CreateTorus("Target", 1);
+    resman_.CreateCone("Beacon", 2, 2, 30, 30);
+    resman_.CreateCylinder("Enemy");
+    resman_.CreateSphere("Powerup");
+    resman_.CreateSphereParticles("SphereParticles", 250);
 
     // Create a simple object to represent the tree
     {
-        resman_.CreateCone("SimpleObject", 2.0, 1.0, 10, 10);
-        resman_.CreateCylinder("tree", 20, 2, 100, 100);
-        resman_.CreateCylinder("branch", 5.0, 0.5, 100, 100);
-        resman_.CreateCone("thorn", 0.5, 0.2, 90, 90);
+    resman_.CreateCone("SimpleObject", 2.0, 1.0, 10, 10);
+    resman_.CreateCylinder("tree", 20, 2, 100, 100);
+    resman_.CreateCylinder("branch", 5.0, 0.5, 100, 100);
+    resman_.CreateCone("thorn", 0.5, 0.2, 90, 90);
     }
 
     resman_.CreateSphere("lightMesh", 0.5, 30, 30);
@@ -188,11 +189,11 @@ void Game::SetupResources(void){
 
         /// Particle Systems ///
 
-        // filename = std::string(MATERIAL_DIRECTORY) + std::string("/Sand-nato");
-        // resman_.LoadResource(Material, "PS-SandTornatoMaterial", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/Sand-nato");
+        resman_.LoadResource(Material, "PS-SandTornatoMaterial", filename.c_str());
 
-        // filename = std::string(MATERIAL_DIRECTORY) + std::string("/firefly_particle");
-        // resman_.LoadResource(Material, "PS-FirFlyMaterial", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/firefly_particle");
+        resman_.LoadResource(Material, "PS-FirFlyMaterial", filename.c_str());
 
         
     }
@@ -324,61 +325,29 @@ void Game::SetupScene(void) {
     scene_.SetBackgroundColor(viewport_background_color_g);
     
     //player
-    SceneNode* playerShape = new SceneNode("PlayerShape", resman_.GetResource("Orb"), resman_.GetResource("ObjectMaterial"));
+    SceneNode* playerShape = new SceneNode("PlayerShape", resman_.GetResource("Powerup"), resman_.GetResource("ObjectMaterial"));
     player_.SetShape(playerShape);
+    player_.SetPosition(glm::vec3(-370, 40, 420));
     scene_.AddNode(playerShape);
     
 
     // Create global light source
     {
         l = CreateLightInstance("light", "lightMesh", "RandomTexMaterial", "Texture1");
-        l->SetPosition(glm::vec3(0, 0, 800));
-        l->SetJointPos(glm::vec3(0, 0, 10));
-        l->SetOrbiting();
-        l->SetOrbitSpeed(0.5);
+        l->SetPosition(glm::vec3(0, 200, 500));
+        l->SetJointPos(glm::vec3(0, 0, 100));
+        //l->SetOrbiting();
+        //l->SetOrbitSpeed(1.0);
         l->SetOrbitAxis(glm::vec3(0, 1, 0));
+        l->SetScale(glm::vec3(5, 5, 5));
     }
 
-    // terrain
-    {
-        createTerrain("/textures/T5.png", glm::vec3(0, -30, 790));
-        CreateTrees();
-    }
-
-
-    // orbs
-    {
-        orbs_left_ = 0;
-        Orb* orb = createOrbInstance("Orb1", "Orb", "ObjectMaterial", "Texture1");
-        orb->SetPosition(glm::vec3(0, 0, 775));
-        orb->AddChild("Ring1", resman_.GetResource("Ring"), resman_.GetResource("ObjectMaterial"), resman_.GetResource("Texture1"));
-    }
+    // create world   
+    CreateWorld();
 
     /*Dylans Game Objects*/ if (true) //this line is here so that this large section of code can be collasped
     {
-        int num_instances = 5; // For loops
-
-        //Obelisk
-        game::SceneNode* obelisk = CreateInstance("Obelisk", "ObeliskMesh", "TextureNormalMaterial", "ObeliskTexture", "ObeliskNormal");
-        obelisk->Translate(glm::vec3(0.0, -18.0, 800.0));
-
-        //Watch Towers
-        num_instances = 5;
-        for (int i = 0; i < num_instances; i++)
-        {
-            std::stringstream ss;
-            ss << i;
-            std::string index = ss.str();
-
-            std::string name = "WatchTowerInstance" + index;
-            game::SceneNode* newWatchTower = CreateInstance(name, "WatchTowerBaseMesh", "TextureNormalMaterial", "WatchTowerBaseTexture", "WatchTowerBaseNormal");
-            newWatchTower->Translate(glm::vec3(0.0 + i * 5.0f, -18.0, 775.0));
-
-            name = "WatchEyeInstance" + index;
-            game::SceneNode* watchEye = CreateInstance("WatchEye", "WatchEyeMesh", "TextureNormalMaterial", "WatchEyeTexture", "WatchEyeNormal");
-            watchEye->Translate(glm::vec3(0.0 + i * 5.0f, -8.0, 775.0));
-        }
-
+        int num_instances = 5; // For loops       
 
         //Palm Tree
         game::SceneNode* palmTreeTrunk = CreateInstance("PalmTreeTrunk", "PalmTreeTrunkMesh", "TextureNormalMaterial", "PalmTreeTrunkTexture", "PalmTreeNormal");
@@ -399,36 +368,6 @@ void Game::SetupScene(void) {
             newLeaf->SetParent(palmTreeHead);
             
         }
-
-        //Dry Shrubs
-        num_instances = 5;
-        for (int i = 0; i < num_instances; i++)
-        {
-            std::stringstream ss;
-            ss << i;
-            std::string index = ss.str();
-
-            std::string name = "DryShrub" + index;
-            game::SceneNode* newDryShrub = CreateInstance("DryShrub", "DryShrubMesh", "TextureNormalMaterial", "DryShrubMeshTexture", "DryShrubMeshNormal");
-            newDryShrub->Translate(glm::vec3(0.0 + i * 5.0f, -18.0, 750.0));
-        }
-
-        //Trees
-        num_instances = 5;
-        for (int i = 0; i < num_instances; i++)
-        {
-            std::stringstream ss;
-            ss << i;
-            std::string index = ss.str();
-
-            std::string name = "Tree" + index;
-            game::SceneNode* newTree = CreateInstance("Tree", "TreeMesh", "TextureNormalMaterial", "TreeTexture", "TreeNormal");
-            newTree->Translate(glm::vec3(0.0 + i * 5.0f, -18.0, 740.0));
-        }
-
-        //Hut1
-        game::SceneNode* hut1 = CreateInstance("Hut1", "Hut1Mesh", "TextureNormalMaterial", "Hut1Texture", "Hut1Normal");
-        hut1->Translate(glm::vec3(0.0, -18.0, 730.0));
 
         //Oasis Plant
         game::SceneNode* oasisPlant = CreateInstance("OasisPlant", "OasisPlantMesh", "TextureNormalMaterial", "OasisPlantTexture", "OasisPlantNormal");
@@ -460,6 +399,7 @@ void Game::SetupScene(void) {
 
     }
 
+    //game_state_ = inProgress;
     // exit loading screen into start screen
     glClearColor(viewport_background_color_g[0], viewport_background_color_g[1], viewport_background_color_g[2], 0.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -470,7 +410,6 @@ void Game::SetupScene(void) {
     std::cout << "start" << std::endl;
     // Push buffer drawn in the background onto the display
     glfwSwapBuffers(window_);
-
 }
 
 
@@ -485,7 +424,8 @@ void Game::MainLoop(void){
             double current_time = glfwGetTime();
             double delta_time = current_time - last_time;
             if ((delta_time) > 0.05){
- 
+                glEnable(GL_CULL_FACE);       
+
                 camera_.UpdateLightInfo(l->GetTransf() * glm::vec4(l->GetPosition(), 1.0), l->GetLightCol(), l->GetSpecPwr());
                 scene_.Update(delta_time);
                 player_.Update(delta_time);
@@ -614,6 +554,15 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
         if (key == GLFW_KEY_H) {
             game->l->Translate(glm::vec3(0.0, -2.0, 0.0));
         }
+        if (key == GLFW_KEY_C) {
+            float x = game->camera_.GetPosition().x;
+            float y = game->camera_.GetPosition().y;
+            float z = game->camera_.GetPosition().z;
+            std::cout << "x:" << x << std::endl;
+            std::cout << "y:" << y << std::endl;
+            std::cout << "z:" << z << std::endl;
+            std::cout << "t-height:" << game->terrain_->getTerrainY(glm::vec3(x,0,z)) << std::endl;
+        }
     }
     else if (game->game_state_ == init && key == GLFW_KEY_SPACE) {
         game->game_state_ = inProgress;
@@ -716,6 +665,41 @@ void Game::DebugCameraMovement()
 }
 
 
+void Game::CreateShips() {
+    // Create a number of ship instances
+    for (int i = 0; i < 4; i++) {
+        // Create instance name
+        std::stringstream ss;
+        ss << i;
+        std::string index = ss.str();
+        std::string name = "Enemy" + index;
+
+        // Create ship instance
+        Spaceship* ship = CreateShipInstance(name, "Enemy", "ObjectMaterial");
+        ship->SetPosition(glm::vec3(-3, 0, 800 - (i+1) * 40));
+        ship->SetScale(glm::vec3(0.5, 0.5, 0.5));
+        ship->SetOrientation(glm::normalize(glm::angleAxis(glm::pi<float>() * ((float)rand() / RAND_MAX), glm::vec3(((float)rand() / RAND_MAX), ((float)rand() / RAND_MAX), ((float)rand() / RAND_MAX)))));
+    }
+}
+
+
+Spaceship* Game::CreateShipInstance(std::string entity_name, std::string object_name, std::string material_name) {
+    // Get resources
+    Resource* geom = resman_.GetResource(object_name);
+    if (!geom) {
+        throw(GameException(std::string("Could not find resource \"") + object_name + std::string("\"")));
+    }
+
+    Resource* mat = resman_.GetResource(material_name);
+    if (!mat) {
+        throw(GameException(std::string("Could not find resource \"") + material_name + std::string("\"")));
+    }
+
+    // Create ship
+    Spaceship* ship = new Spaceship(&player_, entity_name, geom, mat);
+    scene_.AddNode(ship);
+    return ship;
+}
 
 SceneNode* Game::CreateInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name, std::string normal_name) {
 
@@ -751,6 +735,91 @@ SceneNode* Game::CreateInstance(std::string entity_name, std::string object_name
 
 
 
+Asteroid *Game::CreateAsteroidInstance(std::string entity_name, std::string object_name, std::string material_name){
+
+    // Get resources
+    Resource *geom = resman_.GetResource(object_name);
+    if (!geom){
+        throw(GameException(std::string("Could not find resource \"")+object_name+std::string("\"")));
+    }
+
+    Resource *mat = resman_.GetResource(material_name);
+    if (!mat){
+        throw(GameException(std::string("Could not find resource \"")+material_name+std::string("\"")));
+    }
+
+    // Create asteroid instance
+    Asteroid *ast = new Asteroid(entity_name, geom, mat);
+    scene_.AddNode(ast);
+    return ast;
+}
+
+
+void Game::CreateAsteroidField(int num_asteroids){
+
+    // Create a number of asteroid instances
+    for (int i = 0; i < num_asteroids; i++){
+        // Create instance name
+        std::stringstream ss;
+        ss << i;
+        std::string index = ss.str();
+        std::string name = "AsteroidInstance" + index;
+
+        // Create asteroid instance
+        Asteroid *ast = CreateAsteroidInstance(name, "Asteroid", "ObjectMaterial");
+
+        // Set attributes of asteroid: random position, orientation, and
+        // angular momentum
+        ast->SetPosition(glm::vec3(-300.0 + 600.0*((float) rand() / RAND_MAX), -300.0 + 600.0*((float) rand() / RAND_MAX), 600.0*((float) rand() / RAND_MAX)));
+        ast->SetOrientation(glm::normalize(glm::angleAxis(glm::pi<float>()*((float) rand() / RAND_MAX), glm::vec3(((float) rand() / RAND_MAX), ((float) rand() / RAND_MAX), ((float) rand() / RAND_MAX)))));
+        ast->SetAngM(glm::normalize(glm::angleAxis(0.05f*glm::pi<float>()*((float) rand() / RAND_MAX), glm::vec3(((float) rand() / RAND_MAX), ((float) rand() / RAND_MAX), ((float) rand() / RAND_MAX)))));
+    }
+}
+
+Powerup* Game::CreatePowerupInstance(std::string entity_name, std::string object_name, std::string material_name) {
+
+    // Get resources
+    Resource* geom = resman_.GetResource(object_name);
+    if (!geom) {
+        throw(GameException(std::string("Could not find resource \"") + object_name + std::string("\"")));
+    }
+
+    Resource* mat = resman_.GetResource(material_name);
+    if (!mat) {
+        throw(GameException(std::string("Could not find resource \"") + material_name + std::string("\"")));
+    }
+
+    // Create Powerup instance
+    Powerup* pu = new Powerup(entity_name, geom, mat);
+    scene_.AddNode(pu);
+    return pu;
+}
+
+void Game::CreatePowerups() {
+
+    // init the target Powerup
+    Powerup* close_pu = CreatePowerupInstance("Powerup0", "Powerup", "ObjectMaterial");
+    close_pu->SetPosition(glm::vec3(0, 0, 795));
+    close_pu->SetScale(glm::vec3(0.5, 0.5, 0.5));
+    close_pu->SetOrientation(glm::normalize(glm::angleAxis(glm::pi<float>() * ((float)rand() / RAND_MAX), glm::vec3(((float)rand() / RAND_MAX), ((float)rand() / RAND_MAX), ((float)rand() / RAND_MAX)))));
+
+    for (int i = 0; i < 4; i++) {
+
+        // Create instance name
+        std::stringstream ss;
+        ss << i+1;
+        std::string index = ss.str();
+        std::string name = "Powerup" + index;
+
+        // Create asteroid instance
+        Powerup* pu = CreatePowerupInstance(name, "Powerup", "ObjectMaterial");
+        pu->SetScale(glm::vec3(0.75, 0.75, 0.75));
+        pu->SetPosition(glm::vec3 (0, 0, 800 - (i+1) * 40));
+        pu->SetOrientation(glm::normalize(glm::angleAxis(glm::pi<float>() * ((float)rand() / RAND_MAX), glm::vec3(((float)rand() / RAND_MAX), ((float)rand() / RAND_MAX), ((float)rand() / RAND_MAX)))));
+    }
+}
+
+
 void Game::HandleCollisions() {
 
     if (terrain_->getDistToGround(player_.GetPosition()) - player_.GetRadius() < 0) {
@@ -765,14 +834,27 @@ void Game::HandleCollisions() {
 
         // if collision occurred
         if (player_.GetRadius() + curr_node->GetRadius() > node_dist) {
+            // handles Player - Beacon collision
+            if (curr_node->GetName() == "targetBeacon") {
+                scene_.RemoveCollidable(racetrack_.GetNextName());
+                std::cout << "You reached a beacon!" << std::endl;
+                if (racetrack_.UpdateRaceTrack()) {
+                    std::cout << "You reached all beacons in the correct order - You Won!" << std::endl;
+                    //game_state_ = won;
+                    break;
+                }
+                continue;
+
+            // handles Player - Enemy Collision
+            } else if (curr_node->GetType() == "Spaceship") {
+                game_state_ = lost;
+                std::cout << "Collided with the enemy cylinder-ships - You lost!" << std::endl;
+                break;
 
             // handles Player - Power Up Collision
-            if (curr_node->GetType() == "Orb") {
-                orbs_left_ -= 1;
-                if (orbs_left_ == 0) {
-                    game_state_ = won;
-                }
-                std::cout << "You collected an Orb!" << std::endl;
+            } else if (curr_node->GetType() == "Powerup") {
+                player_.AddMaxSpeed(4.0f);
+                std::cout << "You collected a powerup! Max speed increased by 4 units" << std::endl;
                 scene_.RemoveCollidable(curr_node->GetName());
             }
         }
@@ -781,38 +863,10 @@ void Game::HandleCollisions() {
 
 }
 
-Orb* Game::createOrbInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name) {
-
-    Resource* geom = resman_.GetResource(object_name);
-    if (!geom) {
-        throw(GameException(std::string("Could not find resource \"") + object_name + std::string("\"")));
-    }
-
-    Resource* mat = resman_.GetResource(material_name);
-    if (!mat) {
-        throw(GameException(std::string("Could not find resource \"") + material_name + std::string("\"")));
-    }
-
-    Resource* tex = NULL;
-    if (texture_name != "") {
-        tex = resman_.GetResource(texture_name);
-        if (!tex) {
-            throw(GameException(std::string("Could not find resource \"") + material_name + std::string("\"")));
-        }
-    }
-
-    Orb *orb = new Orb(entity_name, geom, mat, tex);
-    scene_.AddNode(orb);
-    orbs_left_++;
-
-    return orb;
-
-}
-
 void Game::createTerrain(const char* file_name, glm::vec3 pos) {
 
     HeightMap heightMap;
-    heightMap.max_height = 70;
+    heightMap.max_height = 90;
     
     std::string f_name = std::string(MATERIAL_DIRECTORY) + std::string(file_name);
     heightMap.hmap = SOIL_load_image(f_name.c_str(), &heightMap.width_, &heightMap.height_, 0, SOIL_LOAD_RGB);
@@ -850,7 +904,133 @@ Light* Game::CreateLightInstance(std::string entity_name, std::string object_nam
 
 }
 
+void Game::PlaceObject(SceneNode* obj, float x, float offSetY, float z) {
+    float y = terrain_->getTerrainY(glm::vec3(x, 0, z));
+    y += offSetY;
+    obj->SetPosition(glm::vec3(x, y, z));
+}
 
+void Game::createObeliskZone() {
+    // place obelisk with 4 watch towers around it
+
+    //Obelisk
+    game::SceneNode* obelisk = CreateInstance("Obelisk", "ObeliskMesh", "TextureNormalMaterial", "ObeliskTexture", "ObeliskNormal");
+    obelisk->SetScale(glm::vec3(30, 30, 30));
+    float x = -48.5;
+    float z = 800;
+    PlaceObject(obelisk, x, 8, z);
+
+    //Watch Towers   
+    game::SceneNode* newWatchTower = CreateInstance("WatchTower1", "WatchTowerBaseMesh", "TextureNormalMaterial", "WatchTowerBaseTexture", "WatchTowerBaseNormal");
+    newWatchTower->SetScale(glm::vec3(8, 8, 8));
+    PlaceObject(newWatchTower, x + 125, 8, z + 125);
+
+    game::SceneNode* watchEye = CreateInstance("WatchEye1", "WatchEyeMesh", "TextureNormalMaterial", "WatchEyeTexture", "WatchEyeNormal");
+    watchEye->SetParent(newWatchTower);
+    watchEye->SetScale(glm::vec3(12, 12, 12));
+    watchEye->Translate(glm::vec3(0, 90, 0));
+
+    newWatchTower = CreateInstance("WatchTower2", "WatchTowerBaseMesh", "TextureNormalMaterial", "WatchTowerBaseTexture", "WatchTowerBaseNormal");
+    newWatchTower->SetScale(glm::vec3(8, 8, 8));
+    newWatchTower->Rotate(glm::angleAxis(glm::pi<float>(), glm::vec3(0, 1, 0)));
+    PlaceObject(newWatchTower, x - 125, 8, z - 125);
+
+    watchEye = CreateInstance("WatchEye2", "WatchEyeMesh", "TextureNormalMaterial", "WatchEyeTexture", "WatchEyeNormal");
+    watchEye->SetParent(newWatchTower);
+    watchEye->SetScale(glm::vec3(12, 12, 12));
+    watchEye->Translate(glm::vec3(0, 90, 0));
+
+    newWatchTower = CreateInstance("WatchTower3", "WatchTowerBaseMesh", "TextureNormalMaterial", "WatchTowerBaseTexture", "WatchTowerBaseNormal");
+    newWatchTower->SetScale(glm::vec3(8, 8, 8));
+    PlaceObject(newWatchTower, x + 125, 8, z - 125);
+
+    watchEye = CreateInstance("WatchEye3", "WatchEyeMesh", "TextureNormalMaterial", "WatchEyeTexture", "WatchEyeNormal");
+    watchEye->SetParent(newWatchTower);
+    watchEye->SetScale(glm::vec3(12, 12, 12));
+    watchEye->Translate(glm::vec3(0, 90, 0));
+
+    newWatchTower = CreateInstance("WatchTower4", "WatchTowerBaseMesh", "TextureNormalMaterial", "WatchTowerBaseTexture", "WatchTowerBaseNormal");
+    newWatchTower->SetScale(glm::vec3(8, 8, 8));
+    newWatchTower->Rotate(glm::angleAxis(glm::pi<float>(), glm::vec3(0, 1, 0)));
+    PlaceObject(newWatchTower, x - 125, 8, z + 125);
+
+    watchEye = CreateInstance("WatchEye4", "WatchEyeMesh", "TextureNormalMaterial", "WatchEyeTexture", "WatchEyeNormal");
+    watchEye->SetParent(newWatchTower);
+    watchEye->SetScale(glm::vec3(12, 12, 12));
+    watchEye->Translate(glm::vec3(0, 90, 0));    
+}
+
+void Game::createVillage() {
+    // pace several houses with some dead bushes. tumbleweed, and a spiky tree thing
+    std::vector<glm::vec3> x_z_positions;
+    x_z_positions.push_back(glm::vec3(-388, -0.5, 1153));
+    x_z_positions.push_back(glm::vec3(-485, -0.5, 1088));
+    x_z_positions.push_back(glm::vec3(-281, -0.5, 1272));
+    x_z_positions.push_back(glm::vec3(-454, -0.5, 1272));
+    x_z_positions.push_back(glm::vec3(-494, -0.6, 1180));
+    x_z_positions.push_back(glm::vec3(-370, -0.6, 1287));
+    x_z_positions.push_back(glm::vec3(-292, -0.6, 1149));
+    x_z_positions.push_back(glm::vec3(-379, -2.5, 1027));
+
+    //Huts
+    game::SceneNode* hut;
+    for (int i = 0; i < x_z_positions.size(); ++i) {
+        hut = CreateInstance("Hut" + i, "Hut1Mesh", "TextureNormalMaterial", "Hut1Texture", "Hut1Normal");
+        hut->SetScale(glm::vec3(8, 8, 8));
+        glm::vec3 hutPos = x_z_positions[i];
+        PlaceObject(hut, hutPos.x, hutPos.y, hutPos.z);
+    }
+      
+    // spiky tree
+    game::SceneNode* newTree = CreateInstance("VillageTree", "TreeMesh", "TextureNormalMaterial", "TreeTexture", "TreeNormal");
+    newTree->SetScale(glm::vec3(8, 8, 8));
+    glm::vec3 TreePos = glm::vec3(-312, 0, 1075);
+    PlaceObject(newTree, TreePos.x, TreePos.y, TreePos.z);
+    
+
+    // dead bushes
+    std::vector<glm::vec3> bush_positions;
+    bush_positions.push_back(glm::vec3(-481, -0.5, 918));
+    bush_positions.push_back(glm::vec3(-463, -0.5, 969));
+    bush_positions.push_back(glm::vec3(-487, -0.5, 994));
+    bush_positions.push_back(glm::vec3(-443, -0.5, 1036));
+    bush_positions.push_back(glm::vec3(-425, -0.5, 1088));
+    bush_positions.push_back(glm::vec3(-432, -0.5, 1164));
+    bush_positions.push_back(glm::vec3(-466, -0.5, 1239));
+    bush_positions.push_back(glm::vec3(-432, -0.5, 1164));
+
+
+    game::SceneNode* bush;
+    for (int j = 0; j < bush_positions.size(); ++j)
+    {
+       bush = CreateInstance("DryShrub" + j, "DryShrubMesh", "TextureNormalMaterial", "DryShrubMeshTexture", "DryShrubMeshNormal");
+       bush->SetScale(glm::vec3(8, 8, 8));
+       glm::vec3 BushPos = bush_positions[j];
+       PlaceObject(bush, BushPos.x, BushPos.y, BushPos.z);
+    }
+}
+
+void Game::createOasis() {
+    // place pond with palm trees, flowers, and fireflies
+}
+
+void Game::createSandNadoZone() {
+    // place several sand nados 
+
+}
+
+void Game::generateTerrainFeatures(float x, float z) {
+    // generate rocks and bushes around the specified position. 
+}
+
+void Game::CreateWorld() {
+    createTerrain("/textures/T5.png", glm::vec3(0, -30, 790));
+    createObeliskZone();
+    createVillage();
+    createOasis();
+    createSandNadoZone();
+
+}
 
 
 } // namespace game

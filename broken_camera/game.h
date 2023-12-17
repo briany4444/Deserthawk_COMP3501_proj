@@ -95,9 +95,17 @@ namespace game {
             //DebugMode
             void DebugCameraMovement();
             bool debugCamera_ = false;
-            float debugMoveSpeed_ = 1.0f;
+            float debugMoveSpeed_ = 5.0f;
             glm::vec2 lastFrameMousePosition_ = glm::vec2(0.0, 0.0);
 
+            //placing stuff/procedural generation
+            void PlaceObject(SceneNode*, float x, float offSetY, float z);
+            void CreateWorld();
+            void createObeliskZone();
+            void createVillage();
+            void createOasis();
+            void createSandNadoZone();
+            void generateTerrainFeatures(float x, float z);
 
     }; // class Game
 
