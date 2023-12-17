@@ -189,11 +189,11 @@ void Game::SetupResources(void){
 
         /// Particle Systems ///
 
-        // filename = std::string(MATERIAL_DIRECTORY) + std::string("/Sand-nato");
-        // resman_.LoadResource(Material, "PS-SandTornatoMaterial", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/Sand-nato");
+        resman_.LoadResource(Material, "PS-SandTornatoMaterial", filename.c_str());
 
-        // filename = std::string(MATERIAL_DIRECTORY) + std::string("/firefly_particle");
-        // resman_.LoadResource(Material, "PS-FirFlyMaterial", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/firefly_particle");
+        resman_.LoadResource(Material, "PS-FirFlyMaterial", filename.c_str());
 
         
     }
@@ -347,30 +347,7 @@ void Game::SetupScene(void) {
 
     /*Dylans Game Objects*/ if (true) //this line is here so that this large section of code can be collasped
     {
-        int num_instances = 5; // For loops
-
-        //Obelisk
-        game::SceneNode* obelisk = CreateInstance("Obelisk", "ObeliskMesh", "TextureNormalMaterial", "ObeliskTexture", "ObeliskNormal");
-        obelisk->SetScale(glm::vec3(15, 15, 15));
-        PlaceObject(obelisk, -48.5, 8, 800);
-        
-        //Watch Towers
-        num_instances = 5;
-        for (int i = 0; i < num_instances; i++)
-        {
-            std::stringstream ss;
-            ss << i;
-            std::string index = ss.str();
-
-            std::string name = "WatchTowerInstance" + index;
-            game::SceneNode* newWatchTower = CreateInstance(name, "WatchTowerBaseMesh", "TextureNormalMaterial", "WatchTowerBaseTexture", "WatchTowerBaseNormal");
-            newWatchTower->Translate(glm::vec3(0.0 + i * 5.0f, -18.0, 775.0));
-
-            name = "WatchEyeInstance" + index;
-            game::SceneNode* watchEye = CreateInstance("WatchEye", "WatchEyeMesh", "TextureNormalMaterial", "WatchEyeTexture", "WatchEyeNormal");
-            watchEye->Translate(glm::vec3(0.0 + i * 5.0f, -8.0, 775.0));
-        }
-
+        int num_instances = 5; // For loops       
 
         //Palm Tree
         game::SceneNode* palmTreeTrunk = CreateInstance("PalmTreeTrunk", "PalmTreeTrunkMesh", "TextureNormalMaterial", "PalmTreeTrunkTexture", "PalmTreeNormal");
@@ -391,36 +368,6 @@ void Game::SetupScene(void) {
             newLeaf->SetParent(palmTreeHead);
             
         }
-
-        //Dry Shrubs
-        num_instances = 5;
-        for (int i = 0; i < num_instances; i++)
-        {
-            std::stringstream ss;
-            ss << i;
-            std::string index = ss.str();
-
-            std::string name = "DryShrub" + index;
-            game::SceneNode* newDryShrub = CreateInstance("DryShrub", "DryShrubMesh", "TextureNormalMaterial", "DryShrubMeshTexture", "DryShrubMeshNormal");
-            newDryShrub->Translate(glm::vec3(0.0 + i * 5.0f, -18.0, 750.0));
-        }
-
-        //Trees
-        num_instances = 5;
-        for (int i = 0; i < num_instances; i++)
-        {
-            std::stringstream ss;
-            ss << i;
-            std::string index = ss.str();
-
-            std::string name = "Tree" + index;
-            game::SceneNode* newTree = CreateInstance("Tree", "TreeMesh", "TextureNormalMaterial", "TreeTexture", "TreeNormal");
-            newTree->Translate(glm::vec3(0.0 + i * 5.0f, -18.0, 740.0));
-        }
-
-        //Hut1
-        game::SceneNode* hut1 = CreateInstance("Hut1", "Hut1Mesh", "TextureNormalMaterial", "Hut1Texture", "Hut1Normal");
-        hut1->Translate(glm::vec3(0.0, -18.0, 730.0));
 
         //Oasis Plant
         game::SceneNode* oasisPlant = CreateInstance("OasisPlant", "OasisPlantMesh", "TextureNormalMaterial", "OasisPlantTexture", "OasisPlantNormal");
@@ -477,7 +424,7 @@ void Game::MainLoop(void){
             double current_time = glfwGetTime();
             double delta_time = current_time - last_time;
             if ((delta_time) > 0.05){
-                glEnable(GL_CULL_FACE);             
+                glEnable(GL_CULL_FACE);       
 
                 camera_.UpdateLightInfo(l->GetTransf() * glm::vec4(l->GetPosition(), 1.0), l->GetLightCol(), l->GetSpecPwr());
                 scene_.Update(delta_time);
@@ -965,10 +912,102 @@ void Game::PlaceObject(SceneNode* obj, float x, float offSetY, float z) {
 
 void Game::createObeliskZone() {
     // place obelisk with 4 watch towers around it
+
+    //Obelisk
+    game::SceneNode* obelisk = CreateInstance("Obelisk", "ObeliskMesh", "TextureNormalMaterial", "ObeliskTexture", "ObeliskNormal");
+    obelisk->SetScale(glm::vec3(30, 30, 30));
+    float x = -48.5;
+    float z = 800;
+    PlaceObject(obelisk, x, 8, z);
+
+    //Watch Towers   
+    game::SceneNode* newWatchTower = CreateInstance("WatchTower1", "WatchTowerBaseMesh", "TextureNormalMaterial", "WatchTowerBaseTexture", "WatchTowerBaseNormal");
+    newWatchTower->SetScale(glm::vec3(8, 8, 8));
+    PlaceObject(newWatchTower, x + 125, 8, z + 125);
+
+    game::SceneNode* watchEye = CreateInstance("WatchEye1", "WatchEyeMesh", "TextureNormalMaterial", "WatchEyeTexture", "WatchEyeNormal");
+    watchEye->SetParent(newWatchTower);
+    watchEye->SetScale(glm::vec3(12, 12, 12));
+    watchEye->Translate(glm::vec3(0, 90, 0));
+
+    newWatchTower = CreateInstance("WatchTower2", "WatchTowerBaseMesh", "TextureNormalMaterial", "WatchTowerBaseTexture", "WatchTowerBaseNormal");
+    newWatchTower->SetScale(glm::vec3(8, 8, 8));
+    newWatchTower->Rotate(glm::angleAxis(glm::pi<float>(), glm::vec3(0, 1, 0)));
+    PlaceObject(newWatchTower, x - 125, 8, z - 125);
+
+    watchEye = CreateInstance("WatchEye2", "WatchEyeMesh", "TextureNormalMaterial", "WatchEyeTexture", "WatchEyeNormal");
+    watchEye->SetParent(newWatchTower);
+    watchEye->SetScale(glm::vec3(12, 12, 12));
+    watchEye->Translate(glm::vec3(0, 90, 0));
+
+    newWatchTower = CreateInstance("WatchTower3", "WatchTowerBaseMesh", "TextureNormalMaterial", "WatchTowerBaseTexture", "WatchTowerBaseNormal");
+    newWatchTower->SetScale(glm::vec3(8, 8, 8));
+    PlaceObject(newWatchTower, x + 125, 8, z - 125);
+
+    watchEye = CreateInstance("WatchEye3", "WatchEyeMesh", "TextureNormalMaterial", "WatchEyeTexture", "WatchEyeNormal");
+    watchEye->SetParent(newWatchTower);
+    watchEye->SetScale(glm::vec3(12, 12, 12));
+    watchEye->Translate(glm::vec3(0, 90, 0));
+
+    newWatchTower = CreateInstance("WatchTower4", "WatchTowerBaseMesh", "TextureNormalMaterial", "WatchTowerBaseTexture", "WatchTowerBaseNormal");
+    newWatchTower->SetScale(glm::vec3(8, 8, 8));
+    newWatchTower->Rotate(glm::angleAxis(glm::pi<float>(), glm::vec3(0, 1, 0)));
+    PlaceObject(newWatchTower, x - 125, 8, z + 125);
+
+    watchEye = CreateInstance("WatchEye4", "WatchEyeMesh", "TextureNormalMaterial", "WatchEyeTexture", "WatchEyeNormal");
+    watchEye->SetParent(newWatchTower);
+    watchEye->SetScale(glm::vec3(12, 12, 12));
+    watchEye->Translate(glm::vec3(0, 90, 0));    
 }
 
 void Game::createVillage() {
-    // pace several houses with some dead trees
+    // pace several houses with some dead bushes. tumbleweed, and a spiky tree thing
+    std::vector<glm::vec3> x_z_positions;
+    x_z_positions.push_back(glm::vec3(-388, -0.5, 1153));
+    x_z_positions.push_back(glm::vec3(-485, -0.5, 1088));
+    x_z_positions.push_back(glm::vec3(-281, -0.5, 1272));
+    x_z_positions.push_back(glm::vec3(-454, -0.5, 1272));
+    x_z_positions.push_back(glm::vec3(-494, -0.6, 1180));
+    x_z_positions.push_back(glm::vec3(-370, -0.6, 1287));
+    x_z_positions.push_back(glm::vec3(-292, -0.6, 1149));
+    x_z_positions.push_back(glm::vec3(-379, -2.5, 1027));
+
+    //Huts
+    game::SceneNode* hut;
+    for (int i = 0; i < x_z_positions.size(); ++i) {
+        hut = CreateInstance("Hut" + i, "Hut1Mesh", "TextureNormalMaterial", "Hut1Texture", "Hut1Normal");
+        hut->SetScale(glm::vec3(8, 8, 8));
+        glm::vec3 hutPos = x_z_positions[i];
+        PlaceObject(hut, hutPos.x, hutPos.y, hutPos.z);
+    }
+      
+    // spiky tree
+    game::SceneNode* newTree = CreateInstance("VillageTree", "TreeMesh", "TextureNormalMaterial", "TreeTexture", "TreeNormal");
+    newTree->SetScale(glm::vec3(8, 8, 8));
+    glm::vec3 TreePos = glm::vec3(-312, 0, 1075);
+    PlaceObject(newTree, TreePos.x, TreePos.y, TreePos.z);
+    
+
+    // dead bushes
+    std::vector<glm::vec3> bush_positions;
+    bush_positions.push_back(glm::vec3(-481, -0.5, 918));
+    bush_positions.push_back(glm::vec3(-463, -0.5, 969));
+    bush_positions.push_back(glm::vec3(-487, -0.5, 994));
+    bush_positions.push_back(glm::vec3(-443, -0.5, 1036));
+    bush_positions.push_back(glm::vec3(-425, -0.5, 1088));
+    bush_positions.push_back(glm::vec3(-432, -0.5, 1164));
+    bush_positions.push_back(glm::vec3(-466, -0.5, 1239));
+    bush_positions.push_back(glm::vec3(-432, -0.5, 1164));
+
+
+    game::SceneNode* bush;
+    for (int j = 0; j < bush_positions.size(); ++j)
+    {
+       bush = CreateInstance("DryShrub" + j, "DryShrubMesh", "TextureNormalMaterial", "DryShrubMeshTexture", "DryShrubMeshNormal");
+       bush->SetScale(glm::vec3(8, 8, 8));
+       glm::vec3 BushPos = bush_positions[j];
+       PlaceObject(bush, BushPos.x, BushPos.y, BushPos.z);
+    }
 }
 
 void Game::createOasis() {
@@ -977,6 +1016,7 @@ void Game::createOasis() {
 
 void Game::createSandNadoZone() {
     // place several sand nados 
+
 }
 
 void Game::generateTerrainFeatures(float x, float z) {
