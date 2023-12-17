@@ -23,6 +23,7 @@ namespace game {
 
         // Destructor
         ~Orb();
+        void Update(float) override;
 
     }; // class Orb
 
