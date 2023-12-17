@@ -12,6 +12,7 @@
 
 #include "resource.h"
 #include "scene_node.h"
+#include "player.h"
 #include <vector>
 
 
@@ -31,9 +32,13 @@ namespace game {
         inline float GetSpecPwr() { return spec_pwr_; }
         inline glm::vec3 GetLightCol() { return light_color_; }
 
+        
+
     private:
         glm::vec3 light_color_;
         float spec_pwr_;
+        
+
 
     }; // class Light
 

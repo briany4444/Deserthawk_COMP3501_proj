@@ -112,14 +112,18 @@ void Game::InitView(void){
     // set loading screen
     glClearColor(viewport_background_color_g[0], viewport_background_color_g[1], viewport_background_color_g[2], 0.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
     resman_.CreateWall("SimpleWall"); //UI and images
-    std::string filename = std::string(MATERIAL_DIRECTORY) + std::string("/textured_material");
+
+    std::string filename = std::string(MATERIAL_DIRECTORY) + std::string("/SS_textured_material");
     resman_.LoadResource(Material, "PlainTexMaterial", filename.c_str());
+
     filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/loading.png");
     resman_.LoadResource(Texture, "Loading", filename.c_str());
-    gui_ = new Ui("LoadingScreen", resman_.GetResource("SimpleWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("Loading"));
-    gui_->Draw(&camera_);
-    std::cout << "loading..." << std::endl;
+
+    Ui* a = new Ui("LoadingScreen", resman_.GetResource("SimpleWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("Loading"));
+    a->Draw(&camera_);
+    
     // Push buffer drawn in the background onto the display
     glfwSwapBuffers(window_);
 }
@@ -227,7 +231,7 @@ void Game::SetupResources(void){
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/T5NormalMap.png");
         resman_.LoadResource(Texture, "Texture2", filename.c_str());
 
-        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/startScreen.png");
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/start.png");
         resman_.LoadResource(Texture, "StartScreen", filename.c_str());
 
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/GameOver.png");
@@ -236,6 +240,11 @@ void Game::SetupResources(void){
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/SkyBoxCubeMap.png");
         resman_.LoadResource(Texture, "CubeMap", filename.c_str());
 
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/winScreen.png");
+        resman_.LoadResource(Texture, "Winner", filename.c_str());
+
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/Sun.png");
+        resman_.LoadResource(Texture, "RedStar", filename.c_str());
     }
 
     
@@ -341,13 +350,13 @@ void Game::SetupScene(void) {
 
     // Create global light source
     {
-        l = CreateLightInstance("light", "lightMesh", "RandomTexMaterial", "Texture1");
-        l->SetPosition(glm::vec3(0, 200, 500));
+        l = CreateLightInstance("light", "lightMesh", "TextureNormalMaterial", "RedStar");
+        l->SetPosition(glm::vec3(-900, 1200, 1800));
         l->SetJointPos(glm::vec3(0, 0, 100));
-        //l->SetOrbiting();
-        //l->SetOrbitSpeed(1.0);
-        l->SetOrbitAxis(glm::vec3(0, 1, 0));
-        l->SetScale(glm::vec3(5, 5, 5));
+        l->SetOrbiting();
+        l->SetOrbitSpeed(-.3);
+        l->SetOrbitAxis(glm::vec3(.5, 0, .5));
+        l->SetScale(glm::vec3(25, 25, 25));
     }
 
     // create world   
@@ -356,7 +365,7 @@ void Game::SetupScene(void) {
     {
     //sky
     SceneNode* skyBox = new SceneNode("SkyBox", resman_.GetResource("SkyBox"), resman_.GetResource("SkyboxMaterial"), resman_.GetResource("CubeMap"));
-    skyBox->Scale(glm::vec3(camera_far_clip_distance_g)); // same dist as far cliping plane from the center of the box
+    skyBox->Scale(glm::vec3(camera_far_clip_distance_g*1.1)); // same dist as far cliping plane from the center of the box
     scene_.skyBox_ = skyBox;
     
     }
@@ -420,9 +429,9 @@ void Game::SetupScene(void) {
     glClearColor(viewport_background_color_g[0], viewport_background_color_g[1], viewport_background_color_g[2], 0.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    
-    delete gui_;
-    gui_ = new Ui("StartScreen", resman_.GetResource("SimpleWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("StartScreen"));
-    gui_->Draw(&camera_);
+    
+    Ui* a = new Ui("StartScreen", resman_.GetResource("SimpleWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("StartScreen"));
+    a->Draw(&camera_);
     std::cout << "start" << std::endl;
     // Push buffer drawn in the background onto the display
     glfwSwapBuffers(window_);
@@ -478,10 +487,15 @@ void Game::MainLoop(void){
         }
         else if (game_state_ == won) { 
             //show win screen
+            
+            gui_ = new Ui("win", resman_.GetResource("SimpleWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("Winner"));
+            gui_->Draw(&camera_);
+            
+            game_state_ = lost;
         }
 
 
-        if (true) { // if player NOT dead
+        if (game_state_ != dead) { // if player NOT dead
             // Draw to the scene
             scene_.Draw(&camera_);
 
@@ -496,12 +510,14 @@ void Game::MainLoop(void){
             // Process the texture with a screen-space effect and display
             // the texture
             float death_duration = scene_.DisplayTexture(resman_.GetResource("ScreenSpaceMaterial")->GetResource());
-            if (death_duration >= 5) {
+            if (death_duration >= 15) {
                 game_state_ = lost;
                 //update display to game over screen
-                delete gui_;
+                
                 gui_ = new Ui("LossScreen", resman_.GetResource("SimpleWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("GameOver"));
                 gui_->Draw(&camera_);
+                glfwSwapBuffers(window_);
+                continue;
             }
         }
             
@@ -528,30 +544,23 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
         // View control
         float rot_factor(glm::pi<float>() * 3 / 180); // amount the ship turns per keypress
         float trans_factor = 1.0; // amount the ship steps forward per keypress
-        if (key == GLFW_KEY_UP) {
+        if (key == GLFW_KEY_W) {
             game->player_.Pitch(rot_factor);
         }
-        if (key == GLFW_KEY_DOWN) {
+        if (key == GLFW_KEY_S) {
             game->player_.Pitch(-rot_factor);
         }
-        if (key == GLFW_KEY_LEFT) {
+        if (key == GLFW_KEY_A) {
             game->player_.Yaw(rot_factor);
         }
-        if (key == GLFW_KEY_RIGHT) {
+        if (key == GLFW_KEY_D) {
             game->player_.Yaw(-rot_factor);
         }
-        if (key == GLFW_KEY_Z) {
-            game->player_.Roll(-rot_factor);
+        if (key == GLFW_KEY_SPACE) {
+            game->player_.MoveForward();
         }
-        if (key == GLFW_KEY_X) {
-            game->player_.Roll(rot_factor);
-        }
-        if (key == GLFW_KEY_W) {
-            game->player_.Accelerate(glfwGetTime() - last_time);
-
-        }
-        if (key == GLFW_KEY_S) {
-            game->player_.Decelerate(glfwGetTime() - last_time);
+        if (key == GLFW_KEY_LEFT_SHIFT) {
+            game->player_.MoveBackward();
         }
         if (key == GLFW_KEY_B && action == GLFW_PRESS) {
             if (game->debugCamera_)
@@ -585,7 +594,7 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
         game->game_state_ = inProgress;
 
         //init game gui
-        delete game->gui_;
+        
         game->gui_ = new Ui("Hud", game->resman_.GetResource("SimpleWall"), game->resman_.GetResource("GuiMaterial"), game->resman_.GetResource("NoiseTex"));
     }
 
@@ -719,7 +728,7 @@ SceneNode* Game::CreateInstance(std::string entity_name, std::string object_name
 void Game::HandleCollisions() {
 
     if (terrain_->getDistToGround(player_.GetPosition()) - player_.GetRadius() < 0) {
-        game_state_ = lost;
+        game_state_ = dead;
         return;
     }
 
@@ -766,7 +775,7 @@ Light* Game::CreateLightInstance(std::string entity_name, std::string object_nam
     }
 
     // creates light object and adds it to the scenegraph to be rendered
-    Light* light = new Light(800.0f, glm::vec3(1, 0, 0), entity_name, geom, mat, tex);
+    Light* light = new Light( 800.0f, glm::vec3(1, 0, 0), entity_name, geom, mat, tex);
     scene_.AddNode(light);
 
     return light;

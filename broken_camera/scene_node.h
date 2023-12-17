@@ -34,7 +34,7 @@ namespace game {
             glm::vec3 GetPosition(void) const;
             glm::quat GetOrientation(void) const;
             glm::vec3 GetScale(void) const;
-            glm::mat4 GetTransf();
+            virtual glm::mat4 GetTransf();
             void AddChild(std::string, const Resource*, const Resource*, const Resource*);
 
             // Set node attributes

@@ -11,6 +11,10 @@
 namespace game {
 
     Camera::Camera(void) {
+        position_ = glm::vec3(0); // Position of Player
+        orientation_ = glm::quat(0, glm::vec3(1)); // Orientation of Player
+        forward_ = glm::vec3(0,0,-1); // Initial forward vector
+        side_= glm::vec3(1,0,0); // Initial side vector
     }
 
 
