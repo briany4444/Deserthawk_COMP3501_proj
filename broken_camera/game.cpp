@@ -897,10 +897,12 @@ void Game::createOasis() {
     //scene_.AddNode(fireflies, SceneGraph::EFFECTS);
 }
 void Game::createSandNadoZone() {
+
     game::SceneNode* sand = new SceneNode("Fire1", resman_.GetResource("SParticle1000"), resman_.GetResource("PS-SandTornatoMaterial"), resman_.GetResource("SandParticle"));
     sand->SetPosition(glm::vec3(337, 30, 463));
     sand->SetScale(glm::vec3(50));
     scene_.AddNode(sand, SceneGraph::EFFECTS);
+
 }
 void Game::createfires() {
     // place the fire around the obilisk nados 

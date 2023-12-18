@@ -162,6 +162,10 @@ void SceneGraph::Update(float delta_time){
     for (int i = 0; i < node_.size(); i++){
         node_[i]->Update(delta_time);
     }
+
+    for (int j = 0; j < effects_.size(); j++) {
+        effects_[j]->Update(delta_time);
+    }
 }
 
 
