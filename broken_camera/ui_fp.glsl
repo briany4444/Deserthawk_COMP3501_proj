@@ -8,7 +8,7 @@ in vec2 uv_coord;
 
 //uniforms
 uniform sampler2D texture_map; // Texture Map
-uniform int num_collected = 0;
+uniform int num_collected;
 uniform float timer;
 
 
@@ -44,13 +44,7 @@ void inerDotsHelper(inout vec4 color, in vec4 red,in vec4 objective_yellow) {
 				color = red;
 			}
 		}
-		else if(uv_coord.x > 0.745 && uv_coord.x < .775) { //five
-			if(num_collected >= 5) {
-				color = objective_yellow;
-			} else{
-				color = red;
-			}
-		}
+		
 	}
 
 }
@@ -115,10 +109,6 @@ void main()
 			inerDotsHelper(color, red, objective_yellow);
 
 		} else if(uv_coord.x > 0.79 && uv_coord.x < .83) {
-			color = background_gray;
-			inerDotsHelper(color, red, objective_yellow);
-
-		} else if(uv_coord.x > 0.74 && uv_coord.x < .78) {
 			color = background_gray;
 			inerDotsHelper(color, red, objective_yellow);
 
