@@ -60,7 +60,7 @@ void main()
     // Assume all components have the same color but with different weights
     float ambient = 0.4;
     if (gl_FrontFacing){
-        gl_FragColor = (ambient + 0*lambertian + 0*specular)*pixel;
+        gl_FragColor = (ambient + 1*lambertian + 1*specular)*pixel;
     } else {
         gl_FragColor = pixel;
     }
