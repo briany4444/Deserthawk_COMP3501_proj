@@ -111,6 +111,25 @@ void Game::InitView(void){
 
     // set loading screen
     LoadScreen();
+    glClearColor(viewport_background_color_g[0], viewport_background_color_g[1], viewport_background_color_g[2], 0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    resman_.CreateWall("SimpleWall"); //UI and images
+
+    std::string filename = std::string(MATERIAL_DIRECTORY) + std::string("/SS_textured_material");
+    resman_.LoadResource(Material, "PlainTexMaterial", filename.c_str());
+
+    filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/loading.png");
+    resman_.LoadResource(Texture, "Loading", filename.c_str());
+
+    filename = std::string(MATERIAL_DIRECTORY) + std::string("/shaders/pond");
+    resman_.LoadResource(Material, "PondMat", filename.c_str());
+
+    Ui* a = new Ui("LoadingScreen", resman_.GetResource("SimpleWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("Loading"));
+    a->Draw(&camera_);
+    
+    // Push buffer drawn in the background onto the display
+    glfwSwapBuffers(window_);
 }
 
 
@@ -146,6 +165,7 @@ void Game::SetupResources(void){
     resman_.CreateSphereParticles("SphereParticles", 250);
     resman_.CreateSphereParticles("SParticle1000", 1000);
     resman_.CreateWall("SimpleWall"); //UI and images
+
 
     
 
@@ -347,6 +367,10 @@ void Game::SetupScene(void) {
 
     // create world   
     CreateWorld();
+    {
+        SceneNode* s = CreateInstance("Pond", "SimpleWall", "PondMat", "Texture1");
+        s->SetPosition(glm::vec3( - 370, 40, 420));
+    }
 
     {
     //sky
