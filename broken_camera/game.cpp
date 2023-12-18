@@ -1209,7 +1209,11 @@ void Game::CreateWorld() {
 
     Orb* orb;
     for (int j = 0; j < orb_positions.size(); ++j) {
-        orb = createOrbInstance("Orb" + j, "Orb", "RandomTexMaterial", "OrbTexture");
+        std::stringstream ss;
+        ss << j;
+        std::string index = ss.str();
+        std::string name = "Orb" + index;
+        orb = createOrbInstance(name, "Orb", "RandomTexMaterial", "OrbTexture");
         orb->SetPosition(glm::vec3(orb_positions[j].x, orb_positions[j].y, orb_positions[j].z));
     }
 }
