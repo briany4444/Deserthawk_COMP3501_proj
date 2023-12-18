@@ -222,6 +222,12 @@ void SceneNode::Orbit(double d) {
     }
 }
 
+glm::vec3 SceneNode::GetForward()
+{
+    glm::vec3 current_forward = orientation_ * forward_;
+    return current_forward; // Return -forward since the camera coordinate system points in the opposite direction
+}
+
 
 void SceneNode::Update(float d){
     for (int i = 0; i < children_.size(); i++) {
