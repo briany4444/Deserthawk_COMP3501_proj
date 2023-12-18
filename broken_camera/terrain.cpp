@@ -22,6 +22,7 @@ namespace game {
     Terrain::~Terrain() {
     }
 
+    // draws terrain
     void Terrain::Draw(Camera* c) {
         glEnable(GL_CULL_FACE);
         SceneNode::Draw(c);
@@ -29,11 +30,13 @@ namespace game {
     }
 
 
+    // gets player distance to heightmap
     float Terrain::getDistToGround(glm::vec3 pos){
 
         return abs(getTerrainY(pos) - pos[1]);
     }
 
+    // get terrain height given y position
     float Terrain::getTerrainY(glm::vec3 pos) {
         float u, v;
         u = (pos[0] - position_[0] + (terrain_width_ / 2)) / terrain_width_;
