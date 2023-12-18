@@ -93,7 +93,6 @@ glm::mat4 SceneNode::GetTransf() {
     return transf;
 }
 
-
 const std::string SceneNode::GetName(void) const {
 
     return name_;
