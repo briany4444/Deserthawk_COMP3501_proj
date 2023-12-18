@@ -30,7 +30,7 @@ target_link_libraries(${PROJ_NAME} ${OPENGL_gl_LIBRARY})
 set(LIBRARY_PATH C:/libs/Libraries)
 #set(LIBRARY_PATH "C:\OpenGL_Libraries\Libraries")
 #set(LIBRARY_PATH C:\Users\User\Libraries) # Brian's Libraries
-#set(LIBRARY_PATH D:/COMP\ 3501\ Libraries/Libraries) #Dylan's Libraries
+set(LIBRARY_PATH D:/COMP\ 3501\ Libraries/Libraries) #Dylan's Libraries
 
 include_directories(${LIBRARY_PATH}/include)
 if(NOT WIN32)

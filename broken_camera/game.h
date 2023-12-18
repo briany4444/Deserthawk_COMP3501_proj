@@ -71,6 +71,13 @@ namespace game {
             //hud
             Ui* gui_;
 
+            //Tree
+            //game::SceneNode* treeTrunk;
+            //game::SceneNode* treeBranch1;
+            //game::SceneNode* treeBranch2;
+            //game::SceneNode* treeBranch3;
+            std::vector<game::SceneNode*> deadTreeParts;
+
             // current game state
             game_state_t game_state_;
 
@@ -92,6 +99,8 @@ namespace game {
             void HandleCollisions();
             void CreateTrees();
             SceneNode* makePalmTree(int treeNum, glm::vec3 pos);
+            SceneNode* makeDeadTree(int treeNum, glm::vec3 pos);
+            void watchTowerBehaviour(float angle);
 
             //DebugMode
             void DebugCameraMovement();
@@ -107,6 +116,7 @@ namespace game {
             void createOasis();
             void createfires();
             void createSandNadoZone();
+            void createDeadTreeArea();
             void generateTerrainFeatures(float x, float z);
 
             //create diferent screens

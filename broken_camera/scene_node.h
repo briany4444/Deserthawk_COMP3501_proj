@@ -73,6 +73,8 @@ namespace game {
             inline std::string GetType() { return type_; }
             void SceneNode::Orbit(double d);
 
+            glm::vec3 GetForward();
+
         protected:
             std::string name_; // Name of the scene node
             GLuint array_buffer_; // References to geometry: vertex and array buffers
@@ -93,6 +95,7 @@ namespace game {
             glm::quat orientation_; // Orientation of node
             glm::vec3 joint_pos_;
             glm::vec3 scale_; // Scale of node
+            glm::vec3 forward_ = glm::vec3(0.0, 0.0, 1.0);
             // Set matrices that transform the node in a shader program
             virtual void SetupShader(GLuint program);
 

@@ -314,6 +314,22 @@ void Game::SetupResources(void){
         resman_.LoadResource(Texture, "TumbleweedTexture", filename.c_str());
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/Dry_shrub_Normal.png");
         resman_.LoadResource(Texture, "TumbleweedNormal", filename.c_str());
+
+        //OtherTree
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/models/Tree_Trunk.obj");
+        resman_.LoadResource(Mesh, "TreeTrunkMesh", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/Tree_Trunk_Texture.png");
+        resman_.LoadResource(Texture, "TreeTrunkTexture", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/Tree_Trunk_Normal.png");
+        resman_.LoadResource(Texture, "TreeTrunkNormal", filename.c_str());
+
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/models/Tree_Branch_1.obj");
+        resman_.LoadResource(Mesh, "TreeBranches1Mesh", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/models/Tree_Branch_2.obj");
+        resman_.LoadResource(Mesh, "TreeBranches2Mesh", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/models/Tree_Branch_3.obj");
+        resman_.LoadResource(Mesh, "TreeBranches3Mesh", filename.c_str());
+
     }
     
 
@@ -389,6 +405,19 @@ void Game::MainLoop(void){
                 {
                     DebugCameraMovement();
                 }
+
+                float angle = glm::mod(current_time, 5.0);
+
+                if (angle > 2.5) angle = 0.002;
+                else angle = -0.002;
+
+                for each (SceneNode * part in deadTreeParts)
+                {
+                    part->Rotate(glm::angleAxis(angle, glm::vec3(1.0, 0.0, 0.0)));
+                }
+
+                watchTowerBehaviour(angle);
+
                 
                 last_time = current_time;
             }
@@ -894,6 +923,71 @@ SceneNode* Game::makePalmTree(int treeNum, glm::vec3 pos) {
     return palmTreeTrunk;
 }
 
+SceneNode* Game::makeDeadTree(int treeNum, glm::vec3 pos)
+{
+    //SwayingTree
+    game::SceneNode* treeTrunk = CreateInstance("TreeTrunk" + treeNum, "TreeTrunkMesh", "TextureNormalMaterial", "TreeTrunkTexture", "TreeTrunkNormal");
+    treeTrunk->SetScale(glm::vec3(5, 5, 5));
+    PlaceObject(treeTrunk, -180.0f, 8.0f, 750.0f);
+    deadTreeParts.push_back(treeTrunk);
+
+    game::SceneNode* treeBranch1 = CreateInstance("TreeBranches1" + treeNum, "TreeBranches1Mesh", "TextureNormalMaterial", "TreeTrunkTexture", "TreeTrunkNormal");
+    treeBranch1->SetScale(glm::vec3(5, 5, 5));
+    treeBranch1->SetParent(treeTrunk);
+    treeBranch1->Translate(glm::vec3(0.0f, 50.0f, 0.0f));
+    deadTreeParts.push_back(treeBranch1);
+
+    game::SceneNode* treeBranch2 = CreateInstance("TreeBranches2" + treeNum, "TreeBranches2Mesh", "TextureNormalMaterial", "TreeTrunkTexture", "TreeTrunkNormal");
+    treeBranch2->SetScale(glm::vec3(5, 5, 5));
+    treeBranch2->SetParent(treeBranch1);
+    treeBranch2->Translate(glm::vec3(0.0f, 0.0f, 0.0f));
+    deadTreeParts.push_back(treeBranch2);
+
+    game::SceneNode* treeBranch3 = CreateInstance("TreeBranches3" + treeNum, "TreeBranches3Mesh", "TextureNormalMaterial", "TreeTrunkTexture", "TreeTrunkNormal");
+    treeBranch3->SetScale(glm::vec3(5, 5, 5));
+    treeBranch3->SetParent(treeBranch2);
+    treeBranch3->Translate(glm::vec3(0.0f, 0.0f, 0.0f));
+    deadTreeParts.push_back(treeBranch3);
+
+    return treeTrunk;
+}
+
+void Game::watchTowerBehaviour(float angle)
+{
+
+    glm::vec3 direction = glm::normalize(camera_.GetPosition() - scene_.GetNode("WatchTower1")->GetPosition());
+    glm::vec3 rotationAxis = glm::normalize(glm::cross(direction, scene_.GetNode("WatchEye1")->GetForward()));
+    float dotP = glm::dot(direction, glm::normalize(scene_.GetNode("WatchTower1")->GetForward()));
+    float ang = glm::acos(dotP);
+
+    if ((glm::distance(camera_.GetPosition(), scene_.GetNode("WatchTower1")->GetPosition())) > 200.0f) scene_.GetNode("WatchEye1")->Rotate(glm::angleAxis(angle * 8.0f, glm::vec3(0.0, 1.0, 0.0)));
+    else scene_.GetNode("WatchEye1")->SetOrientation(glm::normalize(glm::angleAxis(ang, rotationAxis)));
+
+    direction = glm::normalize(camera_.GetPosition() - scene_.GetNode("WatchTower2")->GetPosition());
+    rotationAxis = glm::normalize(glm::cross(direction, scene_.GetNode("WatchEye2")->GetForward()));
+    dotP = glm::dot(direction, glm::normalize(scene_.GetNode("WatchTower2")->GetForward()));
+    ang = glm::acos(dotP);
+
+    if ((glm::distance(camera_.GetPosition(), scene_.GetNode("WatchTower2")->GetPosition())) > 200.0f) scene_.GetNode("WatchEye2")->Rotate(glm::angleAxis(angle * 8.0f, glm::vec3(0.0, 1.0, 0.0)));
+    else scene_.GetNode("WatchEye2")->SetOrientation(glm::normalize(glm::angleAxis(ang, rotationAxis)));
+
+    direction = glm::normalize(camera_.GetPosition() - scene_.GetNode("WatchTower3")->GetPosition());
+    rotationAxis = glm::normalize(glm::cross(direction, scene_.GetNode("WatchEye3")->GetForward()));
+    dotP = glm::dot(direction, glm::normalize(scene_.GetNode("WatchTower3")->GetForward()));
+    ang = glm::acos(dotP);
+
+    if ((glm::distance(camera_.GetPosition(), scene_.GetNode("WatchTower3")->GetPosition())) > 200.0f) scene_.GetNode("WatchEye3")->Rotate(glm::angleAxis(angle * 8.0f, glm::vec3(0.0, 1.0, 0.0)));
+    else scene_.GetNode("WatchEye3")->SetOrientation(glm::normalize(glm::angleAxis(ang, rotationAxis)));
+
+    direction = glm::normalize(camera_.GetPosition() - scene_.GetNode("WatchTower4")->GetPosition());
+    rotationAxis = glm::normalize(glm::cross(direction, scene_.GetNode("WatchEye4")->GetForward()));
+    dotP = glm::dot(direction, glm::normalize(scene_.GetNode("WatchTower4")->GetForward()));
+    ang = glm::acos(dotP);
+
+    if ((glm::distance(camera_.GetPosition(), scene_.GetNode("WatchTower4")->GetPosition())) > 200.0f) scene_.GetNode("WatchEye4")->Rotate(glm::angleAxis(angle * 8.0f, glm::vec3(0.0, 1.0, 0.0)));
+    else scene_.GetNode("WatchEye4")->SetOrientation(glm::normalize(glm::angleAxis(ang, rotationAxis)));
+}
+
 void Game::createOasis() {
     // place pond with palm trees, flowers, and fireflies
 
@@ -974,6 +1068,28 @@ void Game::createfires() {
     fire->SetScale(glm::vec3(5));
     scene_.AddNode(fire, SceneGraph::EFFECTS);
 }    
+
+void Game::createDeadTreeArea()
+{
+    std::vector<glm::vec3> pTree_positions;
+    pTree_positions.push_back(glm::vec3(387, -0.5, 407));
+    pTree_positions.push_back(glm::vec3(373, -0.5, 468));
+    pTree_positions.push_back(glm::vec3(286, -0.5, 478));
+    pTree_positions.push_back(glm::vec3(226, -0.5, 428));
+    pTree_positions.push_back(glm::vec3(256, -0.5, 353));
+    pTree_positions.push_back(glm::vec3(167, -0.5, 354));
+    pTree_positions.push_back(glm::vec3(224, -0.5, 480));
+    pTree_positions.push_back(glm::vec3(227, -0.5, 484));
+    pTree_positions.push_back(glm::vec3(295, -0.5, 558));
+    pTree_positions.push_back(glm::vec3(419, -0.5, 638));
+
+    game::SceneNode* pTree;
+    for (int i = 0; i < pTree_positions.size(); ++i) {
+        pTree = makeDeadTree(i, pTree_positions[i]);
+        glm::vec3 pTreePos = pTree_positions[i];
+        PlaceObject(pTree, pTreePos.x, pTreePos.y, pTreePos.z);
+    }
+}
 
 void Game::generateTerrainFeatures(float x, float z) {
     // generate tumbleweeds and bushes around the specified position. 
@@ -1063,6 +1179,7 @@ void Game::CreateWorld() {
     createVillage();
     createOasis();
     createSandNadoZone();
+    createDeadTreeArea();
     createfires();
 
     // list of points to generate features.
