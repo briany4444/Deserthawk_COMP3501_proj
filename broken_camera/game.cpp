@@ -101,14 +101,12 @@ void Game::InitView(void){
     camera_ = Camera();
     // Set current view
     camera_.SetView(camera_position_g, camera_look_at_g, camera_up_g);
-
-    
+ 
 
     // Set projection
     camera_.SetProjection(camera_fov_g, camera_near_clip_distance_g, camera_far_clip_distance_g, width, height);
 
     
-
     // set loading screen
     LoadScreen();
     glClearColor(viewport_background_color_g[0], viewport_background_color_g[1], viewport_background_color_g[2], 0.0);
@@ -149,7 +147,6 @@ void Game::SetupResources(void){
     // Setup drawing to texture
     scene_.SetupDrawToTexture();
 
-
     // Create a simple object to represent the tree
     {
         resman_.CreateCone("SimpleObject", 2.0, 1.0, 10, 10);
@@ -166,9 +163,6 @@ void Game::SetupResources(void){
     resman_.CreateSphereParticles("SParticle1000", 1000);
     resman_.CreateWall("SimpleWall"); //UI and images
 
-
-
-    
 
     std::string filename;
 
@@ -208,9 +202,7 @@ void Game::SetupResources(void){
 
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/firefly_particle");
         resman_.LoadResource(Material, "PS-FirFlyMaterial", filename.c_str());
-
-
-        
+       
     }
 
     ////// TEXTURES ////// 
@@ -236,15 +228,10 @@ void Game::SetupResources(void){
 
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/T5NormalMap.png");
         resman_.LoadResource(Texture, "Texture2", filename.c_str());
-
-        
-
-        
+   
 
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/SkyBoxCubeMap.png");
         resman_.LoadResource(Texture, "CubeMap", filename.c_str());
-
-        
 
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/Sun.png");
         resman_.LoadResource(Texture, "RedStar", filename.c_str());
@@ -253,9 +240,9 @@ void Game::SetupResources(void){
         resman_.LoadResource(Texture, "OrbTexture", filename.c_str());
     }
 
-    
+ 
 
-    /*Dylans Game Objects*/ if (true) //this line is here so that this large section of code can be collasped
+    /*Dylans Game Objects*/ if (true)
     {
         //Obelisk
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/models/Obelisk.obj");
@@ -369,7 +356,6 @@ void Game::SetupScene(void) {
     player_.SetPosition(glm::vec3(-370, 40, 420));
     scene_.AddNode(playerShape);
     
-
     // Create global light source
     {
         l = CreateLightInstance("light", "lightMesh", "TextureNormalMaterial", "RedStar");
@@ -384,17 +370,13 @@ void Game::SetupScene(void) {
     // create world   
     CreateWorld();
     
-
+    //skybox init
     {
-    //sky
-    SceneNode* skyBox = new SceneNode("SkyBox", resman_.GetResource("SkyBox"), resman_.GetResource("SkyboxMaterial"), resman_.GetResource("CubeMap"));
-    skyBox->Scale(glm::vec3(camera_far_clip_distance_g*1.1)); // same dist as far cliping plane from the center of the box
-    scene_.skyBox_ = skyBox;
-    
+        SceneNode* skyBox = new SceneNode("SkyBox", resman_.GetResource("SkyBox"), resman_.GetResource("SkyboxMaterial"), resman_.GetResource("CubeMap"));
+        skyBox->Scale(glm::vec3(camera_far_clip_distance_g*1.1)); // same dist as far cliping plane from the center of the box
+        scene_.skyBox_ = skyBox;
     }
 
-    //game_state_ = inProgress;
-    // exit loading screen into start screen
     StartScreen();
 
     glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -406,7 +388,6 @@ void Game::MainLoop(void){
     // Loop while the user did not close the window
     while (!glfwWindowShouldClose(window_)){
 
-        
         // Animate the scene
         if (game_state_ == inProgress){
             double current_time = glfwGetTime();
@@ -414,24 +395,27 @@ void Game::MainLoop(void){
             if ((delta_time) > 0.05){
                 glEnable(GL_CULL_FACE);       
 
+                // updates game objects
                 camera_.UpdateLightInfo(l->GetTransf() * glm::vec4(l->GetPosition(), 1.0), l->GetLightCol(), l->GetSpecPwr());
                 scene_.Update(delta_time);
                 player_.Update(delta_time);
                 scene_.skyBox_->SetPosition(player_.GetPosition());
                 
+                // updates player
                 camera_.Update(player_.GetOrientation(), player_.GetForward(), player_.GetSide(), player_.GetPosition());
                 DebugCameraMovement();
 
                 float angle = glm::mod(current_time, 5.0);
-
                 if (angle > 2.5) angle = 0.002;
                 else angle = -0.002;
 
+                // update dead tree
                 for each (SceneNode * part in deadTreeParts)
                 {
                     part->Rotate(glm::angleAxis(angle, glm::vec3(1.0, 0.0, 0.0)));
                 }
 
+                // triggers watch tower behvaiour
                 watchTowerBehaviour(angle);
 
                 
@@ -440,10 +424,6 @@ void Game::MainLoop(void){
             HandleCollisions();
         }
         else if (game_state_ == init) {
-            //in start screen, spin-wait for space input
-           // std::cout << "in init..." << std::endl;
-
-            // Update other events like input handling
             glfwPollEvents();
             continue;
         }
@@ -454,6 +434,8 @@ void Game::MainLoop(void){
             }
             continue;
         }
+
+        // updates when player has won
         else if (game_state_ == won) { 
             //show win screen
             std::string filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/WinScreen.png");
@@ -465,27 +447,27 @@ void Game::MainLoop(void){
             continue;
         }
 
-
-        if (game_state_ != dead) { // if player NOT dead
+        // handles updates when player is alive
+        if (game_state_ != dead) { 
             // Draw to the scene
             scene_.Draw(&camera_);
-            scene_.AlphaBlending(true);
-            scene_.Draw(&camera_,SceneGraph::EFFECTS, false);
-            
 
-            gui_->Draw(&camera_);
-            //glfwSwapBuffers(window_);
-            
+            // turns off alpha blending for particle systems and UI
+            scene_.AlphaBlending(true);
+            scene_.Draw(&camera_,SceneGraph::EFFECTS, false); 
+            gui_->Draw(&camera_);   
             scene_.AlphaBlending(false);
         }
         else {
             // Draw the scene to a texture
             scene_.DrawToTexture(&camera_);
+            
             // Process the texture with a screen-space effect and display
             // the texture
             float death_duration = scene_.DisplayTexture(resman_.GetResource("ScreenSpaceMaterial")->GetResource());
             if (death_duration >= 10) {
                 game_state_ = lost;
+                
                 //update display to game over screen
                 std::string filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/GameOver.png");
                 resman_.LoadResource(Texture, "GameOver", filename.c_str());
@@ -496,7 +478,6 @@ void Game::MainLoop(void){
             }
         }
             
-
         // Push buffer drawn in the background onto the display
         glfwSwapBuffers(window_);
 
@@ -515,6 +496,8 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
     if (key == GLFW_KEY_Q && action == GLFW_PRESS){
         glfwSetWindowShouldClose(window, true);
     }
+
+    // handles game-in-progress keypresses
     if (game->game_state_ == inProgress) {
         if (key == GLFW_KEY_Y) {
             game->l->Translate(glm::vec3(0.0, 2.0, 0.0));
@@ -532,11 +515,9 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
             std::cout << "orb_positions.push_back(glm::vec3(" << x << "," << y << "," << z << "));" << std::endl;
         }
     }
+    // handles start-up key-strokes
     else if (game->game_state_ == init && key == GLFW_KEY_SPACE) {
-        game->game_state_ = inProgress;
-
-        //init game gui
-        
+        game->game_state_ = inProgress;  
         game->gui_ = new Ui("Hud", game->resman_.GetResource("SimpleWall"), game->resman_.GetResource("GuiMaterial"), game->resman_.GetResource("NoiseTex"));
     }
 
@@ -583,6 +564,8 @@ void Game::CreateTrees() {
     }
 }
 
+
+// movement function for debugging
 void Game::DebugCameraMovement()
 {
     double* mouseX = new double(0);
@@ -640,7 +623,7 @@ void Game::DebugCameraMovement()
 }
 
 
-
+// creates a scene node instance
 SceneNode* Game::CreateInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name, std::string normal_name) {
 
     Resource* geom = resman_.GetResource(object_name);
@@ -688,7 +671,7 @@ void Game::HandleCollisions() {
         float node_dist = glm::length(curr_node->GetPosition() - player_.GetPosition());
         if (player_.GetRadius() + curr_node->GetRadius() > node_dist) {
 
-            // handles Player - Power Up Collision
+            // handles Player - Orb Up Collision
             if (curr_node->GetType() == "Orb") {
                 orbs_left_ -= 1;
                 gui_->IncrementCollected();
@@ -703,9 +686,10 @@ void Game::HandleCollisions() {
         i++;
     }
  
-}
 
 
+
+// creates the orb and rings
 Orb* Game::createOrbInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name) {
 
     Resource* geom = resman_.GetResource(object_name);
@@ -735,6 +719,7 @@ Orb* Game::createOrbInstance(std::string entity_name, std::string object_name, s
     orb->AddChild("Ring2", resman_.GetResource("Ring"), resman_.GetResource("RandomTexMaterial"), resman_.GetResource("OrbTexture"));
     orb->AddChild("Ring3", resman_.GetResource("Ring"), resman_.GetResource("RandomTexMaterial"), resman_.GetResource("OrbTexture"));
 
+    // scales the orbs
     std::vector<SceneNode*> children = orb->GetChildren();
     for (int i = 0; i < children.size(); ++i) {
         children[i]->SetScale(glm::vec3(10, 10, 10));
@@ -744,27 +729,29 @@ Orb* Game::createOrbInstance(std::string entity_name, std::string object_name, s
 
 }
 
+
+// generates the terrain model
 void Game::createTerrain(const char* file_name, glm::vec3 pos) {
 
     HeightMap heightMap;
     heightMap.max_height = 90;
     
+    // loads the texture
     std::string f_name = std::string(MATERIAL_DIRECTORY) + std::string(file_name);
     heightMap.hmap = SOIL_load_image(f_name.c_str(), &heightMap.width_, &heightMap.height_, 0, SOIL_LOAD_RGB);
 
-
-
+    // creates terrain geometry
     float terrain_l = 1100;
     float terrain_w = 1100;
     resman_.CreatePlane("terrain", terrain_l, terrain_w, 300, 300, heightMap);
 
+    // adds to scene
     Terrain* t = new Terrain("terrain", resman_.GetResource("terrain"), resman_.GetResource("TerrainMat"), resman_.GetResource("Texture1"), resman_.GetResource("Texture2"), heightMap, terrain_l, terrain_w);
     t->SetPosition(pos);
     scene_.AddNode(t);
     terrain_ = t;
 
 }
-
 
 
 // Creates the light instance and the object in space associated with the light
@@ -785,6 +772,7 @@ Light* Game::CreateLightInstance(std::string entity_name, std::string object_nam
 
 }
 
+// places an object on the terrain given and x and y
 void Game::PlaceObject(SceneNode* obj, float x, float offSetY, float z) {
     float y = terrain_->getTerrainY(glm::vec3(x, 0, z));
     y += offSetY;
@@ -841,6 +829,8 @@ void Game::createObeliskZone() {
     watchEye->Translate(glm::vec3(0, 90, 0));    
 }
 
+
+// creates the village area
 void Game::createVillage() {
     // pace several houses with some dead bushes and a spiky tree thing
     std::vector<glm::vec3> x_z_positions;
@@ -884,7 +874,7 @@ void Game::createVillage() {
     bush_positions.push_back(glm::vec3(-198, -0.5, 1251));
     bush_positions.push_back(glm::vec3(-276, -0.5, 1212));
 
-
+    // instantiates the bushes
     game::SceneNode* bush;
     for (int j = 0; j < bush_positions.size(); ++j)
     {
@@ -895,6 +885,7 @@ void Game::createVillage() {
     }
 }
 
+// puts components together to create the palm tree
 SceneNode* Game::makePalmTree(int treeNum, glm::vec3 pos) {
     //Palm Tree
     game::SceneNode* palmTreeTrunk = CreateInstance("PalmTreeTrunk" + treeNum, "PalmTreeTrunkMesh", "TextureNormalMaterial", "PalmTreeTrunkTexture", "PalmTreeNormal");
@@ -903,6 +894,7 @@ SceneNode* Game::makePalmTree(int treeNum, glm::vec3 pos) {
     palmTreeHead->SetScale(glm::vec3(8, 8, 8));
     palmTreeHead->SetParent(palmTreeTrunk);
 
+    // goes through and add leaves to the trees
     for (int i = 0; i < 14; i++)
     {
         std::string name = treeNum + "Leaf" + i;
@@ -917,6 +909,7 @@ SceneNode* Game::makePalmTree(int treeNum, glm::vec3 pos) {
     return palmTreeTrunk;
 }
 
+// creates the hierarchical dead trees
 SceneNode* Game::makeDeadTree(int treeNum, glm::vec3 pos)
 {
     //SwayingTree
@@ -925,6 +918,7 @@ SceneNode* Game::makeDeadTree(int treeNum, glm::vec3 pos)
     PlaceObject(treeTrunk, -180.0f, 8.0f, 750.0f);
     deadTreeParts.push_back(treeTrunk);
 
+    // the branches moving locally to trunk
     game::SceneNode* treeBranch1 = CreateInstance("TreeBranches1" + treeNum, "TreeBranches1Mesh", "TextureNormalMaterial", "TreeTrunkTexture", "TreeTrunkNormal");
     treeBranch1->SetScale(glm::vec3(5, 5, 5));
     treeBranch1->SetParent(treeTrunk);
@@ -946,6 +940,7 @@ SceneNode* Game::makeDeadTree(int treeNum, glm::vec3 pos)
     return treeTrunk;
 }
 
+// function that triggers watch tower behaviour when player gets close
 void Game::watchTowerBehaviour(float angle)
 {
 
@@ -982,6 +977,8 @@ void Game::watchTowerBehaviour(float angle)
     else scene_.GetNode("WatchEye4")->SetOrientation(glm::normalize(glm::angleAxis(ang, rotationAxis)));
 }
 
+
+// creates the oasis area
 void Game::createOasis() {
     // place pond with palm trees, flowers, and fireflies
 
@@ -1033,13 +1030,10 @@ void Game::createOasis() {
         s->Rotate(glm::quat(.5, glm::vec3(0, 0, 01)));
         s->SetScale(glm::vec3(315));
     }
-
-    //// place fireflies 
-    //game::SceneNode* fireflies = new SceneNode("Fireflies", resman_.GetResource("SphereParticles"), resman_.GetResource("PS-FirFlyMaterial"), resman_.GetResource("sparkle"));
-    //fireflies->SetPosition(glm::vec3(286,75,1099));
-    //fireflies->SetScale(glm::vec3(10));
-    //scene_.AddNode(fireflies, SceneGraph::EFFECTS);
 }
+
+
+// creates the area where the tornados are
 void Game::createSandNadoZone() {
 
     game::SceneNode* sand = new SceneNode("sandNato", resman_.GetResource("SParticle1000"), resman_.GetResource("PS-SandTornatoMaterial"), resman_.GetResource("SandParticle"));
@@ -1048,6 +1042,9 @@ void Game::createSandNadoZone() {
     scene_.AddNode(sand, SceneGraph::EFFECTS);
 
 }
+
+
+// creates the fire by the obelisk
 void Game::createfires() {
     // place the fire around the obilisk nados 
     game::SceneNode* fire = new SceneNode("Fire1", resman_.GetResource("SParticle1000"), resman_.GetResource("PS-Fire"));
@@ -1071,6 +1068,7 @@ void Game::createfires() {
     scene_.AddNode(fire, SceneGraph::EFFECTS);
 }    
 
+// creates the dead tree area 
 void Game::createDeadTreeArea()
 {
     std::vector<glm::vec3> pTree_positions;
@@ -1093,6 +1091,8 @@ void Game::createDeadTreeArea()
     }
 }
 
+
+// the function that procedurally generates tumbleweeds and trees
 void Game::generateTerrainFeatures(float x, float z) {
     // generate tumbleweeds and bushes around the specified position. 
     glm::vec3 topLeft(x, 0, z);
@@ -1160,16 +1160,15 @@ void Game::LoadScreen()
     glfwSwapBuffers(window_);
 }
 
+// This is the start screen function, which loads the screen
 void Game::StartScreen()
 {
     glClearColor(viewport_background_color_g[0], viewport_background_color_g[1], viewport_background_color_g[2], 0.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //resman_.CreateWall("SimpleWall"); //UI and images
     
     std::string filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/start.png");
     resman_.LoadResource(Texture, "StartScreen", filename.c_str());
 
-    //Ui* dead = new Ui("StartScreen", resman_.GetResource("SimpleWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("Start"));
     Ui* a = new Ui("StartScreen", resman_.GetResource("SimpleWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("StartScreen"));
     a->Draw(&camera_);
     
@@ -1177,6 +1176,7 @@ void Game::StartScreen()
     glfwSwapBuffers(window_);
 }
 
+// High level function that generates all aspects of the world
 void Game::CreateWorld() {
     orbs_left_ = 0;
     createTerrain("/textures/T5.png", glm::vec3(0, -30, 790));
@@ -1187,7 +1187,8 @@ void Game::CreateWorld() {
     createDeadTreeArea();
     createfires();
 
-    // list of points to generate features.
+    // list of points to specify grid points
+    // for the procedural generation.
     std::vector<glm::vec3> positions;
     positions.push_back(glm::vec3(-273.46, 0, 463.368));
     positions.push_back(glm::vec3(-96.6231, 0, 486.843));
@@ -1200,7 +1201,7 @@ void Game::CreateWorld() {
         generateTerrainFeatures(positions[i].x, positions[i].z);
     }
 
-    // place orbs
+    // places orbs
     std::vector<glm::vec3> orb_positions;
     orb_positions.push_back(glm::vec3(68.062, 64.7692, 808.75));
     orb_positions.push_back(glm::vec3(-382.8, 46.6105, 1091.44));

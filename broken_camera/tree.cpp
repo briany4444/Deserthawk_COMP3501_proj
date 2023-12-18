@@ -46,6 +46,7 @@ namespace game {
         }
     }
 
+    // creates the thorns for the tree
     void Tree::createThorns(const Resource* geom, const Resource* mat, int num_thorns) {
 
         for (int i = 0; i < num_thorns; i++) {
