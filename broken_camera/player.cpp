@@ -34,8 +34,8 @@ void Player::Update(double delta_time) {
         position_.z = -250;
     }
 
-    if (position_.y > 60) {
-        position_.y = 60;
+    if (position_.y > 100) {
+        position_.y = 100;
     }
     speed_ = 0;
     //update shape
@@ -100,11 +100,11 @@ void Player::Decelerate(float s) {
 }
 
 void Player::MoveForward() {
-    speed_ = 10;
-}
+    speed_ = 30;
 
+}
 void Player::MoveBackward(){
-    speed_ = -10;
+    speed_ = -20;
 }
 
 void Player::MoveStop()
