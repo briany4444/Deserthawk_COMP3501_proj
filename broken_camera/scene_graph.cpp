@@ -54,6 +54,7 @@ void SceneGraph::AddNode(SceneNode *node, Options x){
         node_.push_back(node);
     }
     else if (x == EFFECTS) {
+        
         effects_.push_back(node);
     }
     
@@ -109,6 +110,7 @@ void SceneGraph::AlphaBlending(bool set)
 {
     if (set) {
         // Disable depth write
+        glEnable(GL_DEPTH_TEST);
         glDepthMask(GL_FALSE);
 
         // Enable blending
@@ -129,6 +131,7 @@ void SceneGraph::Draw(Camera *camera, Options x, bool first){
 
     // Clear background
     if (first) {
+        
         glClearColor(background_color_[0], background_color_[1], background_color_[2], 0.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
@@ -145,8 +148,10 @@ void SceneGraph::Draw(Camera *camera, Options x, bool first){
         }
     } else if (x == EFFECTS) {
         // Draw all scene nodes
+        //std::cout << "print effects" <<  std::endl;
         for (int i = 0; i < effects_.size(); i++) {
             effects_[i]->Draw(camera);
+            //std::cout << "print " << effects_[i]->GetPosition().z <<  std::endl;
         }
     }
 }
@@ -156,6 +161,10 @@ void SceneGraph::Update(float delta_time){
 
     for (int i = 0; i < node_.size(); i++){
         node_[i]->Update(delta_time);
+    }
+
+    for (int j = 0; j < effects_.size(); j++) {
+        effects_[j]->Update(delta_time);
     }
 }
 
