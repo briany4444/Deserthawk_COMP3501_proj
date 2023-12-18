@@ -4,7 +4,6 @@
 in vec3 vertex;
 in vec3 normal;
 in vec3 color;
-in int phaseShift;
 
 // Uniform (global) buffer
 uniform mat4 world_mat;
@@ -26,7 +25,7 @@ float upward = 0.0; // additional y velocity for all particles
 void main()
 {
     // Let time cycle every four seconds
-    float circtime = timer  - 8.0 * floor(timer / 8);
+    float circtime = timer  - 4.0 * floor(timer / 4);
     float t = circtime; // Our time parameter
 
     float period = 4.0;  // Time period in seconds for position.x to repeat
@@ -37,15 +36,12 @@ void main()
     vec4 position = world_mat * vec4(vertex, 1.0);
     vec4 norm = normal_mat * vec4(normal, 0.0);
 
+    // Move point along normal
+    position.x =  (position.x + ( cos(normal.x * 1.0 / period * timer * 2 * 2.14159265 * 10) *normal.x*10) );
 	
-	// add "upward" to y speed to launch the particles vertically -- can easily omit
-    position.y +=  mod(((timer) + float(gl_VertexID)*abs(norm.y)),4.0) * 4;
-    //position.y =  int(gl_VertexID);
+    position.y =  clamp(((position.y + sin(normal.y * 1.0 / period * timer * 2 * 2.14159265 * 10) *normal.y*10)  * position.y),position.y + 0.0,position.y + 1000000.0);
 
-    // Move point along normal and down with t*t (acceleration under gravity)
-    position.x +=  cos((mod((norm.x+float(gl_VertexID)),5.0) * 1.0 / period * timer * 2 * 2.14159265)) * (position.y * 0.35) + (norm.y * 5.0) + abs(cos(timer * 1.0 / period * 2 * 2.14159265 * norm.y))*(position.y);
-
-    position.z +=  sin((mod((norm.y+float(gl_VertexID)),5.0) * 1.0 / period * timer * 2 * 2.14159265)) * (position.y * 0.35) + (norm.y * 5.0);
+    position.z =  (position.z + ( cos(normal.z * 1.0 / period * timer * 2 * 2.14159265 * 10) *normal.z*10) );
     
     // Now apply view transformation
     gl_Position = view_mat * position;

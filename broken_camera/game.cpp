@@ -110,22 +110,7 @@ void Game::InitView(void){
     
 
     // set loading screen
-    glClearColor(viewport_background_color_g[0], viewport_background_color_g[1], viewport_background_color_g[2], 0.0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
-    resman_.CreateWall("SimpleWall"); //UI and images
-
-    std::string filename = std::string(MATERIAL_DIRECTORY) + std::string("/SS_textured_material");
-    resman_.LoadResource(Material, "PlainTexMaterial", filename.c_str());
-
-    filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/loading.png");
-    resman_.LoadResource(Texture, "Loading", filename.c_str());
-
-    Ui* a = new Ui("LoadingScreen", resman_.GetResource("SimpleWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("Loading"));
-    a->Draw(&camera_);
-    
-    // Push buffer drawn in the background onto the display
-    glfwSwapBuffers(window_);
+    LoadScreen();
 }
 
 
@@ -145,6 +130,7 @@ void Game::SetupResources(void){
     // Setup drawing to texture
     scene_.SetupDrawToTexture();
 
+
     // Create a simple object to represent the tree
     {
         resman_.CreateCone("SimpleObject", 2.0, 1.0, 10, 10);
@@ -158,6 +144,8 @@ void Game::SetupResources(void){
     resman_.CreateTorus("Ring", 1);
     resman_.CreateSphere("Orb");
     resman_.CreateSphereParticles("SphereParticles", 250);
+    resman_.CreateSphereParticles("SParticle1000", 1000);
+    resman_.CreateWall("SimpleWall"); //UI and images
 
     
 
@@ -194,8 +182,13 @@ void Game::SetupResources(void){
         // filename = std::string(MATERIAL_DIRECTORY) + std::string("/Sand-nato");
         // resman_.LoadResource(Material, "PS-SandTornatoMaterial", filename.c_str());
 
-        // filename = std::string(MATERIAL_DIRECTORY) + std::string("/firefly_particle");
-        // resman_.LoadResource(Material, "PS-FirFlyMaterial", filename.c_str());
+
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/Fire");
+        resman_.LoadResource(Material, "PS-Fire", filename.c_str());
+
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/firefly_particle");
+        resman_.LoadResource(Material, "PS-FirFlyMaterial", filename.c_str());
+
 
         
     }
@@ -346,9 +339,9 @@ void Game::SetupScene(void) {
         l = CreateLightInstance("light", "lightMesh", "TextureNormalMaterial", "RedStar");
         l->SetPosition(glm::vec3(-900, 1200, 1800));
         l->SetJointPos(glm::vec3(0, 0, 100));
-        l->SetOrbiting();
-        l->SetOrbitSpeed(-.3);
-        l->SetOrbitAxis(glm::vec3(.5, 0, .5));
+        //l->SetOrbiting();
+        //l->SetOrbitSpeed(-.3);
+        //l->SetOrbitAxis(glm::vec3(.5, 0, .5));
         l->SetScale(glm::vec3(25, 25, 25));
     }
 
@@ -363,25 +356,9 @@ void Game::SetupScene(void) {
     
     }
 
-    ////// PARTICLE SYSTEMS ////// 
-    {
-    
-
-
-
-    }
-
     //game_state_ = inProgress;
     // exit loading screen into start screen
-    glClearColor(viewport_background_color_g[0], viewport_background_color_g[1], viewport_background_color_g[2], 0.0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   
-    
-    Ui* a = new Ui("StartScreen", resman_.GetResource("SimpleWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("StartScreen"));
-    a->Draw(&camera_);
-    std::cout << "start" << std::endl;
-    // Push buffer drawn in the background onto the display
-    glfwSwapBuffers(window_);
+    StartScreen();
 }
 
 
@@ -447,7 +424,11 @@ void Game::MainLoop(void){
             scene_.Draw(&camera_);
             scene_.AlphaBlending(true);
             scene_.Draw(&camera_,SceneGraph::EFFECTS, false);
+            
+
             gui_->Draw(&camera_);
+            //glfwSwapBuffers(window_);
+            
             scene_.AlphaBlending(false);
         }
         else {
@@ -957,16 +938,42 @@ void Game::createOasis() {
         PlaceObject(oasisPlant, FlowerPos.x, FlowerPos.y, FlowerPos.z);
     }   
 
-    // place fireflies 
+    //// place fireflies 
     //game::SceneNode* fireflies = new SceneNode("Fireflies", resman_.GetResource("SphereParticles"), resman_.GetResource("PS-FirFlyMaterial"), resman_.GetResource("sparkle"));
-    //fireflies->SetPosition(glm::vec3(386,75,1099));
+    //fireflies->SetPosition(glm::vec3(286,75,1099));
+    //fireflies->SetScale(glm::vec3(10));
     //scene_.AddNode(fireflies, SceneGraph::EFFECTS);
 }
-
 void Game::createSandNadoZone() {
-    // place several sand nados 
+
+    game::SceneNode* sand = new SceneNode("Fire1", resman_.GetResource("SParticle1000"), resman_.GetResource("PS-SandTornatoMaterial"), resman_.GetResource("SandParticle"));
+    sand->SetPosition(glm::vec3(337, 30, 463));
+    sand->SetScale(glm::vec3(50));
+    scene_.AddNode(sand, SceneGraph::EFFECTS);
 
 }
+void Game::createfires() {
+    // place the fire around the obilisk nados 
+    game::SceneNode* fire = new SceneNode("Fire1", resman_.GetResource("SParticle1000"), resman_.GetResource("PS-Fire"));
+    fire->SetPosition(glm::vec3(-74, 0, 776));
+    fire->SetScale(glm::vec3(5));
+    scene_.AddNode(fire, SceneGraph::EFFECTS);
+
+    fire = new SceneNode("Fire2", resman_.GetResource("SParticle1000"), resman_.GetResource("PS-Fire"));
+    fire->SetPosition(glm::vec3(-74, 0, 830));
+    fire->SetScale(glm::vec3(5));
+    scene_.AddNode(fire, SceneGraph::EFFECTS);
+
+    fire = new SceneNode("Fire3", resman_.GetResource("SParticle1000"), resman_.GetResource("PS-Fire"));
+    fire->SetPosition(glm::vec3(-15, 0, 830));
+    fire->SetScale(glm::vec3(5));
+    scene_.AddNode(fire, SceneGraph::EFFECTS);
+
+    fire = new SceneNode("Fire4", resman_.GetResource("SParticle1000"), resman_.GetResource("PS-Fire"));
+    fire->SetPosition(glm::vec3(-15, 0, 776));
+    fire->SetScale(glm::vec3(5));
+    scene_.AddNode(fire, SceneGraph::EFFECTS);
+}    
 
 void Game::generateTerrainFeatures(float x, float z) {
     // generate tumbleweeds and bushes around the specified position. 
@@ -1004,8 +1011,49 @@ void Game::generateTerrainFeatures(float x, float z) {
         else {
             i++;
             numFails++;
+            if (numFails > 50) {
+                break;
+            }
         }
     }
+}
+
+void Game::LoadScreen()
+{
+    glClearColor(viewport_background_color_g[0], viewport_background_color_g[1], viewport_background_color_g[2], 0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glfwSwapBuffers(window_);
+
+    glClearColor(viewport_background_color_g[0], viewport_background_color_g[1], viewport_background_color_g[2], 0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    resman_.CreateWall("SWall"); //UI and images
+
+    std::string filename = std::string(MATERIAL_DIRECTORY) + std::string("/SS_textured_material");
+    resman_.LoadResource(Material, "PlainTexMaterial", filename.c_str());
+
+    filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/loading.png");
+    resman_.LoadResource(Texture, "Loading", filename.c_str());
+
+    Ui* a = new Ui("LoadingScreen", resman_.GetResource("SWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("Loading"));
+    a->Draw(&camera_);
+
+    // Push buffer drawn in the background onto the display
+    glfwSwapBuffers(window_);
+}
+
+void Game::StartScreen()
+{
+    glClearColor(viewport_background_color_g[0], viewport_background_color_g[1], viewport_background_color_g[2], 0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //resman_.CreateWall("SimpleWall"); //UI and images
+    
+    Ui* dead = new Ui("StartScreen", resman_.GetResource("SimpleWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("Start"));
+    Ui* a = new Ui("StartScreen", resman_.GetResource("SimpleWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("Start"));
+    a->Draw(&camera_);
+    
+    // Push buffer drawn in the background onto the display
+    glfwSwapBuffers(window_);
 }
 
 void Game::CreateWorld() {
@@ -1015,6 +1063,7 @@ void Game::CreateWorld() {
     createVillage();
     createOasis();
     createSandNadoZone();
+    createfires();
 
     // list of points to generate features.
     std::vector<glm::vec3> positions;

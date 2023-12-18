@@ -60,7 +60,7 @@ namespace game {
 
         // Find resource with the specified name
         for (int i = 0; i < resource_.size(); i++) {
-            if (resource_[i]->GetName() == name) {
+            if (resource_[i]->GetName().compare( name) == 0) {
                 return resource_[i];
             }
         }
@@ -377,6 +377,7 @@ namespace game {
         }
 
         if (geometry_program) {
+            //std::cout << "GP worjking" << std::endl;
             // Create a shader from the geometry program source code
             gs = glCreateShader(GL_GEOMETRY_SHADER);
             const char* source_gp = gp.c_str();

@@ -105,8 +105,13 @@ namespace game {
             void createObeliskZone();
             void createVillage();
             void createOasis();
+            void createfires();
             void createSandNadoZone();
             void generateTerrainFeatures(float x, float z);
+
+            //create diferent screens
+            void LoadScreen();
+            void StartScreen();
 
     }; // class Game
 

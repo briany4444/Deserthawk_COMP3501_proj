@@ -63,7 +63,7 @@ void main()
 	vec4 dark_green = vec4( 0.32549, 0.77647, 0.32549, 1);
 	vec4 light_gray = vec4(.7,.7,.7, 1);
 	
-
+	vec4 color = vec4(0,0,0, 0);
 	//flicker out of night vision for a couple seconds and then back in
 	float phase = mod(timer/2, 28);
 	int compA = abs(int( round(12*sin(.31 * phase)) ));
@@ -71,16 +71,16 @@ void main()
 	int compC = abs(int( round(3*cos(.13 * phase)) ));
 	int onOff = min(min(compA, min(compB, compC)), 1); // clamp at 1, already clamp at 0 implicitly
 
-	vec4 overlay_green = vec4(0.2196 * onOff, .750 * onOff, 0.20196 * onOff, 0.2);
+	//vec4 overlay_green = vec4(0.2196 * onOff, .750 * onOff, 0.20196 * onOff, 0.2);
 
 
 	//sample the noise texture as a function 
 	//float t = timer/3;
 	//float uv_x = mod( (abs(sin(t*t) * cos(timer)) + abs(sin(t)) * uv_coord.x) /2, 1.0f);
 	//float uv_y = mod( ( abs(sin(t*t)/ sin(timer)) - abs(cos(uv_coord.y)) )/2, 1.0f);
-	vec4 color = texture2D(texture_map, uv_coord);
+	//vec4 color = texture2D(texture_map, uv_coord);
 	//might need to invert 
-	color = vec4(color.r * overlay_green.r, color.g * overlay_green.g, color.b * overlay_green.b, overlay_green.a);
+	//color = vec4(color.r * overlay_green.r, color.g * overlay_green.g, color.b * overlay_green.b, overlay_green.a);
 	
 	
 	
