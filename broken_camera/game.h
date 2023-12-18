@@ -104,7 +104,6 @@ namespace game {
 
             //DebugMode
             void DebugCameraMovement();
-            bool debugCamera_ = false;
             float debugMoveSpeed_ = 5.0f;
             glm::vec2 lastFrameMousePosition_ = glm::vec2(0.0, 0.0);
 
