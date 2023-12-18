@@ -54,7 +54,7 @@ void SceneGraph::AddNode(SceneNode *node, Options x){
         node_.push_back(node);
     }
     else if (x == EFFECTS) {
-        std::cout << "d" << std::endl;
+        
         effects_.push_back(node);
     }
     
@@ -148,10 +148,10 @@ void SceneGraph::Draw(Camera *camera, Options x, bool first){
         }
     } else if (x == EFFECTS) {
         // Draw all scene nodes
-        std::cout << "print effects" <<  std::endl;
+        //std::cout << "print effects" <<  std::endl;
         for (int i = 0; i < effects_.size(); i++) {
             effects_[i]->Draw(camera);
-            std::cout << "print " << effects_[i]->GetPosition().z <<  std::endl;
+            //std::cout << "print " << effects_[i]->GetPosition().z <<  std::endl;
         }
     }
 }
