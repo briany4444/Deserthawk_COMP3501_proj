@@ -251,6 +251,9 @@ void Game::SetupResources(void){
 
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/Sun.png");
         resman_.LoadResource(Texture, "RedStar", filename.c_str());
+
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/Orb_Texture.png");
+        resman_.LoadResource(Texture, "OrbTexture", filename.c_str());
     }
 
     
@@ -728,9 +731,9 @@ Orb* Game::createOrbInstance(std::string entity_name, std::string object_name, s
     scene_.AddNode(orb);
     orbs_left_++;
 
-    orb->AddChild("Ring", resman_.GetResource("Ring"), resman_.GetResource("RandomTexMaterial"), resman_.GetResource("Texture1"));
-    orb->AddChild("Ring2", resman_.GetResource("Ring"), resman_.GetResource("RandomTexMaterial"), resman_.GetResource("Texture1"));
-    orb->AddChild("Ring3", resman_.GetResource("Ring"), resman_.GetResource("RandomTexMaterial"), resman_.GetResource("Texture1"));
+    orb->AddChild("Ring", resman_.GetResource("Ring"), resman_.GetResource("RandomTexMaterial"), resman_.GetResource("OrbTexture"));
+    orb->AddChild("Ring2", resman_.GetResource("Ring"), resman_.GetResource("RandomTexMaterial"), resman_.GetResource("OrbTexture"));
+    orb->AddChild("Ring3", resman_.GetResource("Ring"), resman_.GetResource("RandomTexMaterial"), resman_.GetResource("OrbTexture"));
 
     std::vector<SceneNode*> children = orb->GetChildren();
     for (int i = 0; i < children.size(); ++i) {
@@ -1203,7 +1206,7 @@ void Game::CreateWorld() {
 
     Orb* orb;
     for (int j = 0; j < orb_positions.size(); ++j) {
-        orb = createOrbInstance("Orb" + j, "Orb", "RandomTexMaterial", "Texture1");
+        orb = createOrbInstance("Orb" + j, "Orb", "RandomTexMaterial", "OrbTexture");
         orb->SetPosition(glm::vec3(orb_positions[j].x, orb_positions[j].y, orb_positions[j].z));
     }
 }
