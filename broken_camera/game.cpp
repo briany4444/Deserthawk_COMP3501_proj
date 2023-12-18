@@ -111,6 +111,25 @@ void Game::InitView(void){
 
     // set loading screen
     LoadScreen();
+    glClearColor(viewport_background_color_g[0], viewport_background_color_g[1], viewport_background_color_g[2], 0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    resman_.CreateWall("SimpleWall"); //UI and images
+
+    std::string filename = std::string(MATERIAL_DIRECTORY) + std::string("/SS_textured_material");
+    resman_.LoadResource(Material, "PlainTexMaterial", filename.c_str());
+
+    filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/loading.png");
+    resman_.LoadResource(Texture, "Loading", filename.c_str());
+
+    filename = std::string(MATERIAL_DIRECTORY) + std::string("/shaders/pond");
+    resman_.LoadResource(Material, "PondMat", filename.c_str());
+
+    Ui* a = new Ui("LoadingScreen", resman_.GetResource("SimpleWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("Loading"));
+    a->Draw(&camera_);
+    
+    // Push buffer drawn in the background onto the display
+    glfwSwapBuffers(window_);
 }
 
 
@@ -147,6 +166,8 @@ void Game::SetupResources(void){
     resman_.CreateSphereParticles("SParticle1000", 1000);
     resman_.CreateWall("SimpleWall"); //UI and images
 
+
+
     
 
     std::string filename;
@@ -179,9 +200,8 @@ void Game::SetupResources(void){
 
         /// Particle Systems ///
 
-        // filename = std::string(MATERIAL_DIRECTORY) + std::string("/Sand-nato");
-        // resman_.LoadResource(Material, "PS-SandTornatoMaterial", filename.c_str());
-
+         filename = std::string(MATERIAL_DIRECTORY) + std::string("/Sand-nato");
+         resman_.LoadResource(Material, "PS-SandTornatoMaterial", filename.c_str());
 
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/Fire");
         resman_.LoadResource(Material, "PS-Fire", filename.c_str());
@@ -363,6 +383,7 @@ void Game::SetupScene(void) {
 
     // create world   
     CreateWorld();
+    
 
     {
     //sky
@@ -395,7 +416,7 @@ void Game::MainLoop(void){
                 scene_.Update(delta_time);
                 player_.Update(delta_time);
                 scene_.skyBox_->SetPosition(player_.GetPosition());
-
+                
                 if (!debugCamera_)
                 {
                     camera_.Update(player_.GetOrientation(), player_.GetForward(), player_.GetSide(),
@@ -698,6 +719,7 @@ void Game::HandleCollisions() {
             // handles Player - Power Up Collision
             if (curr_node->GetType() == "Orb") {
                 orbs_left_ -= 1;
+                gui_->IncrementCollected();
                 if (orbs_left_ == 0) {
                     std::cout << "You Have WON!" << std::endl;
                     game_state_ = won;
@@ -1032,6 +1054,14 @@ void Game::createOasis() {
         PlaceObject(oasisPlant, FlowerPos.x, FlowerPos.y, FlowerPos.z);
     }   
 
+    { //pond
+        SceneNode* s = CreateInstance("Pond", "SimpleWall", "PondMat", "Texture1");
+        s->SetPosition(glm::vec3(290, 4, 1080));
+        s->Rotate(glm::quat(1, glm::vec3(1, 0, 0)));
+        s->Rotate(glm::quat(.5, glm::vec3(0, 0, 01)));
+        s->SetScale(glm::vec3(315));
+    }
+
     //// place fireflies 
     //game::SceneNode* fireflies = new SceneNode("Fireflies", resman_.GetResource("SphereParticles"), resman_.GetResource("PS-FirFlyMaterial"), resman_.GetResource("sparkle"));
     //fireflies->SetPosition(glm::vec3(286,75,1099));
@@ -1040,7 +1070,7 @@ void Game::createOasis() {
 }
 void Game::createSandNadoZone() {
 
-    game::SceneNode* sand = new SceneNode("Fire1", resman_.GetResource("SParticle1000"), resman_.GetResource("PS-SandTornatoMaterial"), resman_.GetResource("SandParticle"));
+    game::SceneNode* sand = new SceneNode("sandNato", resman_.GetResource("SParticle1000"), resman_.GetResource("PS-SandTornatoMaterial"), resman_.GetResource("SandParticle"));
     sand->SetPosition(glm::vec3(337, 30, 463));
     sand->SetScale(glm::vec3(50));
     scene_.AddNode(sand, SceneGraph::EFFECTS);
