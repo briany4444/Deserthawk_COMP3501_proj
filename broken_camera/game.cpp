@@ -396,6 +396,8 @@ void Game::SetupScene(void) {
     //game_state_ = inProgress;
     // exit loading screen into start screen
     StartScreen();
+
+    glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 
@@ -417,15 +419,8 @@ void Game::MainLoop(void){
                 player_.Update(delta_time);
                 scene_.skyBox_->SetPosition(player_.GetPosition());
                 
-                if (!debugCamera_)
-                {
-                    camera_.Update(player_.GetOrientation(), player_.GetForward(), player_.GetSide(),
-                    player_.GetPosition());
-                }
-                else
-                {
-                    DebugCameraMovement();
-                }
+                camera_.Update(player_.GetOrientation(), player_.GetForward(), player_.GetSide(), player_.GetPosition());
+                DebugCameraMovement();
 
                 float angle = glm::mod(current_time, 5.0);
 
@@ -518,39 +513,6 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
         glfwSetWindowShouldClose(window, true);
     }
     if (game->game_state_ == inProgress) {
-        // View control
-        float rot_factor(glm::pi<float>() * 3 / 180); // amount the ship turns per keypress
-        float trans_factor = 1.0; // amount the ship steps forward per keypress
-        if (key == GLFW_KEY_W) {
-            game->player_.Pitch(rot_factor);
-        }
-        if (key == GLFW_KEY_S) {
-            game->player_.Pitch(-rot_factor);
-        }
-        if (key == GLFW_KEY_A) {
-            game->player_.Yaw(rot_factor);
-        }
-        if (key == GLFW_KEY_D) {
-            game->player_.Yaw(-rot_factor);
-        }
-        if (key == GLFW_KEY_SPACE) {
-            game->player_.MoveForward();
-        }
-        if (key == GLFW_KEY_LEFT_SHIFT) {
-            game->player_.MoveBackward();
-        }
-        if (key == GLFW_KEY_B && action == GLFW_PRESS) {
-            if (game->debugCamera_)
-            {
-                game->debugCamera_ = false;
-                glfwSetInputMode(game->window_, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-            }
-            else
-            {
-                game->debugCamera_ = true;
-                glfwSetInputMode(game->window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-            }
-        }
         if (key == GLFW_KEY_Y) {
             game->l->Translate(glm::vec3(0.0, 2.0, 0.0));
         }
@@ -631,37 +593,44 @@ void Game::DebugCameraMovement()
 
     lastFrameMousePosition_ = mousePosition;
 
-    camera_.Yaw(-mouseSlide.x / 1000.0f);
-    camera_.Pitch(-mouseSlide.y / 1000.0f); //Honestly 1000 just seemed like a good number to control the turn speed using mouse controls
+    player_.Yaw(-mouseSlide.x / 1000.0f);
+    player_.Pitch(-mouseSlide.y / 1000.0f); //Honestly 1000 just seemed like a good number to control the turn speed using mouse controls
 
     // A : Strafe Left
     if (glfwGetKey(window_, GLFW_KEY_A)) {
-        camera_.SetPosition(camera_.GetPosition() + -camera_.GetSide() * debugMoveSpeed_);
+        //camera_.SetPosition(camera_.GetPosition() + -camera_.GetSide() * debugMoveSpeed_);
+        player_.SetPosition(player_.GetPosition() + -player_.GetSide() * debugMoveSpeed_);
     }
 
     // D : Strafe Right
     if (glfwGetKey(window_, GLFW_KEY_D)) {
-        camera_.SetPosition(camera_.GetPosition() + camera_.GetSide() * debugMoveSpeed_);
+        //camera_.SetPosition(camera_.GetPosition() + camera_.GetSide() * debugMoveSpeed_);
+        player_.SetPosition(player_.GetPosition() + player_.GetSide() * debugMoveSpeed_);
     }
 
     // W : Go Foraward
     if (glfwGetKey(window_, GLFW_KEY_W)) {
-        camera_.SetPosition(camera_.GetPosition() + camera_.GetForward() * debugMoveSpeed_);
+        //camera_.SetPosition(camera_.GetPosition() + camera_.GetForward() * debugMoveSpeed_);
+        player_.SetPosition(player_.GetPosition() + player_.GetForward() * debugMoveSpeed_);
     }
 
     // S : Go Backward
     if (glfwGetKey(window_, GLFW_KEY_S)) {
-        camera_.SetPosition(camera_.GetPosition() + -camera_.GetForward() * debugMoveSpeed_);
+        //camera_.SetPosition(camera_.GetPosition() + -camera_.GetForward() * debugMoveSpeed_);
+        player_.SetPosition(player_.GetPosition() + -player_.GetForward() * debugMoveSpeed_);
+
     }
 
     // Space : Acsend
     if (glfwGetKey(window_, GLFW_KEY_SPACE)) {
-        camera_.SetPosition(camera_.GetPosition() + camera_.GetUp() * debugMoveSpeed_);
+        //camera_.SetPosition(camera_.GetPosition() + camera_.GetUp() * debugMoveSpeed_);
+        player_.SetPosition(player_.GetPosition() + glm::vec3(0.0,1.0,0.0) * debugMoveSpeed_);
     }
 
     // Shift : Descend
     if (glfwGetKey(window_, GLFW_KEY_LEFT_SHIFT)) {
-        camera_.SetPosition(camera_.GetPosition() + -camera_.GetUp() * debugMoveSpeed_);
+        //camera_.SetPosition(camera_.GetPosition() + -camera_.GetUp() * debugMoveSpeed_);
+        player_.SetPosition(player_.GetPosition() + -glm::vec3(0.0, 1.0, 0.0) * debugMoveSpeed_);
     }
 
 
