@@ -121,6 +121,9 @@ void Game::InitView(void){
     filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/loading.png");
     resman_.LoadResource(Texture, "Loading", filename.c_str());
 
+    filename = std::string(MATERIAL_DIRECTORY) + std::string("/shaders/pond");
+    resman_.LoadResource(Material, "PondMat", filename.c_str());
+
     Ui* a = new Ui("LoadingScreen", resman_.GetResource("SimpleWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("Loading"));
     a->Draw(&camera_);
     
@@ -158,6 +161,7 @@ void Game::SetupResources(void){
     resman_.CreateTorus("Ring", 1);
     resman_.CreateSphere("Orb");
     resman_.CreateSphereParticles("SphereParticles", 250);
+
 
     
 
@@ -354,6 +358,10 @@ void Game::SetupScene(void) {
 
     // create world   
     CreateWorld();
+    {
+        SceneNode* s = CreateInstance("Pond", "SimpleWall", "PondMat", "Texture1");
+        s->SetPosition(glm::vec3( - 370, 40, 420));
+    }
 
     {
     //sky
