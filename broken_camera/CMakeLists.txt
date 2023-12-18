@@ -12,7 +12,7 @@ set(HDRS
  
 set(SRCS
    asteroid.cpp player.cpp camera.cpp game.cpp main.cpp orb.cpp resource.cpp tree.cpp thorn.cpp resource_manager.cpp scene_graph.cpp scene_node.cpp spaceship.cpp Ui.cpp
-   material_vp.glsl material_fp.glsl terrain.cpp firefly_particle_vp.glsl firefly_particle_fp.glsl firefly_particle_gp.glsl light.cpp ui_vp.glsl ui_vp.glsl screen_space_vp.glsl screen_space_fp.glsl
+   material_vp.glsl material_fp.glsl terrain.cpp firefly_particle_vp.glsl firefly_particle_fp.glsl firefly_particle_gp.glsl light.cpp ui_vp.glsl screen_space_vp.glsl screen_space_fp.glsl
 )
 
 # Add path name to configuration file
@@ -27,7 +27,7 @@ include_directories(${OPENGL_INCLUDE_DIR})
 target_link_libraries(${PROJ_NAME} ${OPENGL_gl_LIBRARY})
 
 # Other libraries needed
-set(LIBRARY_PATH C:/libs/Libraries)
+#set(LIBRARY_PATH C:/libs/Libraries)
 #set(LIBRARY_PATH "C:\OpenGL_Libraries\Libraries")
 #set(LIBRARY_PATH C:\Users\User\Libraries) # Brian's Libraries
 set(LIBRARY_PATH D:/COMP\ 3501\ Libraries/Libraries) #Dylan's Libraries
