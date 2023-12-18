@@ -194,8 +194,8 @@ void Game::SetupResources(void){
 
         /// Particle Systems ///
 
-         filename = std::string(MATERIAL_DIRECTORY) + std::string("/Sand-nato");
-         resman_.LoadResource(Material, "PS-SandTornatoMaterial", filename.c_str());
+        filename = std::string(MATERIAL_DIRECTORY) + std::string("/Sand-nato");
+        resman_.LoadResource(Material, "PS-SandTornatoMaterial", filename.c_str());
 
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/Fire");
         resman_.LoadResource(Material, "PS-Fire", filename.c_str());
@@ -685,6 +685,7 @@ void Game::HandleCollisions() {
         }
         i++;
     }
+}
  
 
 

@@ -15,11 +15,25 @@ uniform float timer;
 void main (void)
 {
 
-    float rad = mod(timer, 5) / 5;
-    float shell_len = 0.05;
-    vec4 pixel = vec4(0, 0, 1, 1);
+    float rad = mod(timer, 10) / 10;
+    float rad2 = mod(timer, 7) / 7;
+    float shell_len = 0.005;
+    vec4 pixel = vec4(0, 0, 0.78, 1);
     
     if ((distance(uv_interp, vec2(0.5, 0.5)) > rad) && (distance(uv_interp, vec2(0.5, 0.5)) < (rad + shell_len)) ) {
+        pixel = vec4(1, 1, 1, 1);
+    } else if ((distance(uv_interp, vec2(0.5, 0.5)) > rad / 2) && (distance(uv_interp, vec2(0.5, 0.5)) < (rad/2 + shell_len)) ) {
+        pixel = vec4(1, 1, 1, 1);
+    } else if ((distance(uv_interp, vec2(0.5, 0.5)) > rad / 4) && (distance(uv_interp, vec2(0.5, 0.5)) < (rad/4 + shell_len)) ) {
+        pixel = vec4(1, 1, 1, 1);
+    }
+
+
+    if ((distance(uv_interp, vec2(0.75, 0.34)) > rad2) && (distance(uv_interp, vec2(0.75, 0.34)) < (rad2 + shell_len)) ) {
+        pixel = vec4(1, 1, 1, 1);
+    } else if ((distance(uv_interp, vec2(0.75, 0.34)) > (rad2) / 2) && (distance(uv_interp, vec2(0.75, 0.34)) < ((rad2)/2 + shell_len)) ) {
+        pixel = vec4(1, 1, 1, 1);
+    } else if ((distance(uv_interp, vec2(0.75, 0.34)) > (rad2) / 4) && (distance(uv_interp, vec2(0.75, 0.34)) < ((rad2)/4 + shell_len)) ) {
         pixel = vec4(1, 1, 1, 1);
     }
 
