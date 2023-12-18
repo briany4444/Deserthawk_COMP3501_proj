@@ -56,6 +56,7 @@ namespace game {
             void CreateCubeInverted(std::string object_name);
 
             void CreateWall(std::string object_name); // used for ui
+            void CreateWall2(std::string object_name); // used for screen textyres
             void CalculateNormalTan(GLfloat *vertices, int, int, int);
             void AverageNormalTan(GLfloat*, int, int, int);
 			

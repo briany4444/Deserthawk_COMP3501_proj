@@ -63,6 +63,10 @@ void game::Ui::SetupShader(GLuint program) {
 	GLint timer_var = glGetUniformLocation(program, "timer");
 	double current_time = glfwGetTime();
 	glUniform1f(timer_var, (float)current_time);
+
+	// num collected objectives
+	GLint collect_var = glGetUniformLocation(program, "num_collected");
+	glUniform1i(collect_var, num_collected_);
 }
 /*
 void game::Ui::setOrthographicProjection() {

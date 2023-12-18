@@ -237,17 +237,14 @@ void Game::SetupResources(void){
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/T5NormalMap.png");
         resman_.LoadResource(Texture, "Texture2", filename.c_str());
 
-        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/start.png");
-        resman_.LoadResource(Texture, "StartScreen", filename.c_str());
+        
 
-        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/GameOver.png");
-        resman_.LoadResource(Texture, "GameOver", filename.c_str());
+        
 
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/SkyBoxCubeMap.png");
         resman_.LoadResource(Texture, "CubeMap", filename.c_str());
 
-        filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/winScreen.png");
-        resman_.LoadResource(Texture, "Winner", filename.c_str());
+        
 
         filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/Sun.png");
         resman_.LoadResource(Texture, "RedStar", filename.c_str());
@@ -452,18 +449,20 @@ void Game::MainLoop(void){
         }
         else if (game_state_ == lost) {
             //print end screen 
-            if (glfwGetTime() - last_time > 10) {
+            if (glfwGetTime() - last_time > 15) {
                 return;
             }
             continue;
         }
         else if (game_state_ == won) { 
             //show win screen
-            
+            std::string filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/WinScreen.png");
+            resman_.LoadResource(Texture, "Winner", filename.c_str());
             gui_ = new Ui("win", resman_.GetResource("SimpleWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("Winner"));
             gui_->Draw(&camera_);
-            
+            glfwSwapBuffers(window_);
             game_state_ = lost;
+            continue;
         }
 
 
@@ -485,10 +484,11 @@ void Game::MainLoop(void){
             // Process the texture with a screen-space effect and display
             // the texture
             float death_duration = scene_.DisplayTexture(resman_.GetResource("ScreenSpaceMaterial")->GetResource());
-            if (death_duration >= 15) {
+            if (death_duration >= 10) {
                 game_state_ = lost;
                 //update display to game over screen
-                
+                std::string filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/GameOver.png");
+                resman_.LoadResource(Texture, "GameOver", filename.c_str());
                 gui_ = new Ui("LossScreen", resman_.GetResource("SimpleWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("GameOver"));
                 gui_->Draw(&camera_);
                 glfwSwapBuffers(window_);
@@ -1166,8 +1166,11 @@ void Game::StartScreen()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     //resman_.CreateWall("SimpleWall"); //UI and images
     
-    Ui* dead = new Ui("StartScreen", resman_.GetResource("SimpleWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("Start"));
-    Ui* a = new Ui("StartScreen", resman_.GetResource("SimpleWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("Start"));
+    std::string filename = std::string(MATERIAL_DIRECTORY) + std::string("/textures/start.png");
+    resman_.LoadResource(Texture, "StartScreen", filename.c_str());
+
+    //Ui* dead = new Ui("StartScreen", resman_.GetResource("SimpleWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("Start"));
+    Ui* a = new Ui("StartScreen", resman_.GetResource("SimpleWall"), resman_.GetResource("PlainTexMaterial"), resman_.GetResource("StartScreen"));
     a->Draw(&camera_);
     
     // Push buffer drawn in the background onto the display
