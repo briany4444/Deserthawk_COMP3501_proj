@@ -30,8 +30,8 @@ void Player::Update(double delta_time) {
 
     if (position_.z > 1330) {
         position_.z = 1330;
-    } else if (position_.z > 1330) {
-        position_.z = -250;
+    } else if (position_.z < 290) {
+        position_.z = 290;
     }
 
     if (position_.y > 100) {
