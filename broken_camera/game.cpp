@@ -375,9 +375,9 @@ void Game::SetupScene(void) {
         l = CreateLightInstance("light", "lightMesh", "TextureNormalMaterial", "RedStar");
         l->SetPosition(glm::vec3(-900, 1200, 1800));
         l->SetJointPos(glm::vec3(0, 0, 100));
-        //l->SetOrbiting();
-        //l->SetOrbitSpeed(-.3);
-        //l->SetOrbitAxis(glm::vec3(.5, 0, .5));
+        l->SetOrbiting();
+        l->SetOrbitSpeed(-.3);
+        l->SetOrbitAxis(glm::vec3(.5, 0, .5));
         l->SetScale(glm::vec3(25, 25, 25));
     }
 
